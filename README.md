@@ -47,6 +47,11 @@ One command. Full project health report. AI-graded score.
 - **Vibe Check** — AI analyzes your project structure against industry-standard patterns
 - **Technical Debt Summary** — Plain-English summary of critical issues + praise for good practices
 
+### 📄 Automatic Report Generation
+- **Plain Text Reports** — Every scan automatically saves a detailed, scrollable report to `obelisk-report.txt`
+- **Custom Output Paths** — Use `--output` flag to save reports to any location
+- **Shareable Format** — Reports are in plain text format, perfect for sharing with team members or version control
+
 ---
 
 ## 🚀 Quick Start
@@ -74,10 +79,17 @@ export GOOGLE_API_KEY="your-api-key-here"
 
 ```bash
 # Run a full health check with interactive TUI
+# Automatically saves report to obelisk-report.txt
 obelisk check
+
+# Check a specific project path
+obelisk check --path "C:\path\to\your\project"
 
 # Run with an API key flag
 obelisk check --api-key="your-key"
+
+# Specify custom output file location
+obelisk check --output "C:\reports\my-scan.txt"
 
 # Export a health report as Markdown
 obelisk report --export=markdown
@@ -91,6 +103,8 @@ obelisk protect --install
 # Run in strict mode (non-zero exit on failures)
 obelisk protect --strict
 ```
+
+**Note:** The `check` command now automatically saves a detailed plain-text report to `obelisk-report.txt` in the project directory. This file can be opened in any text editor for easy scrolling and review. Use the `--output` flag to specify a custom location.
 
 ---
 

@@ -8,11 +8,13 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/Swif7ify/Obelisk-CLI/internal/engine"
+	"github.com/Swif7ify/Obelisk-CLI/internal/report"
 	"github.com/Swif7ify/Obelisk-CLI/ui"
 )
 
 var flagCheckPath string
 var flagSkipAI bool
+var flagOutputFile string
 
 var checkCmd = &cobra.Command{
 	Use:   "check [path]",
@@ -34,7 +36,11 @@ var checkCmd = &cobra.Command{
 
 		// Create the dashboard
 		dashboard := ui.NewDashboard()
-		p := tea.NewProgram(dashboard, tea.WithAltScreen())
+		p := tea.NewProgram(dashboard)
+
+		// Channel to capture the scan result
+		resultChan := make(chan *engine.Result, 1)
+		errChan := make(chan error, 1)
 
 		// Run engine in background
 		go func() {
@@ -54,10 +60,12 @@ var checkCmd = &cobra.Command{
 			})
 
 			if err != nil {
+				errChan <- err
 				p.Send(ui.ScanCompleteMsg{Err: err})
 				return
 			}
 
+			resultChan <- result
 			p.Send(ui.ScanCompleteMsg{
 				Result: result.ScanResult,
 				Report: result.Report,
@@ -65,12 +73,39 @@ var checkCmd = &cobra.Command{
 		}()
 
 		_, err := p.Run()
-		return err
+		if err != nil {
+			return err
+		}
+
+		// After the TUI exits, save the report to file
+		// Check if we have a result from the scan
+		select {
+		case result := <-resultChan:
+			outputPath := flagOutputFile
+			if outputPath == "" {
+				outputPath = report.GetDefaultOutputPath(projectPath)
+			}
+
+			// Write the report to file
+			if err := report.WriteToFile(result.ScanResult, result.Report, outputPath); err != nil {
+				fmt.Fprintf(os.Stderr, "\nWarning: Could not save report to file: %v\n", err)
+			} else {
+				fmt.Printf("\n✓ Report saved to: %s\n", outputPath)
+			}
+		case err := <-errChan:
+			fmt.Fprintf(os.Stderr, "\nWarning: Scan failed, report not saved: %v\n", err)
+		default:
+			// No result available (shouldn't happen, but handle gracefully)
+			fmt.Fprintf(os.Stderr, "\nWarning: No scan result available to save\n")
+		}
+
+		return nil
 	},
 }
 
 func init() {
 	checkCmd.Flags().StringVarP(&flagCheckPath, "path", "p", "", "Path to project (default: current directory)")
 	checkCmd.Flags().BoolVar(&flagSkipAI, "skip-ai", false, "Skip AI analysis (offline mode)")
+	checkCmd.Flags().StringVarP(&flagOutputFile, "output", "o", "", "Output file path (default: obelisk-report.txt in project directory)")
 	rootCmd.AddCommand(checkCmd)
 }

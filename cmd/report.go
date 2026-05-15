@@ -72,12 +72,15 @@ func exportMarkdown(result *engine.Result) error {
 	fmt.Printf("**Project:** %s\n", s.ProjectPath)
 	fmt.Printf("**Type:** %s (%s)\n", result.Detection.Framework, result.Detection.Type)
 	fmt.Printf("**Files:** %d | **Directories:** %d\n\n", s.FileCount, s.DirCount)
-	fmt.Printf("## Grade: %s (%d/100)\n\n", r.Grade, r.OverallScore)
-	fmt.Printf("| Category | Score |\n|---|---|\n")
-	fmt.Printf("| Security | %d/100 |\n", r.SecurityScore)
-	fmt.Printf("| Architecture | %d/100 |\n", r.ArchitectureScore)
-	fmt.Printf("| Quality | %d/100 |\n\n", r.QualityScore)
-	fmt.Printf("## Summary\n\n%s\n\n", r.Summary)
+	
+	if r != nil {
+		fmt.Printf("## Grade: %s (%d/100)\n\n", r.Grade, r.OverallScore)
+		fmt.Printf("| Category | Score |\n|---|---|\n")
+		fmt.Printf("| Security | %d/100 |\n", r.SecurityScore)
+		fmt.Printf("| Architecture | %d/100 |\n", r.ArchitectureScore)
+		fmt.Printf("| Quality | %d/100 |\n\n", r.QualityScore)
+		fmt.Printf("## Summary\n\n%s\n\n", r.Summary)
+	}
 
 	if len(s.Findings) > 0 {
 		fmt.Printf("## Findings (%d total)\n\n", len(s.Findings))
@@ -120,7 +123,7 @@ func exportMarkdown(result *engine.Result) error {
 		}
 	}
 
-	if len(r.Recommendations) > 0 {
+	if r != nil && len(r.Recommendations) > 0 {
 		fmt.Printf("## Recommendations\n\n")
 		for i, rec := range r.Recommendations {
 			fmt.Printf("%d. %s\n", i+1, rec)
