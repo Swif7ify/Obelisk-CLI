@@ -80,8 +80,8 @@ func FormatPlainText(result *scanner.ScanResult, report *ai.HealthReport) string
 		}
 	}
 
-	// AI Summary
-	if report != nil {
+	// AI Summary (only if report exists and has meaningful content)
+	if report != nil && report.Summary != "" && report.Summary != "Project analysis completed without AI. Issues were found that should be addressed." && report.Summary != "Project analysis completed without AI. No issues detected — great job!" {
 		sb.WriteString("--------------------------------------------------------------------------------\n")
 		sb.WriteString("AI SUMMARY\n")
 		sb.WriteString("--------------------------------------------------------------------------------\n")
@@ -89,7 +89,7 @@ func FormatPlainText(result *scanner.ScanResult, report *ai.HealthReport) string
 		sb.WriteString("\n\n")
 
 		// Praise
-		if len(report.Praise) > 0 {
+		if len(report.Praise) > 0 && report.Praise[0] != "Scan completed successfully" {
 			sb.WriteString("✨ PRAISE:\n")
 			for _, p := range report.Praise {
 				sb.WriteString(fmt.Sprintf("  ✓ %s\n", p))
@@ -98,7 +98,7 @@ func FormatPlainText(result *scanner.ScanResult, report *ai.HealthReport) string
 		}
 
 		// Recommendations
-		if len(report.Recommendations) > 0 {
+		if len(report.Recommendations) > 0 && report.Recommendations[0] != "Run with an API key for AI-powered insights" {
 			sb.WriteString("💡 RECOMMENDATIONS:\n")
 			for i, r := range report.Recommendations {
 				sb.WriteString(fmt.Sprintf("  %d. %s\n", i+1, r))

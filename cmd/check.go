@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
+	"github.com/Swif7ify/Obelisk-CLI/internal/detector"
 	"github.com/Swif7ify/Obelisk-CLI/internal/engine"
 	"github.com/Swif7ify/Obelisk-CLI/internal/report"
 	"github.com/Swif7ify/Obelisk-CLI/ui"
@@ -33,6 +34,34 @@ var checkCmd = &cobra.Command{
 				return err
 			}
 		}
+
+		// Validate project path exists
+		if _, err := os.Stat(projectPath); os.IsNotExist(err) {
+			return fmt.Errorf("project path does not exist: %s", projectPath)
+		}
+
+		// Detect project type
+		detection := detector.Detect(projectPath)
+		
+		// For now, only support JavaScript/TypeScript projects
+		supportedTypes := map[detector.ProjectType]bool{
+			detector.TypeJavaScript: true,
+			detector.TypeTypeScript: true,
+			detector.TypeReact:      true,
+			detector.TypeNextJS:     true,
+		}
+
+		if !supportedTypes[detection.Type] {
+			return fmt.Errorf(
+				"unsupported project type: %s\n"+
+					"Currently, Obelisk only supports JavaScript/TypeScript projects.\n"+
+					"Detected: %s",
+				detection.Type,
+				detection.Framework,
+			)
+		}
+
+		fmt.Printf("✓ Detected project type: %s\n\n", detection.Framework)
 
 		// Create the dashboard
 		dashboard := ui.NewDashboard()

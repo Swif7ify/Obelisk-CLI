@@ -44,14 +44,24 @@ var skipDirs = map[string]bool{
 // ScanSecrets scans the project for hardcoded secrets.
 func ScanSecrets(projectPath string) ([]Finding, error) {
 	var findings []Finding
+	
+	// Create gitignore matcher
+	matcher, _ := NewGitignoreMatcher(projectPath)
+	
 	err := filepath.Walk(projectPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}
-		if info.IsDir() {
-			if skipDirs[info.Name()] {
+		
+		// Skip if path should be ignored
+		if matcher.ShouldIgnore(path) {
+			if info.IsDir() {
 				return filepath.SkipDir
 			}
+			return nil
+		}
+		
+		if info.IsDir() {
 			return nil
 		}
 		ext := strings.ToLower(filepath.Ext(path))

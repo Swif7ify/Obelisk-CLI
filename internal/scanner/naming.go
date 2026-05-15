@@ -29,16 +29,24 @@ func DefaultJSNamingRules() NamingRules {
 // ScanNaming checks file/folder naming conventions.
 func ScanNaming(projectPath string, rules NamingRules) ([]Finding, error) {
 	var findings []Finding
+	
+	// Create gitignore matcher
+	matcher, _ := NewGitignoreMatcher(projectPath)
 
 	err := filepath.Walk(projectPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}
-		if info.IsDir() {
-			n := info.Name()
-			if n == "node_modules" || n == ".git" || n == "dist" || n == "build" || n == ".next" {
+		
+		// Skip if path should be ignored
+		if matcher.ShouldIgnore(path) {
+			if info.IsDir() {
 				return filepath.SkipDir
 			}
+			return nil
+		}
+		
+		if info.IsDir() {
 			return nil
 		}
 

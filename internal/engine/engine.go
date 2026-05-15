@@ -182,15 +182,24 @@ func getAdapter(t detector.ProjectType) adapters.Adapter {
 
 func countFilesAndDirs(root string) (int, int) {
 	files, dirs := 0, 0
+	
+	// Create gitignore matcher
+	matcher, _ := scanner.NewGitignoreMatcher(root)
+	
 	_ = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}
-		name := info.Name()
-		if info.IsDir() {
-			if name == "node_modules" || name == ".git" || name == "vendor" || name == "dist" || name == ".next" {
+		
+		// Skip if path should be ignored
+		if matcher.ShouldIgnore(path) {
+			if info.IsDir() {
 				return filepath.SkipDir
 			}
+			return nil
+		}
+		
+		if info.IsDir() {
 			dirs++
 		} else {
 			files++
