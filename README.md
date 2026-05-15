@@ -178,5 +178,5 @@ For security concerns, please see our [Security Policy](SECURITY.md).
 ---
 
 <p align="center">
-  Built with ❤️ and Go for the hackathon
+  Built using IBM BOB and Go for the hackathon
 </p>
