@@ -35,7 +35,7 @@
 				{
 					"id": "obelisk-panel",
 					"title": "Obelisk",
-					"icon": "resources/obelisk-icon.png"
+					"icon": "resources/transparent-bg.png"
 				}
 			]
 		},
@@ -44,7 +44,7 @@
 				{
 					"id": "obeliskFindings",
 					"name": "Findings",
-					"icon": "resources/obelisk-icon.png"
+					"icon": "resources/transparent-bg.png"
 				},
 				{
 					"id": "obeliskSummary",
