@@ -76,6 +76,10 @@ func FallbackReport(result *scanner.ScanResult, aiErr error) *HealthReport {
 	infos := result.CountBySeverity(scanner.SeverityInfo)
 	total := criticals + errors + warnings + infos
 
+	secWarnPenalty := 0
+	archWarnPenalty := 0
+	qualWarnPenalty := 0
+
 	for _, f := range result.Findings {
 		penalty := 0
 		switch f.Severity {
@@ -89,13 +93,35 @@ func FallbackReport(result *scanner.ScanResult, aiErr error) *HealthReport {
 
 		switch f.Category {
 		case scanner.CategorySecurity:
-			secScore -= penalty
+			if f.Severity == scanner.SeverityWarning {
+				secWarnPenalty += penalty
+			} else {
+				secScore -= penalty
+			}
 		case scanner.CategoryArchitecture:
-			archScore -= penalty
+			if f.Severity == scanner.SeverityWarning {
+				archWarnPenalty += penalty
+			} else {
+				archScore -= penalty
+			}
 		default:
-			qualScore -= penalty
+			if f.Severity == scanner.SeverityWarning {
+				qualWarnPenalty += penalty
+			} else {
+				qualScore -= penalty
+			}
 		}
 	}
+
+	// Cap the penalty from warnings so they can't completely tank a category
+	if secWarnPenalty > 45 { secWarnPenalty = 45 }
+	secScore -= secWarnPenalty
+
+	if archWarnPenalty > 45 { archWarnPenalty = 45 }
+	archScore -= archWarnPenalty
+
+	if qualWarnPenalty > 45 { qualWarnPenalty = 45 }
+	qualScore -= qualWarnPenalty
 
 	secScore = clamp(secScore, 0, 100)
 	archScore = clamp(archScore, 0, 100)

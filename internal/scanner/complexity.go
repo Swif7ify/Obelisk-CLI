@@ -74,21 +74,21 @@ func ScanComplexity(projectPath string) ([]Finding, error) {
 			relPath = path
 		}
 
-		if complexityScore > 50 {
+		if complexityScore > 60 {
 			findings = append(findings, Finding{
 				Category:    CategoryArchitecture,
 				Severity:    SeverityWarning,
 				Title:       "Severe Spaghetti Code Detected",
-				Description: fmt.Sprintf("File has a Cyclomatic Complexity score of %d (>50). It is highly unmaintainable.", complexityScore),
+				Description: fmt.Sprintf("File has a Cyclomatic Complexity score of %d (>60). It is highly unmaintainable.", complexityScore),
 				File:        relPath,
 				Suggestion:  "Refactor the file into smaller, modular functions or components.",
 			})
-		} else if complexityScore > 25 {
+		} else if complexityScore > 30 {
 			findings = append(findings, Finding{
 				Category:    CategoryArchitecture,
 				Severity:    SeverityInfo,
 				Title:       "High Cyclomatic Complexity",
-				Description: fmt.Sprintf("File has a Cyclomatic Complexity score of %d (>25). Logic is hard to follow.", complexityScore),
+				Description: fmt.Sprintf("File has a Cyclomatic Complexity score of %d (>30). Logic is hard to follow.", complexityScore),
 				File:        relPath,
 				Suggestion:  "Consider breaking down large functions to reduce branch density.",
 			})
