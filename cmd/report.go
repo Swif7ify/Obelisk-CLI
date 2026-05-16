@@ -32,7 +32,7 @@ var reportCmd = &cobra.Command{
 			Verbose:     flagVerbose,
 		}
 
-		fmt.Println("🏛️ Obelisk — Generating report...")
+		fmt.Println("Obelisk — Generating report...")
 		result, err := engine.Run(cfg, func(phase string) {
 			fmt.Printf("  → %s\n", phase)
 		})
@@ -68,7 +68,7 @@ func exportMarkdown(result *engine.Result) error {
 	r := result.Report
 	s := result.ScanResult
 
-	fmt.Printf("# 🏛️ Obelisk Health Report\n\n")
+	fmt.Printf("# Obelisk Health Report\n\n")
 	fmt.Printf("**Project:** %s\n", s.ProjectPath)
 	fmt.Printf("**Type:** %s (%s)\n", result.Detection.Framework, result.Detection.Type)
 	fmt.Printf("**Files:** %d | **Directories:** %d\n\n", s.FileCount, s.DirCount)

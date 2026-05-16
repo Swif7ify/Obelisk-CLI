@@ -47,7 +47,7 @@ func init() {
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-	fmt.Println("🔍 Checking for updates...")
+	fmt.Println("Checking for updates...")
 	fmt.Println()
 
 	// Get current version
@@ -67,21 +67,21 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// Compare versions
 	if latestVersion == currentVersionClean {
-		fmt.Println("✅ You're running the latest version!")
+		fmt.Println("You're running the latest version!")
 		fmt.Printf("   Current: %s\n", currentVersion)
 		return nil
 	}
 
 	// Check if current is newer (dev build)
 	if currentVersionClean == "dev" || isNewerVersion(currentVersionClean, latestVersion) {
-		fmt.Println("ℹ️  You're running a development or newer version")
+		fmt.Println("You're running a development or newer version")
 		fmt.Printf("   Current: %s\n", currentVersion)
 		fmt.Printf("   Latest stable: %s\n", latestVersion)
 		return nil
 	}
 
 	// New version available
-	fmt.Println("🎉 A new version is available!")
+	fmt.Println("A new version is available!")
 	fmt.Println()
 	fmt.Printf("   Current version: %s\n", currentVersion)
 	fmt.Printf("   Latest version:  %s\n", latestVersion)
@@ -90,7 +90,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// Show release notes (first 5 lines)
 	if latestRelease.Body != "" {
-		fmt.Println("📝 Release Notes:")
+		fmt.Println("Release Notes:")
 		lines := strings.Split(latestRelease.Body, "\n")
 		maxLines := 5
 		if len(lines) < maxLines {
@@ -107,7 +107,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// If check-only mode, stop here
 	if updateCheckOnly {
-		fmt.Printf("🔗 Download: %s\n", latestRelease.HTMLURL)
+		fmt.Printf("Download: %s\n", latestRelease.HTMLURL)
 		return nil
 	}
 
@@ -176,7 +176,7 @@ func isNewerVersion(current, latest string) bool {
 }
 
 func showUpdateInstructions(release *GitHubRelease) {
-	fmt.Println("📦 How to Update:")
+	fmt.Println("How to Update:")
 	fmt.Println()
 
 	// Detect installation method and show appropriate instructions
@@ -220,7 +220,7 @@ func showUpdateInstructions(release *GitHubRelease) {
 	}
 
 	fmt.Println()
-	fmt.Printf("🔗 Release Page: %s\n", release.HTMLURL)
+	fmt.Printf("Release Page: %s\n", release.HTMLURL)
 }
 
 func getAssetURL(release *GitHubRelease, keyword string) string {

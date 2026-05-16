@@ -128,10 +128,17 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.ScanResult = msg.result
 			m.ScanReport = msg.report
 			
+			// Generate report path first
+			format := m.Config.GetReportFormat()
+			if format == "" {
+				format = "txt"
+			}
+			outputPath := report.GetDefaultOutputPath(m.ScanResult.ProjectPath, format)
+			
 			var content strings.Builder
 			content.WriteString(RenderStats(m.ScanResult) + "\n\n")
 			content.WriteString(RenderScoreCard(m.ScanReport) + "\n")
-			content.WriteString(RenderFindings(m.ScanResult.Findings) + "\n")
+			content.WriteString(RenderFindings(m.ScanResult.Findings, outputPath) + "\n")
 			content.WriteString(RenderSummary(m.ScanReport) + "\n")
 			
 			m.Viewport.SetContent(content.String())
@@ -139,11 +146,6 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			
 			// Auto-save report to file (matching CLI behavior)
 			if m.ScanResult != nil && m.ScanReport != nil {
-				format := m.Config.GetReportFormat()
-				if format == "" {
-					format = "txt"
-				}
-				outputPath := report.GetDefaultOutputPath(m.ScanResult.ProjectPath, format)
 				if err := report.WriteToFile(m.ScanResult, m.ScanReport, outputPath, format); err != nil {
 					// Don't show error in TUI, just silently fail
 					// User can still see results in the viewport

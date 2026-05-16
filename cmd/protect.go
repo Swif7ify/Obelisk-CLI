@@ -38,7 +38,7 @@ func installHook() error {
 # Obelisk CLI pre-push hook
 # Automatically installed by 'obelisk protect --install'
 
-echo "🏛️ Obelisk pre-push check..."
+echo "Obelisk pre-push check..."
 
 obelisk protect --strict
 exit_code=$?
