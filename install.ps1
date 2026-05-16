@@ -3,7 +3,7 @@
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🏛️  Obelisk CLI Installer" -ForegroundColor Cyan
+Write-Host "Obelisk CLI Installer" -ForegroundColor Cyan
 Write-Host ""
 
 # Check if running as administrator

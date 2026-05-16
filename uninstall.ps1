@@ -3,7 +3,7 @@
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🏛️  Obelisk CLI Uninstaller" -ForegroundColor Cyan
+Write-Host "Obelisk CLI Uninstaller" -ForegroundColor Cyan
 Write-Host ""
 
 # Check both possible install locations

@@ -3,9 +3,12 @@
 # Variables
 BINARY_NAME=obelisk
 VERSION?=0.1.0
+COMMIT=$(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+BUILD_DATE=$(shell date -u '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || echo "unknown")
 BUILD_DIR=bin
 GO=go
-GOFLAGS=-ldflags="-s -w -X main.Version=$(VERSION)"
+LDFLAGS_PKG=github.com/Swif7ify/Obelisk-CLI/cmd
+GOFLAGS=-ldflags="-s -w -X $(LDFLAGS_PKG).Version=$(VERSION) -X $(LDFLAGS_PKG).Commit=$(COMMIT) -X $(LDFLAGS_PKG).BuildDate=$(BUILD_DATE)"
 
 # Colors for output
 CYAN=\033[0;36m

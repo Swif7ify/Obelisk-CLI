@@ -6,7 +6,7 @@
            Language="1033" 
            Version="0.1.0" 
            Manufacturer="OneDev PH" 
-           UpgradeCode="12345678-1234-1234-1234-123456789012">
+           UpgradeCode="4c2c5fcb-75f7-4c12-8dbf-2d5c150021e4">
     
     <!-- Package Information -->
     <Package InstallerVersion="200" 
@@ -25,12 +25,12 @@
     <!-- Installation Directory Structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- Program Files -->
-      <Directory Id="ProgramFilesFolder">
+      <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="Obelisk CLI">
-          <Component Id="ObeliskExecutable" Guid="87654321-4321-4321-4321-210987654321">
+          <Component Id="ObeliskExecutable" Guid="f0ef31b2-ef9f-4250-8ff4-27280f9ab9bb" Win64="yes">
             <!-- Main Executable -->
             <File Id="ObeliskExe" 
-                  Source="../bin/obelisk.exe" 
+                  Source="$(var.BinDir)\obelisk.exe" 
                   KeyPath="yes" 
                   Checksum="yes" />
             
@@ -45,10 +45,10 @@
           </Component>
 
           <!-- Documentation -->
-          <Component Id="Documentation" Guid="11111111-2222-3333-4444-555555555555">
-            <File Id="ReadmeFile" Source="../README.md" KeyPath="yes" />
-            <File Id="LicenseFile" Source="../LICENSE" />
-            <File Id="ChangelogFile" Source="../CHANGELOG.md" />
+          <Component Id="Documentation" Guid="007251e1-cd63-495e-9d0d-6da74ac8f62f" Win64="yes">
+            <File Id="ReadmeFile" Source="$(var.ProjectDir)\README.md" KeyPath="yes" />
+            <File Id="LicenseFile" Source="$(var.ProjectDir)\LICENSE" />
+            <File Id="ChangelogFile" Source="$(var.ProjectDir)\CHANGELOG.md" />
           </Component>
         </Directory>
       </Directory>
@@ -56,7 +56,7 @@
       <!-- Start Menu Shortcuts -->
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="Obelisk CLI">
-          <Component Id="ApplicationShortcut" Guid="22222222-3333-4444-5555-666666666666">
+          <Component Id="ApplicationShortcut" Guid="a3b7e916-8c4d-4f1a-b2d8-9e6f3a5c7d01">
             <Shortcut Id="UninstallProduct"
                       Name="Uninstall Obelisk CLI"
                       Description="Uninstalls Obelisk CLI"
@@ -89,35 +89,12 @@
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <!-- License Agreement -->
-    <WixVariable Id="WixUILicenseRtf" Value="installer\License.rtf" />
-    
-    <!-- Installer Images -->
-    <WixVariable Id="WixUIBannerBmp" Value="installer\banner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="installer\dialog.bmp" />
-
-    <!-- Custom Actions -->
-    <CustomAction Id="LaunchApplication" 
-                  FileKey="ObeliskExe" 
-                  ExeCommand="version" 
-                  Execute="immediate" 
-                  Impersonate="yes" 
-                  Return="asyncNoWait" />
-
-    <!-- Installation Sequence -->
-    <InstallExecuteSequence>
-      <Custom Action="LaunchApplication" After="InstallFinalize">NOT Installed</Custom>
-    </InstallExecuteSequence>
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\installer\License.rtf" />
 
     <!-- Properties -->
-    <Property Id="ARPPRODUCTICON" Value="ObeliskIcon" />
     <Property Id="ARPHELPLINK" Value="https://github.com/Swif7ify/Obelisk-CLI" />
     <Property Id="ARPURLINFOABOUT" Value="https://github.com/Swif7ify/Obelisk-CLI" />
     <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" />
-    
-    <!-- Icon -->
-    <Icon Id="ObeliskIcon" SourceFile="installer\icon.ico" />
 
   </Product>
 </Wix>
-
-<!-- Made with Bob -->
