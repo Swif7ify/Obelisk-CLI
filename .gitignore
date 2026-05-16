@@ -1,58 +1,106 @@
-# Binaries
-bin/
-obelisk
-obelisk.exe
+# Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
 
-# Test binary
+# Test binary, built with `go test -c`
 *.test
 
-# Output of go coverage
+# Output of the go coverage tool
 *.out
-coverage.html
+*.html
 
-# Go workspace
+# Go workspace file
 go.work
 go.work.sum
 
+# Build artifacts
+obelisk
+obelisk-server
+obelisk-cli
+bin/
+dist/
+build/
+release/
+
+# Coverage reports
+coverage/
+coverage.out
+coverage.html
+
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
+.vs/
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+*.bak
 
-# Dependencies
-node_modules/
-
-# Logs
-*.log
-
-# Environment
+# Environment variables
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
 
-# Debug
-debug
-__debug_bin*
+# Logs
+*.log
+logs/
 
-project.md
-userFILE.md
+# Reports
+obelisk-report-*.json
+obelisk-report-*.html
+obelisk-report-*.md
+obelisk-report-*.txt
 
-# Installer build artifacts
-*.msi
-*.wixobj
-*.wixpdb
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Node.js (for extension development)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
 
 # Extension build artifacts
-extension/out/
 extension/*.vsix
+extension/out/
+extension/dist/
+
+# Installer artifacts
+installer/*.wixobj
+installer/*.wixpdb
+installer/*.msi
+
+# Package manager artifacts
+packages/**/*.nupkg
+packages/**/*.zip
+
+# Config and credentials (security)
+config.json
+.obelisk/
+*.pfx
+*.p12
+certificate.pfx
+
+# Test files
+*_test.go.bak
+test-results/
+
+# Documentation drafts
+userFILE.md
+project.md
+DRAFT*.md
+
+# Made with Bob

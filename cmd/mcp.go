@@ -9,19 +9,28 @@ import (
 	"github.com/Swif7ify/Obelisk-CLI/internal/mcp"
 )
 
+var (
+	mcpHTTPMode bool
+	mcpPort     string
+)
+
 var mcpCmd = &cobra.Command{
 	Use:   "mcp",
 	Short: "Run Obelisk as an MCP (Model Context Protocol) server",
 	Long: `Starts Obelisk in MCP server mode, exposing code analysis capabilities
-via the Model Context Protocol over stdio transport.
+via the Model Context Protocol.
 
 This mode is designed to be used by AI assistants and IDEs that support MCP.
-The server communicates using JSON-RPC 2.0 over stdin/stdout.
+
+Transport Modes:
+  - stdio (default): JSON-RPC 2.0 over stdin/stdout for local use
+  - http: HTTP/SSE transport for cloud deployment (use --http flag)
 
 Environment Variables:
   GEMINI_API_KEY    - Google Gemini API key for AI-powered analysis
   GOOGLE_API_KEY    - Alternative to GEMINI_API_KEY
   OBELISK_MODEL     - AI model to use (default: gemini-2.0-flash-exp)
+  PORT              - HTTP server port (default: 8080, only for --http mode)
 
 Available Tools:
   - scan_project        Full project health scan
@@ -38,7 +47,7 @@ Available Resources:
   - obelisk://findings/quality      Code quality findings
   - obelisk://findings/architecture Architecture findings
 
-Example MCP Configuration (Bob IDE):
+Example MCP Configuration (Local - Bob IDE):
   {
     "mcpServers": {
       "obelisk": {
@@ -49,17 +58,40 @@ Example MCP Configuration (Bob IDE):
         }
       }
     }
+  }
+
+Example MCP Configuration (Cloud - Remote URL):
+  {
+    "mcpServers": {
+      "obelisk-cloud": {
+        "url": "https://your-app.onrender.com/sse"
+      }
+    }
   }`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Disable colored output for MCP mode (stdout is for JSON-RPC only)
-		os.Setenv("NO_COLOR", "1")
+		if mcpHTTPMode {
+			// HTTP/SSE mode for cloud deployment
+			port := mcpPort
+			if port == "" {
+				port = os.Getenv("PORT")
+			}
+			if port == "" {
+				port = "8080"
+			}
 
-		// Create and run the MCP server
-		server := mcp.NewServer(Version)
-		
-		if err := server.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "MCP server error: %v\n", err)
-			return err
+			if err := mcp.StartHTTPServer(Version, port); err != nil {
+				fmt.Fprintf(os.Stderr, "HTTP server error: %v\n", err)
+				return err
+			}
+		} else {
+			// stdio mode for local use
+			os.Setenv("NO_COLOR", "1")
+
+			server := mcp.NewServer(Version)
+			if err := server.Run(); err != nil {
+				fmt.Fprintf(os.Stderr, "MCP server error: %v\n", err)
+				return err
+			}
 		}
 
 		return nil
@@ -67,6 +99,8 @@ Example MCP Configuration (Bob IDE):
 }
 
 func init() {
+	mcpCmd.Flags().BoolVar(&mcpHTTPMode, "http", false, "Run in HTTP/SSE mode for cloud deployment")
+	mcpCmd.Flags().StringVar(&mcpPort, "port", "", "HTTP server port (default: 8080 or PORT env var)")
 	rootCmd.AddCommand(mcpCmd)
 }
 

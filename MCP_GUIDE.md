@@ -1,449 +1,627 @@
-# 🏛️ Obelisk MCP Server Guide
+# 🤖 Obelisk MCP Server Guide
 
-## Overview
+> Model Context Protocol (MCP) integration for AI assistants and IDEs
 
-Obelisk can now run as a **Model Context Protocol (MCP) server**, exposing its powerful code analysis capabilities to AI assistants and IDEs that support MCP. This allows AI assistants to scan your projects, check security, analyze code quality, and provide architectural insights programmatically.
+## 📋 Table of Contents
+
+- [What is MCP?](#what-is-mcp)
+- [Quick Start](#quick-start)
+- [Local Setup](#local-setup)
+- [Cloud Deployment](#cloud-deployment)
+- [Available Tools](#available-tools)
+- [Available Resources](#available-resources)
+- [Client Configuration](#client-configuration)
+- [Examples](#examples)
+- [Troubleshooting](#troubleshooting)
+
+---
 
 ## What is MCP?
 
-The Model Context Protocol (MCP) is an open protocol that enables AI assistants to securely access tools and data sources. By running Obelisk as an MCP server, you give AI assistants the ability to:
+**Model Context Protocol (MCP)** is an open standard that enables AI assistants to securely connect to external tools and data sources. Obelisk implements MCP to expose its code analysis capabilities to AI assistants like Claude, Bob IDE, and other MCP-compatible clients.
 
-- Scan projects for security vulnerabilities
-- Analyze code complexity and quality
-- Track technical debt
-- Audit dependencies
-- Generate AI-powered health reports
+### Benefits
+
+- 🔌 **Seamless Integration** - AI assistants can analyze your code directly
+- 🔒 **Secure** - All analysis runs locally or on your infrastructure
+- 🚀 **Real-time** - Get instant code health insights during conversations
+- 🎯 **Context-Aware** - AI understands your project structure and issues
+
+---
 
 ## Quick Start
 
-### 1. Build Obelisk with MCP Support
+### 1. Start MCP Server
 
 ```bash
-go build -o obelisk.exe
+# Local mode (stdio transport)
+obelisk mcp
+
+# HTTP mode (for remote access)
+obelisk mcp --http --port 8080
 ```
 
-### 2. Configure MCP Server
+### 2. Configure Your AI Assistant
 
-The MCP server has been automatically configured in your Bob IDE settings at:
-`C:\Users\nikon\.bob\settings\mcp_settings.json`
+See [Client Configuration](#client-configuration) for specific setup instructions.
 
-Current configuration:
-```json
-{
-  "mcpServers": {
-    "obelisk": {
-      "command": "C:\\Users\\nikon\\Desktop\\Obelisk-CLI\\obelisk.exe",
-      "args": ["mcp"],
-      "env": {
-        "GEMINI_API_KEY": ""
-      },
-      "disabled": false,
-      "alwaysAllow": [],
-      "disabledTools": []
-    }
-  }
-}
+---
+
+## Local Setup
+
+### Prerequisites
+
+- Obelisk CLI installed ([Installation Guide](README.md#installation))
+- Google Gemini API key ([Get one here](https://aistudio.google.com/app/apikey))
+
+### Configuration
+
+```bash
+# Set your API key
+obelisk config set api-key YOUR_GEMINI_API_KEY
+
+# Or use environment variable
+export GEMINI_API_KEY=your-api-key-here
 ```
 
-### 3. Add Your Gemini API Key (Optional)
+### Start Server
 
-To enable AI-powered health reports, add your Gemini API key:
+```bash
+# Default stdio mode (for local IDE integration)
+obelisk mcp
 
-1. Get a free API key from: https://aistudio.google.com/app/apikey
-2. Edit `mcp_settings.json` and replace the empty `GEMINI_API_KEY` value
-3. Restart Bob IDE to apply changes
+# The server will output:
+# MCP Server started (stdio transport)
+# Available tools: scan_project, check_security, analyze_complexity, ...
+```
 
-**Note:** The MCP server works without an API key, but AI-powered features like `get_health_report` will be unavailable.
+---
 
-### 4. Restart Bob IDE
+## Cloud Deployment
 
-After configuration, restart Bob IDE to load the Obelisk MCP server.
+For remote access and team collaboration, deploy Obelisk MCP Server to the cloud.
+
+### Deploy to Render (Recommended)
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for complete cloud deployment guide.
+
+**Quick Deploy:**
+
+1. Push code to GitHub
+2. Connect to Render
+3. Set `GEMINI_API_KEY` environment variable
+4. Deploy with `obelisk mcp --http`
+
+Your server will be available at: `https://your-app.onrender.com/sse`
+
+---
 
 ## Available Tools
 
-### 1. `scan_project` - Comprehensive Project Analysis
+MCP clients can invoke these tools to analyze your code:
 
-Performs a full health scan including security, architecture, and code quality analysis.
+### `scan_project`
+
+**Description:** Run a comprehensive project health scan
 
 **Parameters:**
-- `path` (string, optional): Project directory path (defaults to current directory)
-- `skip_ai` (boolean, optional): Skip AI-powered analysis (default: false)
 
-**Example Usage:**
-```
-"Scan the current project for issues"
-"Run a full scan on C:\path\to\project"
-"Scan this project without AI analysis"
-```
+- `path` (string, required) - Project directory path
+- `skip_ai` (boolean, optional) - Skip AI analysis for faster results
 
-**Returns:**
-- Project metadata (type, file count, directory count)
-- All findings categorized by severity (critical, error, warning, info)
-- Health report with grade (A-F) if AI is enabled
+**Returns:** Complete scan results with security, quality, and architecture findings
+
+**Example:**
+
+```json
+{
+	"name": "scan_project",
+	"arguments": {
+		"path": "/path/to/project",
+		"skip_ai": false
+	}
+}
+```
 
 ---
 
-### 2. `check_security` - Security-Focused Scan
+### `check_security`
 
-Scans specifically for security vulnerabilities including secrets, exposed credentials, and .gitignore issues.
+**Description:** Security-focused scan for vulnerabilities
 
 **Parameters:**
-- `path` (string, optional): Project directory path
 
-**Example Usage:**
-```
-"Check security vulnerabilities in this project"
-"Scan for secrets and exposed credentials"
-```
+- `path` (string, required) - Project directory path
 
-**Returns:**
-- Security findings only
-- Count by severity level
-- Specific file locations and line numbers
+**Returns:** Security findings including secrets, exposed files, and vulnerabilities
+
+**Example:**
+
+```json
+{
+	"name": "check_security",
+	"arguments": {
+		"path": "/path/to/project"
+	}
+}
+```
 
 ---
 
-### 3. `analyze_complexity` - Code Complexity Analysis
+### `analyze_complexity`
 
-Analyzes cyclomatic complexity to identify spaghetti code and maintainability issues.
+**Description:** Analyze code complexity and identify spaghetti code
 
 **Parameters:**
-- `path` (string, optional): Project directory path
-- `threshold` (number, optional): Complexity threshold (default: 10)
 
-**Example Usage:**
-```
-"Analyze code complexity in this project"
-"Find functions with high cyclomatic complexity"
-```
+- `path` (string, required) - Project directory path
 
-**Returns:**
-- Complexity findings
-- Functions exceeding threshold
-- Maintainability warnings
+**Returns:** Cyclomatic complexity metrics and problematic files
+
+**Example:**
+
+```json
+{
+	"name": "analyze_complexity",
+	"arguments": {
+		"path": "/path/to/project"
+	}
+}
+```
 
 ---
 
-### 4. `track_tech_debt` - Technical Debt Tracking
+### `track_tech_debt`
 
-Tracks TODO, FIXME, HACK, and XXX comments across the codebase.
+**Description:** Track technical debt markers (TODO, FIXME, HACK, XXX)
 
 **Parameters:**
-- `path` (string, optional): Project directory path
 
-**Example Usage:**
-```
-"Track technical debt in this project"
-"Find all TODO and FIXME comments"
-```
+- `path` (string, required) - Project directory path
 
-**Returns:**
-- All technical debt markers
-- File locations and line numbers
-- Total count
+**Returns:** List of technical debt items with locations
+
+**Example:**
+
+```json
+{
+	"name": "track_tech_debt",
+	"arguments": {
+		"path": "/path/to/project"
+	}
+}
+```
 
 ---
 
-### 5. `audit_dependencies` - Dependency Audit
+### `audit_dependencies`
 
-Audits package.json for deprecated, vulnerable, or unused dependencies.
+**Description:** Audit project dependencies for issues
 
 **Parameters:**
-- `path` (string, optional): Project directory path
 
-**Example Usage:**
-```
-"Audit dependencies in this project"
-"Check for vulnerable or deprecated packages"
-```
+- `path` (string, required) - Project directory path
 
-**Returns:**
-- Dependency findings
-- Vulnerable packages
-- Deprecated packages
-- Unused dependencies
+**Returns:** Dependency analysis including unused, deprecated, and vulnerable packages
+
+**Example:**
+
+```json
+{
+	"name": "audit_dependencies",
+	"arguments": {
+		"path": "/path/to/project"
+	}
+}
+```
 
 ---
 
-### 6. `get_health_report` - AI Health Assessment
+### `get_health_report`
 
-Generates an AI-powered health report with grade (A-F) and recommendations.
+**Description:** Get AI-powered health assessment with grade
 
 **Parameters:**
-- `path` (string, optional): Project directory path
 
-**Requirements:**
-- Requires `GEMINI_API_KEY` environment variable
+- `path` (string, required) - Project directory path
 
-**Example Usage:**
+**Returns:** Health score (A-F), AI insights, and recommendations
+
+**Example:**
+
+```json
+{
+	"name": "get_health_report",
+	"arguments": {
+		"path": "/path/to/project"
+	}
+}
 ```
-"Generate a health report for this project"
-"What's the overall health score of this codebase?"
-```
-
-**Returns:**
-- Health grade (A-F)
-- Overall score and category scores (security, architecture, quality)
-- AI-generated summary
-- Praise for good practices
-- Actionable recommendations
-- Top priority issues
 
 ---
 
 ## Available Resources
 
-Resources provide quick access to cached scan results without re-running scans.
+MCP clients can read these resources to get cached analysis results:
 
-### 1. `obelisk://scan/latest`
-Access the most recent project scan results including all findings.
+### `obelisk://scan/latest`
 
-### 2. `obelisk://health/score`
-Current project health grade (A-F) and AI-generated recommendations.
+**Description:** Latest scan results
 
-### 3. `obelisk://findings/security`
-All security-related findings from the latest scan.
+**MIME Type:** `application/json`
 
-### 4. `obelisk://findings/quality`
-All code quality findings from the latest scan.
-
-### 5. `obelisk://findings/architecture`
-All architecture-related findings from the latest scan.
-
-**Example Usage:**
-```
-"Show me the latest scan results"
-"What's the current health score?"
-"List all security findings"
-```
+**Content:** Complete scan results from the most recent analysis
 
 ---
 
-## Environment Variables
+### `obelisk://health/score`
 
-### `GEMINI_API_KEY` (or `GOOGLE_API_KEY`)
-Google Gemini API key for AI-powered analysis. Required for `get_health_report` tool.
+**Description:** Current project health score
 
-**How to set:**
+**MIME Type:** `text/plain`
+
+**Content:** Health grade (A-F) with brief summary
+
+---
+
+### `obelisk://findings/security`
+
+**Description:** Security findings only
+
+**MIME Type:** `application/json`
+
+**Content:** Filtered list of security-related findings
+
+---
+
+### `obelisk://findings/quality`
+
+**Description:** Code quality findings only
+
+**MIME Type:** `application/json`
+
+**Content:** Filtered list of quality-related findings
+
+---
+
+### `obelisk://findings/architecture`
+
+**Description:** Architecture findings only
+
+**MIME Type:** `application/json`
+
+**Content:** Filtered list of architecture-related findings
+
+---
+
+## Client Configuration
+
+### Bob IDE
+
+Add to your Bob configuration:
+
 ```json
 {
-  "mcpServers": {
-    "obelisk": {
-      "env": {
-        "GEMINI_API_KEY": "your-api-key-here"
-      }
-    }
-  }
+	"mcpServers": {
+		"obelisk": {
+			"command": "obelisk",
+			"args": ["mcp"]
+		}
+	}
 }
 ```
 
-### `OBELISK_MODEL`
-AI model to use (default: `gemini-2.0-flash-exp`)
+For cloud deployment:
 
-**Supported models:**
-- `gemini-2.0-flash-exp` (default, fastest)
-- `gemini-1.5-pro`
-- `gemini-1.5-flash`
-
----
-
-## Supported Project Types
-
-Currently, Obelisk MCP server supports:
-
-- ✅ JavaScript / TypeScript
-- ✅ React
-- ✅ Next.js
-- 🔜 Go (Golang) - Coming Soon
-- 🔜 Laravel (PHP) - Coming Soon
-- 🔜 Python (Django/Flask) - Planned
-
----
-
-## Testing the MCP Server
-
-### Manual Test (Command Line)
-
-You can test the MCP server manually using stdio:
-
-```bash
-# Start the server
-.\obelisk.exe mcp
-
-# In another terminal, send a JSON-RPC request:
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | .\obelisk.exe mcp
+```json
+{
+	"mcpServers": {
+		"obelisk-cloud": {
+			"url": "https://your-app.onrender.com/sse"
+		}
+	}
+}
 ```
 
-### Test with Bob IDE
+---
 
-1. Restart Bob IDE after configuration
-2. Ask the AI assistant: "What MCP tools are available?"
-3. Try a scan: "Scan the current project for issues"
-4. Check results: "Show me the latest scan results"
+### Claude Desktop
+
+Add to `claude_desktop_config.json`:
+
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+	"mcpServers": {
+		"obelisk": {
+			"command": "obelisk",
+			"args": ["mcp"]
+		}
+	}
+}
+```
+
+---
+
+### Cline (VS Code Extension)
+
+Add to Cline settings:
+
+```json
+{
+	"mcpServers": {
+		"obelisk": {
+			"command": "obelisk",
+			"args": ["mcp"]
+		}
+	}
+}
+```
+
+---
+
+### Custom MCP Client
+
+For custom implementations:
+
+**Stdio Transport:**
+
+```javascript
+const { spawn } = require("child_process");
+
+const server = spawn("obelisk", ["mcp"]);
+// Communicate via stdin/stdout using JSON-RPC 2.0
+```
+
+**HTTP/SSE Transport:**
+
+```javascript
+const eventSource = new EventSource("https://your-server.com/sse");
+
+eventSource.onmessage = (event) => {
+	const message = JSON.parse(event.data);
+	// Handle MCP messages
+};
+```
+
+---
+
+## Examples
+
+### Example 1: Security Scan via AI Assistant
+
+**User:** "Check my project for security issues"
+
+**AI Assistant:** _Invokes `check_security` tool_
+
+**Response:**
+
+```
+Found 3 security issues:
+1. Hardcoded API key in config.js (line 15)
+2. .env file tracked in Git
+3. Weak password validation in auth.js
+```
+
+---
+
+### Example 2: Health Report
+
+**User:** "What's the overall health of my codebase?"
+
+**AI Assistant:** _Invokes `get_health_report` tool_
+
+**Response:**
+
+```
+Health Score: B
+
+Strengths:
+- Good test coverage
+- Clean architecture
+- No critical security issues
+
+Areas for Improvement:
+- 5 files with high complexity
+- 12 TODO items need attention
+- Consider updating deprecated dependencies
+```
+
+---
+
+### Example 3: Complexity Analysis
+
+**User:** "Which files are too complex?"
+
+**AI Assistant:** _Invokes `analyze_complexity` tool_
+
+**Response:**
+
+```
+High Complexity Files:
+1. src/utils/parser.js - Complexity: 45 (Refactor recommended)
+2. src/api/handler.js - Complexity: 38 (Needs simplification)
+3. src/core/engine.js - Complexity: 32 (Consider splitting)
+```
 
 ---
 
 ## Troubleshooting
 
-### Server Not Starting
+### Server Won't Start
 
-**Issue:** MCP server doesn't appear in Bob IDE
-
-**Solutions:**
-1. Verify the executable path in `mcp_settings.json` is correct
-2. Ensure `disabled` is set to `false`
-3. Restart Bob IDE completely
-4. Check Bob IDE logs for error messages
-
-### Tools Not Working
-
-**Issue:** Tools return errors or don't execute
+**Issue:** `obelisk mcp` fails to start
 
 **Solutions:**
-1. Verify the project path exists
-2. Check that the project is a supported type (JS/TS/React/Next.js)
-3. For AI features, ensure `GEMINI_API_KEY` is set
-4. Check stderr output for detailed error messages
 
-### API Key Issues
+```bash
+# Check if Obelisk is installed
+obelisk version
 
-**Issue:** `get_health_report` fails with API key error
+# Verify API key is set
+obelisk config get api-key
 
-**Solutions:**
-1. Verify API key is correctly set in `mcp_settings.json`
-2. Test API key at: https://aistudio.google.com/app/apikey
-3. Ensure no extra spaces or quotes in the key value
-4. Restart Bob IDE after adding the key
+# Check for port conflicts (HTTP mode)
+netstat -ano | findstr :8080
+```
 
 ---
 
-## Advanced Configuration
+### Client Can't Connect
 
-### Custom Installation Path
+**Issue:** AI assistant can't connect to MCP server
 
-If you install Obelisk to a different location, update the `command` path:
+**Solutions:**
 
-```json
-{
-  "mcpServers": {
-    "obelisk": {
-      "command": "C:\\Program Files\\Obelisk\\obelisk.exe",
-      "args": ["mcp"]
-    }
-  }
-}
+1. **Verify server is running:**
+
+    ```bash
+    # Check process
+    ps aux | grep obelisk
+    ```
+
+2. **Check configuration:**
+    - Ensure correct command path in client config
+    - Verify args are correct: `["mcp"]`
+
+3. **Test manually:**
+    ```bash
+    # Start server with verbose output
+    obelisk mcp --verbose
+    ```
+
+---
+
+### Tools Not Working
+
+**Issue:** MCP tools return errors
+
+**Solutions:**
+
+1. **Check API key:**
+
+    ```bash
+    # Verify key is set
+    echo $GEMINI_API_KEY
+    ```
+
+2. **Verify project path:**
+    - Ensure path exists and is accessible
+    - Use absolute paths for reliability
+
+3. **Check logs:**
+    ```bash
+    # Enable debug logging
+    obelisk mcp --verbose
+    ```
+
+---
+
+### HTTP Mode Issues
+
+**Issue:** Can't access HTTP endpoint
+
+**Solutions:**
+
+1. **Check firewall:**
+
+    ```bash
+    # Windows
+    netsh advfirewall firewall add rule name="Obelisk MCP" dir=in action=allow protocol=TCP localport=8080
+    ```
+
+2. **Verify port:**
+
+    ```bash
+    # Test endpoint
+    curl http://localhost:8080/health
+    ```
+
+3. **Check CORS:**
+    - Server includes CORS headers by default
+    - Verify client origin is allowed
+
+---
+
+## Advanced Usage
+
+### Custom Port
+
+```bash
+# Use custom port
+obelisk mcp --http --port 3000
 ```
 
-### Always Allow Specific Tools
+### Environment Variables
 
-To skip confirmation prompts for certain tools:
+```bash
+# Set via environment
+export GEMINI_API_KEY=your-key
+export OBELISK_MODEL=gemini-2.0-flash-exp
+export PORT=8080
 
-```json
-{
-  "mcpServers": {
-    "obelisk": {
-      "alwaysAllow": ["scan_project", "check_security"]
-    }
-  }
-}
+obelisk mcp --http
 ```
 
-### Disable Specific Tools
+### Docker Deployment
 
-To prevent certain tools from being used:
+```bash
+# Build image
+docker build -t obelisk-mcp .
 
-```json
-{
-  "mcpServers": {
-    "obelisk": {
-      "disabledTools": ["get_health_report"]
-    }
-  }
-}
+# Run container
+docker run -p 8080:8080 \
+  -e GEMINI_API_KEY=your-key \
+  obelisk-mcp
 ```
 
 ---
 
 ## Security Considerations
 
-### API Key Storage
+### API Key Protection
 
-- API keys are stored in the MCP settings file
-- The file is located in your user directory: `~/.bob/settings/mcp_settings.json`
-- Ensure this file has appropriate permissions (readable only by you)
-- Never commit this file to version control
+- ✅ Never commit API keys to Git
+- ✅ Use environment variables in production
+- ✅ Rotate keys regularly
+- ✅ Use OS keyring for local storage
 
-### Project Access
+### Network Security
 
-- The MCP server can only access projects you explicitly specify
-- It respects `.gitignore` and `.obelisk-ignore` files
-- No data is sent to external services except the Gemini API (when enabled)
+- ✅ Use HTTPS in production (Render provides this)
+- ✅ Implement rate limiting for public endpoints
+- ✅ Consider authentication for team deployments
+- ✅ Monitor access logs
 
-### Network Communication
+### Data Privacy
 
-- The MCP server communicates via stdio (no network ports)
-- Only the Gemini API is contacted (when AI features are used)
-- All communication uses HTTPS (TLS 1.2+)
-
----
-
-## Example Workflows
-
-### Daily Code Review
-
-```
-1. "Scan the current project"
-2. "Show me all critical and error findings"
-3. "What's the security status?"
-4. "Generate a health report"
-```
-
-### Pre-Commit Check
-
-```
-1. "Check security vulnerabilities"
-2. "Track technical debt"
-3. "Analyze code complexity"
-```
-
-### Dependency Maintenance
-
-```
-1. "Audit dependencies"
-2. "Show me vulnerable packages"
-3. "List unused dependencies"
-```
+- ✅ Code analysis runs on your infrastructure
+- ✅ Only summaries sent to Gemini API (not full code)
+- ✅ No data stored by Obelisk servers
+- ✅ Comply with your organization's data policies
 
 ---
 
-## Integration with CI/CD
+## Resources
 
-While the MCP server is designed for interactive use with AI assistants, you can still use Obelisk in CI/CD pipelines with the standard CLI commands:
-
-```bash
-# Headless scan for CI/CD
-obelisk scan --format json --strict
-
-# This will exit with code 1 if critical issues are found
-```
-
----
-
-## Support and Feedback
-
+- **MCP Specification:** https://modelcontextprotocol.io/
+- **Obelisk Documentation:** [README.md](README.md)
+- **Cloud Deployment:** [DEPLOYMENT.md](DEPLOYMENT.md)
 - **GitHub Issues:** https://github.com/Swif7ify/Obelisk-CLI/issues
-- **Documentation:** https://github.com/Swif7ify/Obelisk-CLI
-- **Security Policy:** See SECURITY.md
 
 ---
 
-## Version Information
+## Support
 
-- **Obelisk Version:** 0.1.0
-- **MCP Protocol Version:** 2024-11-05
-- **Supported Transports:** stdio
+For help with MCP integration:
+
+- 📧 Email: weareonedev@gmail.com
+- 🐛 Issues: https://github.com/Swif7ify/Obelisk-CLI/issues
+- 📖 Docs: https://github.com/Swif7ify/Obelisk-CLI
 
 ---
 
-**Built during the IBM Bob Hackathon (May 15–17, 2026)**  
-**By OneDev PH — with the help of IBM Bob IDE**
+**Built with ❤️ by OneDev PH for the IBM Bob Hackathon 2026**

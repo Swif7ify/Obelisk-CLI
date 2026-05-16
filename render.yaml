@@ -1,0 +1,19 @@
+services:
+    - type: web
+      name: obelisk-mcp-server
+      runtime: go
+      plan: free
+      buildCommand: go build -o obelisk-server .
+      startCommand: ./obelisk-server mcp --http
+      envVars:
+          - key: PORT
+            value: 10000
+          - key: GEMINI_API_KEY
+            sync: false
+          - key: GOOGLE_API_KEY
+            sync: false
+          - key: OBELISK_MODEL
+            value: gemini-2.0-flash-exp
+      healthCheckPath: /health
+
+# Made with Bob

@@ -1,0 +1,126 @@
+{
+	"description": "Example MCP client configurations for Obelisk MCP Server",
+	"configurations": {
+		"local_stdio": {
+			"description": "Local stdio transport (default) - for Bob IDE, Claude Desktop, Cline",
+			"mcpServers": {
+				"obelisk": {
+					"command": "obelisk",
+					"args": ["mcp"],
+					"env": {
+						"GEMINI_API_KEY": "your-gemini-api-key-here",
+						"OBELISK_MODEL": "gemini-2.0-flash-exp"
+					}
+				}
+			}
+		},
+		"cloud_render": {
+			"description": "Cloud deployment via Render.com - HTTP/SSE transport",
+			"mcpServers": {
+				"obelisk-cloud": {
+					"url": "https://obelisk-mcp-server.onrender.com/sse"
+				}
+			}
+		},
+		"cloud_custom": {
+			"description": "Custom cloud deployment - replace with your URL",
+			"mcpServers": {
+				"obelisk-cloud": {
+					"url": "https://your-app-name.onrender.com/sse"
+				}
+			}
+		},
+		"local_http": {
+			"description": "Local HTTP/SSE mode for testing",
+			"mcpServers": {
+				"obelisk-local": {
+					"url": "http://localhost:8080/sse"
+				}
+			}
+		}
+	},
+	"usage_instructions": {
+		"bob_ide": {
+			"file_location": "~/.bob/config.json or project .bob/config.json",
+			"instructions": "Copy the desired configuration from 'configurations' above into your Bob config file"
+		},
+		"claude_desktop": {
+			"file_location_mac": "~/Library/Application Support/Claude/claude_desktop_config.json",
+			"file_location_windows": "%APPDATA%/Claude/claude_desktop_config.json",
+			"instructions": "Copy the desired configuration from 'configurations' above into your Claude Desktop config file"
+		},
+		"cline_vscode": {
+			"file_location": "VS Code Settings → Extensions → Cline → MCP Settings",
+			"instructions": "Add the configuration through VS Code settings UI or settings.json"
+		}
+	},
+	"available_tools": [
+		{
+			"name": "scan_project",
+			"description": "Performs a comprehensive health scan of a project",
+			"parameters": {
+				"path": "Project directory path (optional, defaults to current directory)",
+				"skip_ai": "Skip AI-powered analysis (optional, default: false)"
+			}
+		},
+		{
+			"name": "check_security",
+			"description": "Scans for security vulnerabilities",
+			"parameters": {
+				"path": "Project directory path (optional)"
+			}
+		},
+		{
+			"name": "analyze_complexity",
+			"description": "Analyzes cyclomatic complexity",
+			"parameters": {
+				"path": "Project directory path (optional)",
+				"threshold": "Complexity threshold (optional, default: 10)"
+			}
+		},
+		{
+			"name": "track_tech_debt",
+			"description": "Tracks TODO, FIXME, HACK, and XXX comments",
+			"parameters": {
+				"path": "Project directory path (optional)"
+			}
+		},
+		{
+			"name": "audit_dependencies",
+			"description": "Audits package.json for issues",
+			"parameters": {
+				"path": "Project directory path (optional)"
+			}
+		},
+		{
+			"name": "get_health_report",
+			"description": "Generates AI-powered health report with grade (A-F)",
+			"parameters": {
+				"path": "Project directory path (optional)"
+			},
+			"note": "Requires GEMINI_API_KEY"
+		}
+	],
+	"available_resources": [
+		{
+			"uri": "obelisk://scan/latest",
+			"description": "Latest scan results"
+		},
+		{
+			"uri": "obelisk://health/score",
+			"description": "Project health score"
+		},
+		{
+			"uri": "obelisk://findings/security",
+			"description": "Security findings"
+		},
+		{
+			"uri": "obelisk://findings/quality",
+			"description": "Code quality findings"
+		},
+		{
+			"uri": "obelisk://findings/architecture",
+			"description": "Architecture findings"
+		}
+	]
+}

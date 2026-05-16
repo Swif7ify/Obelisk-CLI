@@ -42,7 +42,7 @@ Obelisk is designed for both humans and machines:
 - **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system with scrollable results.
 - **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a report file in your project directory.
 - **Headless Mode (`obelisk scan`)** — Completely bypasses the UI and prints standard text directly to `stdout`. Designed for automated pipelines (GitHub Actions, Jenkins). Supports raw JSON (`--format json`) and strict mode (`--strict`) which fails the pipeline with an Exit Code 1 if critical issues are found.
-- **MCP Server Mode (`obelisk mcp`)** — Runs as a Model Context Protocol server, exposing code analysis capabilities to AI assistants and IDEs via JSON-RPC 2.0 over stdio. See [MCP_GUIDE.md](MCP_GUIDE.md) for details.
+- **MCP Server Mode (`obelisk mcp`)** — Runs as a Model Context Protocol server, exposing code analysis capabilities to AI assistants and IDEs. Supports both stdio (local) and HTTP/SSE (cloud) transports. See [DEPLOYMENT.md](DEPLOYMENT.md) for cloud deployment guide.
 
 ### 🛡️ Security Shield
 
@@ -202,6 +202,14 @@ obelisk mcp
 ```
 
 **🤖 MCP Server Mode:** Run Obelisk as a Model Context Protocol server to expose code analysis capabilities to AI assistants. See [MCP_GUIDE.md](MCP_GUIDE.md) for complete setup and usage instructions.
+
+**📚 Additional Documentation:**
+
+- [API Reference](API.md) - Complete API documentation for developers
+- [MCP Guide](MCP_GUIDE.md) - Model Context Protocol integration guide
+- [Commands Reference](COMMANDS.md) - Detailed command documentation
+- [Deployment Guide](DEPLOYMENT.md) - Cloud deployment instructions
+- [Distribution Guide](DISTRIBUTION.md) - Package and release management
 
 ### Ignored Files
 
