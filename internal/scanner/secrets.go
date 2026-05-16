@@ -19,7 +19,7 @@ var knownSecretPatterns = []secretPattern{
 	{Name: "AWS Access Key ID", Pattern: regexp.MustCompile(`(?i)(AKIA[0-9A-Z]{16})`)},
 	{Name: "AWS Secret Key", Pattern: regexp.MustCompile(`(?i)aws_secret_access_key\s*[=:]\s*["']?([A-Za-z0-9/+=]{40})["']?`)},
 	{Name: "GitHub Token", Pattern: regexp.MustCompile(`(?i)(ghp_[A-Za-z0-9_]{36,})`)},
-	{Name: "Generic API Key", Pattern: regexp.MustCompile(`(?i)(api[_-]?key|apikey)\s*[=:]\s*["']([A-Za-z0-9_\-]{20,})["']`)},
+	{Name: "Generic API Key", Pattern: regexp.MustCompile(`(?i)(api[_-]?key|apikey|token)\s*[=:]\s*["']([^\s"']{16,})["']`)},
 	{Name: "Generic Secret", Pattern: regexp.MustCompile(`(?i)(secret|password|passwd|pwd)\s*[=:]\s*["']([^\s"']{8,})["']`)},
 	{Name: "JWT Token", Pattern: regexp.MustCompile(`eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_\-]+`)},
 	{Name: "Private Key", Pattern: regexp.MustCompile(`-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----`)},
@@ -119,7 +119,7 @@ func scanFileForSecrets(filePath, projectPath string) ([]Finding, error) {
 }
 
 func checkEntropy(line, file string, lineNum int) []Finding {
-	p := regexp.MustCompile(`(?i)(key|token|secret|password|auth)\s*[=:]\s*["']([A-Za-z0-9+/=_\-]{20,})["']`)
+	p := regexp.MustCompile(`(?i)(key|token|secret|password|auth)\s*[=:]\s*["']([^\s"']{16,})["']`)
 	matches := p.FindStringSubmatch(line)
 	if len(matches) < 3 {
 		return nil
