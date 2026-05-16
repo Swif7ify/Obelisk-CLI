@@ -69,6 +69,11 @@ func (m DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tickCmd()
 		}
 
+	case PhaseUpdateMsg:
+		if m.State == StateScanning {
+			m.Spinner.Phase = MapPhaseStringToSpinnerPhase(msg.Phase)
+		}
+
 	case ScanCompleteMsg:
 		m.State = StateResults
 		m.Result = msg.Result

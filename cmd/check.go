@@ -94,6 +94,7 @@ var checkCmd = &cobra.Command{
 
 			result, err := engine.Run(cfg, func(phase string) {
 				// Update spinner phase
+				p.Send(ui.PhaseUpdateMsg{Phase: phase})
 				if flagVerbose {
 					fmt.Fprintf(os.Stderr, "  → %s\n", phase)
 				}

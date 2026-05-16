@@ -119,9 +119,9 @@ func printScanText(result *engine.Result) error {
 	warnings := s.CountBySeverity(scanner.SeverityWarning)
 	infos := s.CountBySeverity(scanner.SeverityInfo)
 
-	fmt.Printf("\n📁 Project: %s\n", s.ProjectPath)
-	fmt.Printf("📋 Type: %s (%s)\n", result.Detection.Framework, result.Detection.Type)
-	fmt.Printf("📄 Files: %d | Dirs: %d\n\n", s.FileCount, s.DirCount)
+	fmt.Printf("\nProject: %s\n", s.ProjectPath)
+	fmt.Printf("Type: %s (%s)\n", result.Detection.Framework, result.Detection.Type)
+	fmt.Printf("Files: %d | Dirs: %d\n\n", s.FileCount, s.DirCount)
 
 	if r != nil {
 		fmt.Printf("━━━ Grade: %s (%d/100) ━━━\n", r.Grade, r.OverallScore)

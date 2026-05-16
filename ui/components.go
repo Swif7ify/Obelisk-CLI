@@ -92,7 +92,7 @@ func RenderFindings(findings []scanner.Finding) string {
 	}
 
 	var sb strings.Builder
-	sb.WriteString(SubtitleStyle.Render("📋 Findings") + "\n\n")
+	sb.WriteString(SubtitleStyle.Render(" Findings") + "\n\n")
 
 	maxShow := 15
 	if len(findings) < maxShow {

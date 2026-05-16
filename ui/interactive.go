@@ -112,6 +112,12 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tickCmd()
 		}
 		return m, nil
+	case PhaseUpdateMsg:
+		if m.CurrentView == ViewScanning {
+			m.Spinner.Phase = MapPhaseStringToSpinnerPhase(msg.Phase)
+			return m, ListenForPhaseUpdates(enginePhaseChan)
+		}
+		return m, nil
 	case scanCompleteMsg:
 		m.CurrentView = ViewScanResults
 		if msg.err != nil {

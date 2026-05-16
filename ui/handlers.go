@@ -325,19 +325,43 @@ func (m InteractiveModel) handleProtectMenu(key string) (tea.Model, tea.Cmd) {
 
 // --- Tea Commands ---
 
+var enginePhaseChan chan string
+
 func startScanCmd(path string, cfg *config.Config) tea.Cmd {
-	return func() tea.Msg {
+	enginePhaseChan = make(chan string, 100)
+	
+	// Create a channel for the final result
+	resultChan := make(chan scanCompleteMsg)
+	
+	// Start the engine in a goroutine
+	go func() {
 		ecfg := engine.Config{
 			ProjectPath: path,
 			APIKey:      cfg.GetAPIKey(),
 			Model:       cfg.GetModel(),
 			SkipAI:      cfg.GetAPIKey() == "",
 		}
-		result, err := engine.Run(ecfg, nil)
+		result, err := engine.Run(ecfg, func(phase string) {
+			enginePhaseChan <- phase
+		})
+		
 		if err != nil {
-			return scanCompleteMsg{err: err}
+			resultChan <- scanCompleteMsg{err: err}
+		} else {
+			resultChan <- scanCompleteMsg{result: result.ScanResult, report: result.Report}
 		}
-		return scanCompleteMsg{result: result.ScanResult, report: result.Report}
+	}()
+	
+	// Return a batch command that listens for BOTH the first phase update AND the final result
+	return tea.Batch(
+		ListenForPhaseUpdates(enginePhaseChan),
+		waitForScanResult(resultChan),
+	)
+}
+
+func waitForScanResult(c chan scanCompleteMsg) tea.Cmd {
+	return func() tea.Msg {
+		return <-c
 	}
 }
 
