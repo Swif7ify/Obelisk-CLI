@@ -104,6 +104,10 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 		labelStyle.Render("No Color:"),
 		valueStyle.Render(noColorStr)))
 
+	sb.WriteString(fmt.Sprintf("  %s %s\n",
+		labelStyle.Render("Report Format:"),
+		valueStyle.Render(cfg.GetReportFormat())))
+
 	sb.WriteString("\n")
 
 	// Sub-menu
@@ -114,6 +118,7 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 		{"🤖", "Change Model"},
 		{"📁", "Set Default Path"},
 		{"🎨", "Toggle No Color"},
+		{"📄", "Toggle Report Format"},
 		{"🔄", "Reset All Settings"},
 		{"🔙", "Back to Menu"},
 	}

@@ -235,7 +235,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.SubCursor--
 		}
 	case "down", "j":
-		if m.SubCursor < 4 {
+		if m.SubCursor < 5 {
 			m.SubCursor++
 		}
 	case "enter":
@@ -260,13 +260,23 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.StatusMsg = "No color: " + s
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 3: // Reset
+		case 3: // Toggle Report Format
+			if m.Config.GetReportFormat() == "md" {
+				m.Config.ReportFormat = "txt"
+			} else {
+				m.Config.ReportFormat = "md"
+			}
+			_ = m.Config.Save()
+			m.StatusMsg = "Report format: " + m.Config.ReportFormat
+			m.StatusIsError = false
+			return m, clearStatusAfter(3 * time.Second)
+		case 4: // Reset
 			m.Config.Reset()
 			_ = m.Config.Save()
 			m.StatusMsg = "Settings reset to defaults"
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 4: // Back
+		case 5: // Back
 			m.CurrentView = ViewMainMenu
 		}
 	case "esc", "backspace":

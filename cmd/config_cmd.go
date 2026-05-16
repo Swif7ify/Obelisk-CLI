@@ -44,6 +44,7 @@ var configListCmd = &cobra.Command{
 			defaultPath = "(current directory)"
 		}
 		fmt.Printf("  %-18s %s\n", "Default Path:", defaultPath)
+		fmt.Printf("  %-18s %s\n", "Report Format:", cfg.GetReportFormat())
 
 		noColor := "Off"
 		if cfg.NoColor {
@@ -59,10 +60,11 @@ var configSetCmd = &cobra.Command{
 	Use:   "set <key> <value>",
 	Short: "Set a configuration value",
 	Long: `Set a configuration value. Available keys:
-  api-key     Your Gemini API key
-  model       AI model name (e.g., gemini-2.5-flash)
-  path        Default project scan path
-  no-color    Disable colors (true/false)`,
+  api-key       Your Gemini API key
+  model         AI model name (e.g., gemini-2.5-flash)
+  path          Default project scan path
+  no-color      Disable colors (true/false)
+  report-format Report format (md/txt)`,
 	Args: cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.Load()
@@ -86,8 +88,15 @@ var configSetCmd = &cobra.Command{
 		case "no-color", "nocolor":
 			cfg.NoColor = strings.ToLower(value) == "true" || value == "1"
 			fmt.Printf("✓ No color: %v\n", cfg.NoColor)
+		case "report-format", "format":
+			if value == "txt" {
+				cfg.ReportFormat = "txt"
+			} else {
+				cfg.ReportFormat = "md"
+			}
+			fmt.Printf("✓ Report format set to: %s\n", cfg.ReportFormat)
 		default:
-			return fmt.Errorf("unknown config key: %s\nAvailable: api-key, model, path, no-color", key)
+			return fmt.Errorf("unknown config key: %s\nAvailable: api-key, model, path, no-color, report-format", key)
 		}
 
 		return cfg.Save()
@@ -118,6 +127,8 @@ var configGetCmd = &cobra.Command{
 			fmt.Println(p)
 		case "no-color", "nocolor":
 			fmt.Println(cfg.NoColor)
+		case "report-format", "format":
+			fmt.Println(cfg.GetReportFormat())
 		default:
 			return fmt.Errorf("unknown config key: %s", key)
 		}
