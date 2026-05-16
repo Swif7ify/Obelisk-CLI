@@ -1,7 +1,9 @@
 package ui
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -48,6 +50,7 @@ type InteractiveModel struct {
 	Width         int
 	Height        int
 	Version       string
+	TargetFormat  string
 }
 
 // scanCompleteMsg is sent when a scan finishes.
@@ -70,6 +73,7 @@ type hookResultMsg struct {
 func NewInteractive(cfg *config.Config, version string) InteractiveModel {
 	menuItems := []MenuItem{
 		{Icon: "", Title: "Scan Project", Description: "Run a full health check", Key: "scan"},
+		{Icon: "", Title: "Scan Project (JSON)", Description: "Run health check and export to JSON", Key: "scan_json"},
 		{Icon: "", Title: "Protect", Description: "Git pre-push hook", Key: "protect"},
 		{Icon: "", Title: "API Key", Description: "Manage your Gemini key", Key: "apikey"},
 		{Icon: "", Title: "Settings", Description: "Configure Obelisk", Key: "settings"},
@@ -129,7 +133,10 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.ScanReport = msg.report
 			
 			// Generate report path first
-			format := m.Config.GetReportFormat()
+			format := m.TargetFormat
+			if format == "" {
+				format = m.Config.GetReportFormat()
+			}
 			if format == "" {
 				format = "txt"
 			}
@@ -146,7 +153,18 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			
 			// Auto-save report to file (matching CLI behavior)
 			if m.ScanResult != nil && m.ScanReport != nil && m.Config.AutoSave && len(m.ScanResult.Findings) > 0 {
-				if err := report.WriteToFile(m.ScanResult, m.ScanReport, outputPath, format); err != nil {
+				var err error
+				if format == "json" {
+					data, _ := json.MarshalIndent(map[string]interface{}{
+						"scan_result": m.ScanResult,
+						"report":      m.ScanReport,
+					}, "", "  ")
+					err = os.WriteFile(outputPath, data, 0644)
+				} else {
+					err = report.WriteToFile(m.ScanResult, m.ScanReport, outputPath, format)
+				}
+				
+				if err != nil {
 					// Don't show error in TUI, just silently fail
 					// User can still see results in the viewport
 				} else {

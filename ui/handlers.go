@@ -69,7 +69,12 @@ func (m InteractiveModel) handleMainMenu(key string) (tea.Model, tea.Cmd) {
 		m.Menu.MoveDown()
 	case "enter":
 		switch m.Menu.Selected().Key {
-		case "scan":
+		case "scan", "scan_json":
+			if m.Menu.Selected().Key == "scan_json" {
+				m.TargetFormat = "json"
+			} else {
+				m.TargetFormat = m.Config.GetReportFormat()
+			}
 			path := m.Config.DefaultPath
 			if path == "" {
 				path, _ = os.Getwd()
