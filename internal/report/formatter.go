@@ -90,7 +90,7 @@ func FormatPlainText(result *scanner.ScanResult, report *ai.HealthReport) string
 
 		// Praise
 		if len(report.Praise) > 0 && report.Praise[0] != "Scan completed successfully" {
-			sb.WriteString("✨ PRAISE:\n")
+			sb.WriteString("PRAISE:\n")
 			for _, p := range report.Praise {
 				sb.WriteString(fmt.Sprintf("  ✓ %s\n", p))
 			}
@@ -99,7 +99,7 @@ func FormatPlainText(result *scanner.ScanResult, report *ai.HealthReport) string
 
 		// Recommendations
 		if len(report.Recommendations) > 0 && report.Recommendations[0] != "Run with an API key for AI-powered insights" {
-			sb.WriteString("💡 RECOMMENDATIONS:\n")
+			sb.WriteString("RECOMMENDATIONS:\n")
 			for i, r := range report.Recommendations {
 				sb.WriteString(fmt.Sprintf("  %d. %s\n", i+1, r))
 			}
@@ -230,7 +230,7 @@ func FormatMarkdown(result *scanner.ScanResult, report *ai.HealthReport) string 
 
 		// Praise
 		if len(report.Praise) > 0 && report.Praise[0] != "Scan completed successfully" {
-			sb.WriteString("### ✨ Praise\n\n")
+			sb.WriteString("### Praise\n\n")
 			for _, p := range report.Praise {
 				sb.WriteString(fmt.Sprintf("- ✓ %s\n", p))
 			}
@@ -239,7 +239,7 @@ func FormatMarkdown(result *scanner.ScanResult, report *ai.HealthReport) string 
 
 		// Recommendations
 		if len(report.Recommendations) > 0 && report.Recommendations[0] != "Run with an API key for AI-powered insights" {
-			sb.WriteString("### 💡 Recommendations\n\n")
+			sb.WriteString("### Recommendations\n\n")
 			for i, r := range report.Recommendations {
 				sb.WriteString(fmt.Sprintf("%d. %s\n", i+1, r))
 			}

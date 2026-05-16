@@ -147,18 +147,18 @@ func RenderSummary(report *ai.HealthReport) string {
 
 	var sb strings.Builder
 
-	sb.WriteString(SubtitleStyle.Render("📊 Summary") + "\n\n")
+	sb.WriteString(SubtitleStyle.Render("Summary") + "\n\n")
 	sb.WriteString(lipgloss.NewStyle().Foreground(ColorText).Render(report.Summary) + "\n")
 
 	if len(report.Praise) > 0 {
-		sb.WriteString("\n" + SuccessStyle.Render("✨ Praise:") + "\n")
+		sb.WriteString("\n" + SuccessStyle.Render("Praise:") + "\n")
 		for _, p := range report.Praise {
 			sb.WriteString(PraiseStyle.Render("  ✓ "+p) + "\n")
 		}
 	}
 
 	if len(report.Recommendations) > 0 {
-		sb.WriteString("\n" + SubtitleStyle.Render("💡 Recommendations:") + "\n")
+		sb.WriteString("\n" + SubtitleStyle.Render("Recommendations:") + "\n")
 		for i, r := range report.Recommendations {
 			sb.WriteString(fmt.Sprintf("  %d. %s\n", i+1, r))
 		}

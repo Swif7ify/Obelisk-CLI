@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -10,10 +9,10 @@ import (
 // InputModel is a simple text input component.
 type InputModel struct {
 	Prompt      string
-	Value       string
+	Value       []rune
 	Placeholder string
 	Masked      bool // hide input characters (for API keys)
-	Cursor      int
+	Cursor      int  // index in the rune slice
 	Focused     bool
 	Width       int
 }
@@ -22,6 +21,7 @@ type InputModel struct {
 func NewInput(prompt, placeholder string, masked bool) InputModel {
 	return InputModel{
 		Prompt:      prompt,
+		Value:       []rune{},
 		Placeholder: placeholder,
 		Masked:      masked,
 		Focused:     true,
@@ -29,12 +29,23 @@ func NewInput(prompt, placeholder string, masked bool) InputModel {
 	}
 }
 
+// SetValue sets the input value from a string.
+func (m *InputModel) SetValue(v string) {
+	m.Value = []rune(v)
+	m.Cursor = len(m.Value)
+}
+
+// GetValue returns the input value as a string.
+func (m *InputModel) GetValue() string {
+	return string(m.Value)
+}
+
 // InsertChar adds a character at the cursor position.
 func (m *InputModel) InsertChar(ch rune) {
 	if m.Cursor >= len(m.Value) {
-		m.Value += string(ch)
+		m.Value = append(m.Value, ch)
 	} else {
-		m.Value = m.Value[:m.Cursor] + string(ch) + m.Value[m.Cursor:]
+		m.Value = append(m.Value[:m.Cursor], append([]rune{ch}, m.Value[m.Cursor:]...)...)
 	}
 	m.Cursor++
 }
@@ -42,7 +53,7 @@ func (m *InputModel) InsertChar(ch rune) {
 // DeleteChar removes the character before the cursor.
 func (m *InputModel) DeleteChar() {
 	if m.Cursor > 0 && len(m.Value) > 0 {
-		m.Value = m.Value[:m.Cursor-1] + m.Value[m.Cursor:]
+		m.Value = append(m.Value[:m.Cursor-1], m.Value[m.Cursor:]...)
 		m.Cursor--
 	}
 }
@@ -50,7 +61,7 @@ func (m *InputModel) DeleteChar() {
 // DeleteForward removes the character at the cursor.
 func (m *InputModel) DeleteForward() {
 	if m.Cursor < len(m.Value) {
-		m.Value = m.Value[:m.Cursor] + m.Value[m.Cursor+1:]
+		m.Value = append(m.Value[:m.Cursor], m.Value[m.Cursor+1:]...)
 	}
 }
 
@@ -80,7 +91,7 @@ func (m *InputModel) MoveToEnd() {
 
 // Clear resets the input value.
 func (m *InputModel) Clear() {
-	m.Value = ""
+	m.Value = []rune{}
 	m.Cursor = 0
 }
 
@@ -102,29 +113,33 @@ func (m InputModel) View() string {
 		Italic(true)
 
 	var display string
-	if m.Value == "" && !m.Focused {
+	if len(m.Value) == 0 && !m.Focused {
 		display = placeholderStyle.Render(m.Placeholder)
-	} else if m.Value == "" {
+	} else if len(m.Value) == 0 {
 		display = cursorStyle.Render(" ") + placeholderStyle.Render(m.Placeholder)
 	} else {
-		val := m.Value
+		var valRunes []rune
 		if m.Masked {
-			val = strings.Repeat("•", len(val))
+			for i := 0; i < len(m.Value); i++ {
+				valRunes = append(valRunes, '•')
+			}
+		} else {
+			valRunes = m.Value
 		}
 
-		if m.Focused && m.Cursor <= len(val) {
-			before := val[:m.Cursor]
+		if m.Focused && m.Cursor <= len(valRunes) {
+			before := string(valRunes[:m.Cursor])
 			after := ""
 			cursorChar := " "
-			if m.Cursor < len(val) {
-				cursorChar = string(val[m.Cursor])
-				after = val[m.Cursor+1:]
+			if m.Cursor < len(valRunes) {
+				cursorChar = string(valRunes[m.Cursor])
+				after = string(valRunes[m.Cursor+1:])
 			}
 			display = inputStyle.Render(before) +
 				cursorStyle.Render(cursorChar) +
 				inputStyle.Render(after)
 		} else {
-			display = inputStyle.Render(val)
+			display = inputStyle.Render(string(valRunes))
 		}
 	}
 

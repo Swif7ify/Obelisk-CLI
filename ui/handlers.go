@@ -75,8 +75,7 @@ func (m InteractiveModel) handleMainMenu(key string) (tea.Model, tea.Cmd) {
 				path, _ = os.Getwd()
 			}
 			m.Input = NewInput("Project path:", path, false)
-			m.Input.Value = path
-			m.Input.Cursor = len(path)
+			m.Input.SetValue(path)
 			m.CurrentView = ViewScanInput
 		case "protect":
 			m.SubCursor = 0
@@ -103,32 +102,33 @@ func (m InteractiveModel) handleMainMenu(key string) (tea.Model, tea.Cmd) {
 type submitFunc func(m InteractiveModel, value string) (InteractiveModel, tea.Cmd)
 
 func (m InteractiveModel) handleTextInput(msg tea.KeyMsg, cancelView InteractiveView, onSubmit submitFunc) (tea.Model, tea.Cmd) {
-	key := msg.String()
-	switch key {
-	case "enter":
-		return onSubmit(m, strings.TrimSpace(m.Input.Value))
-	case "esc":
+	switch msg.Type {
+	case tea.KeyEnter:
+		return onSubmit(m, strings.TrimSpace(m.Input.GetValue()))
+	case tea.KeyEsc:
 		m.CurrentView = cancelView
 		return m, nil
-	case "backspace":
+	case tea.KeyBackspace:
 		m.Input.DeleteChar()
-	case "delete":
+	case tea.KeyDelete:
 		m.Input.DeleteForward()
-	case "left":
+	case tea.KeyLeft:
 		m.Input.MoveLeft()
-	case "right":
+	case tea.KeyRight:
 		m.Input.MoveRight()
-	case "home", "ctrl+a":
+	case tea.KeyHome, tea.KeyCtrlA:
 		m.Input.MoveToStart()
-	case "end", "ctrl+e":
+	case tea.KeyEnd, tea.KeyCtrlE:
 		m.Input.MoveToEnd()
-	case "ctrl+u":
+	case tea.KeyCtrlU:
 		m.Input.Clear()
-	default:
-		if len(key) == 1 {
-			m.Input.InsertChar(rune(key[0]))
-		} else if key == "space" {
-			m.Input.InsertChar(' ')
+	case tea.KeySpace:
+		m.Input.InsertChar(' ')
+	case tea.KeyRunes:
+		for _, r := range msg.Runes {
+			if r >= 32 && r <= 126 && r != 0xFFFD {
+				m.Input.InsertChar(r)
+			}
 		}
 	}
 	return m, nil
@@ -156,12 +156,23 @@ func (m InteractiveModel) onScanSubmit(im InteractiveModel, value string) (Inter
 }
 
 func (m InteractiveModel) onAPIKeySubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
-	if value == "" {
+	// Clean the API key - remove any control characters, spaces, and invalid Unicode
+	cleaned := strings.Map(func(r rune) rune {
+		// Keep only valid ASCII alphanumeric, dash, and underscore
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_' {
+			return r
+		}
+		// Remove everything else (spaces, control chars, invalid Unicode)
+		return -1
+	}, value)
+	
+	if cleaned == "" {
 		im.StatusMsg = "API key cannot be empty"
 		im.StatusIsError = true
 		return im, clearStatusAfter(3 * time.Second)
 	}
-	im.Config.SetAPIKey(value)
+	
+	im.Config.SetAPIKey(cleaned)
 	if err := im.Config.Save(); err != nil {
 		im.StatusMsg = "Failed to save: " + err.Error()
 		im.StatusIsError = true
@@ -253,13 +264,11 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 		switch m.SubCursor {
 		case 0: // Model
 			m.Input = NewInput("Model:", m.Config.GetModel(), false)
-			m.Input.Value = m.Config.GetModel()
-			m.Input.Cursor = len(m.Input.Value)
+			m.Input.SetValue(m.Config.GetModel())
 			m.CurrentView = ViewSettingsModelInput
 		case 1: // Path
 			m.Input = NewInput("Default path:", "(current directory)", false)
-			m.Input.Value = m.Config.DefaultPath
-			m.Input.Cursor = len(m.Input.Value)
+			m.Input.SetValue(m.Config.DefaultPath)
 			m.CurrentView = ViewSettingsPathInput
 		case 2: // Toggle AI
 			m.Config.SkipAI = !m.Config.SkipAI
