@@ -15,13 +15,13 @@ obelisk [command] --help
 obelisk
 
 # Run health check
-obelisk check --path /path/to/project
+obelisk check /path/to/project
 
 # Headless scan (CI/CD)
-obelisk scan --path /path/to/project
+obelisk scan /path/to/project
 
 # Generate report
-obelisk report --path /path/to/project --output report.json
+obelisk report /path/to/project --output report.json
 
 # Configure settings
 obelisk config set api-key YOUR_API_KEY

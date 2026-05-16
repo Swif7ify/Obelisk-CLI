@@ -52,3 +52,7 @@ userFILE.md
 *.msi
 *.wixobj
 *.wixpdb
+
+# Extension build artifacts
+extension/out/
+extension/*.vsix
