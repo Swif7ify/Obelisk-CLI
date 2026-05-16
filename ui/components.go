@@ -135,6 +135,10 @@ func RenderFindings(findings []scanner.Finding) string {
 
 // RenderSummary renders the AI summary and recommendations.
 func RenderSummary(report *ai.HealthReport) string {
+	if strings.HasPrefix(report.Summary, "Project analysis completed without AI") {
+		return ""
+	}
+
 	var sb strings.Builder
 
 	sb.WriteString(SubtitleStyle.Render("📊 Summary") + "\n\n")

@@ -34,7 +34,11 @@ func (m InteractiveModel) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.ScanResult = nil
 			m.ScanReport = nil
 			m.StatusMsg = ""
+			return m, nil
 		}
+		var cmd tea.Cmd
+		m.Viewport, cmd = m.Viewport.Update(msg)
+		return m, cmd
 	case ViewAPIKey:
 		return m.handleAPIKeyMenu(msg.String())
 	case ViewAPIKeyInput:
@@ -130,16 +134,18 @@ func (m InteractiveModel) handleTextInput(msg tea.KeyMsg, cancelView Interactive
 // --- Submit callbacks ---
 
 func (m InteractiveModel) onScanSubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
-	path := strings.TrimSpace(value)
-	path = strings.Trim(path, `"'`) // Strip surrounding quotes
+	// Strip spaces, quotes, and control characters (like \r, \n)
+	path := strings.TrimFunc(value, func(r rune) bool {
+		return r < 32 || r == '"' || r == '\'' || r == ' '
+	})
 	
 	if path == "" {
 		path, _ = os.Getwd()
 	}
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		im.StatusMsg = "Path does not exist: " + path
+	if _, err := os.Stat(path); err != nil {
+		im.StatusMsg = "Invalid path: " + err.Error()
 		im.StatusIsError = true
-		return im, clearStatusAfter(3 * time.Second)
+		return im, clearStatusAfter(4 * time.Second)
 	}
 	im.CurrentView = ViewScanning
 	im.Spinner = NewSpinner()

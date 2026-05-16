@@ -5,7 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 
 	"github.com/Swif7ify/Obelisk-CLI/internal/ai"
 	"github.com/Swif7ify/Obelisk-CLI/internal/config"
@@ -36,6 +38,7 @@ type InteractiveModel struct {
 	Config        *config.Config
 	Input         InputModel
 	Spinner       SpinnerModel
+	Viewport      viewport.Model
 	ScanResult    *scanner.ScanResult
 	ScanReport    *ai.HealthReport
 	StatusMsg     string
@@ -73,14 +76,18 @@ func NewInteractive(cfg *config.Config, version string) InteractiveModel {
 		{Icon: "🚪", Title: "Quit", Description: "Exit Obelisk", Key: "quit"},
 	}
 
+	vp := viewport.New(80, 20)
+	vp.Style = lipgloss.NewStyle().Padding(0, 2)
+
 	return InteractiveModel{
 		CurrentView: ViewMainMenu,
-		Menu:    NewMenu("Main Menu", menuItems),
-		Config:  cfg,
-		Spinner: NewSpinner(),
-		Width:   80,
-		Height:  40,
-		Version: version,
+		Menu:        NewMenu("Main Menu", menuItems),
+		Config:      cfg,
+		Spinner:     NewSpinner(),
+		Viewport:    vp,
+		Width:       80,
+		Height:      40,
+		Version:     version,
 	}
 }
 
@@ -93,6 +100,9 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.Width = msg.Width
 		m.Height = msg.Height
+		m.Viewport.Width = msg.Width
+		// Adjust height to leave room for banner and footer
+		m.Viewport.Height = msg.Height - 12
 		return m, nil
 	case tea.KeyMsg:
 		return m.handleKeyPress(msg)
@@ -110,6 +120,15 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.ScanResult = msg.result
 			m.ScanReport = msg.report
+			
+			var content strings.Builder
+			content.WriteString(RenderStats(m.ScanResult) + "\n\n")
+			content.WriteString(RenderScoreCard(m.ScanReport) + "\n")
+			content.WriteString(RenderFindings(m.ScanResult.Findings) + "\n")
+			content.WriteString(RenderSummary(m.ScanReport) + "\n")
+			
+			m.Viewport.SetContent(content.String())
+			m.Viewport.GotoTop()
 		}
 		return m, nil
 	case statusClearMsg:
@@ -150,12 +169,9 @@ func (m InteractiveModel) View() string {
 		if m.StatusIsError && m.StatusMsg != "" {
 			sb.WriteString(ErrorStyle.Render("  ✗ Error: "+m.StatusMsg) + "\n\n")
 		} else if m.ScanReport != nil && m.ScanResult != nil {
-			sb.WriteString(RenderStats(m.ScanResult) + "\n\n")
-			sb.WriteString(RenderScoreCard(m.ScanReport) + "\n")
-			sb.WriteString(RenderFindings(m.ScanResult.Findings) + "\n")
-			sb.WriteString(RenderSummary(m.ScanReport) + "\n")
+			sb.WriteString(m.Viewport.View() + "\n")
 		}
-		sb.WriteString("\n" + MutedStyle.Render("  Press Esc or Backspace to go back") + "\n")
+		sb.WriteString("\n" + MutedStyle.Render("  Press Esc or Backspace to go back, ↑/↓ to scroll") + "\n")
 	case ViewAPIKey:
 		sb.WriteString(RenderAPIKeyView(m.Config, m.SubCursor))
 	case ViewAPIKeyInput:

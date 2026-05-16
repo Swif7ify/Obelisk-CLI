@@ -37,11 +37,14 @@ var checkCmd = &cobra.Command{
 			}
 		}
 		
-		projectPath = strings.Trim(strings.TrimSpace(projectPath), `"'`)
+		// Strip spaces, quotes, and control characters
+		projectPath = strings.TrimFunc(projectPath, func(r rune) bool {
+			return r < 32 || r == '"' || r == '\'' || r == ' '
+		})
 
 		// Validate project path exists
-		if _, err := os.Stat(projectPath); os.IsNotExist(err) {
-			return fmt.Errorf("project path does not exist: %s", projectPath)
+		if _, err := os.Stat(projectPath); err != nil {
+			return fmt.Errorf("invalid project path: %w", err)
 		}
 
 		// Load config to get format preference
