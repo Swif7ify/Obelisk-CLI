@@ -1,5 +1,12 @@
 # Security Policy
 
+## Data Privacy & Security
+
+1. Obelisk communicates directly with the official Google Gemini API over HTTPS (TLS 1.2+).
+2. Code is **never** used to train Google's models (as per standard Gemini API enterprise terms).
+3. The API key is required but is **never stored in plaintext**. Obelisk integrates with your Operating System's native Credential Manager (Windows Credential Manager, macOS Keychain, Linux Secret Service). This means your key is encrypted locally by the OS and strictly tied to your authenticated login session. Even if `config.json` is stolen, the key remains safe.
+4. If you prefer, you can completely avoid storing the key locally by passing it at runtime via the `GEMINI_API_KEY` or `GOOGLE_API_KEY` environment variables.
+
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability in Obelisk CLI, please report it responsibly.

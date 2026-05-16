@@ -53,6 +53,7 @@ Obelisk is designed for both humans and machines:
 - **Unused Dependency Detection** — Identifies and flags packages declared but never imported
 
 ### 🧠 AI "Senior Dev" Brain
+- **OS-Level Keyring Encryption** — Your Gemini API key is securely encrypted and stored natively in your Operating System's Credential Manager (Windows Credential Manager / macOS Keychain). It is **never** saved in plaintext.
 - **Health Score (A–F)** — Composite grade based on Security, Architecture, and Code Quality rubrics
 - **Vibe Check** — AI analyzes your project structure against industry-standard patterns
 - **Technical Debt Summary** — Plain-English summary of critical issues + praise for good practices
