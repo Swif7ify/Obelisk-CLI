@@ -18,7 +18,18 @@ var protectCmd = &cobra.Command{
 	Use:   "protect",
 	Short: "Git pre-push hook integration",
 	Long:  "Install Obelisk as a Git pre-push hook or run a protection check.",
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			switch args[0] {
+			case "install":
+				return installHook()
+			case "uninstall":
+				return uninstallHook()
+			default:
+				return fmt.Errorf("unknown command %q for protect", args[0])
+			}
+		}
 		if flagInstall {
 			return installHook()
 		}
@@ -67,6 +78,26 @@ exit 0
 	fmt.Println("✅ Obelisk pre-push hook installed!")
 	fmt.Printf("   Hook path: %s\n", hookPath)
 	fmt.Println("   Pushes will now be checked for critical security issues.")
+	return nil
+}
+
+func uninstallHook() error {
+	gitDir, err := findGitDir()
+	if err != nil {
+		return fmt.Errorf("not a git repository: %w", err)
+	}
+
+	hookPath := filepath.Join(gitDir, "hooks", "pre-push")
+	if _, err := os.Stat(hookPath); os.IsNotExist(err) {
+		fmt.Println("ℹ️ No pre-push hook found to uninstall.")
+		return nil
+	}
+
+	if err := os.Remove(hookPath); err != nil {
+		return fmt.Errorf("failed to remove hook: %w", err)
+	}
+
+	fmt.Println("✅ Obelisk pre-push hook uninstalled successfully!")
 	return nil
 }
 

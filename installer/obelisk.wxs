@@ -4,7 +4,7 @@
   <Product Id="*" 
            Name="Obelisk CLI" 
            Language="1033" 
-           Version="0.1.0" 
+           Version="$(var.Version)" 
            Manufacturer="OneDev PH" 
            UpgradeCode="4c2c5fcb-75f7-4c12-8dbf-2d5c150021e4">
     
@@ -20,7 +20,7 @@
     <Media Id="1" Cabinet="obelisk.cab" EmbedCab="yes" />
 
     <!-- Upgrade Logic -->
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 
     <!-- Installation Directory Structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">

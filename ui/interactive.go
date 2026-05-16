@@ -162,6 +162,9 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.StatusMsg = ""
 		return m, nil
 	case hookResultMsg:
+		if m.CurrentView == ViewScanning {
+			m.CurrentView = ViewProtect
+		}
 		if msg.err != nil {
 			m.StatusMsg = msg.err.Error()
 			m.StatusIsError = true

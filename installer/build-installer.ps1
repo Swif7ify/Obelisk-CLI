@@ -123,9 +123,10 @@ try {
     $lightExe  = Join-Path $wixPath "light.exe"
     $binDir    = Join-Path $projectRoot "bin"
 
-    # Run candle (compiler) - pass variables for portable paths
+    # Run candle (compiler) - pass variables for portable paths and version
     & $candleExe -nologo `
         -arch x64 `
+        "-dVersion=$Version" `
         "-dBinDir=$binDir" `
         "-dProjectDir=$projectRoot" `
         -out "installer\obelisk.wixobj" `

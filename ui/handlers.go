@@ -334,19 +334,20 @@ func (m InteractiveModel) handleProtectMenu(key string) (tea.Model, tea.Cmd) {
 			m.SubCursor--
 		}
 	case "down", "j":
-		if m.SubCursor < 2 {
+		if m.SubCursor < 3 {
 			m.SubCursor++
 		}
 	case "enter":
 		switch m.SubCursor {
 		case 0: // Install hook
 			return m, installHookCmd()
-		case 1: // Run check
-			cwd, _ := os.Getwd()
+		case 1: // Uninstall hook
+			return m, uninstallHookCmd()
+		case 2: // Run check
 			m.CurrentView = ViewScanning
 			m.Spinner = NewSpinner()
-			return m, tea.Batch(tickCmd(), startScanCmd(cwd, m.Config))
-		case 2: // Back
+			return m, tea.Batch(tickCmd(), runProtectCheckCmd(m.Config))
+		case 3: // Back
 			m.CurrentView = ViewMainMenu
 		}
 	case "esc", "backspace":
@@ -417,5 +418,55 @@ func installHookCmd() tea.Cmd {
 			return hookResultMsg{err: err}
 		}
 		return hookResultMsg{msg: "Pre-push hook installed!"}
+	}
+}
+
+func uninstallHookCmd() tea.Cmd {
+	return func() tea.Msg {
+		cmd := exec.Command("git", "rev-parse", "--git-dir")
+		output, err := cmd.Output()
+		if err != nil {
+			return hookResultMsg{err: fmt.Errorf("not a git repository")}
+		}
+		dir := strings.TrimSpace(string(output))
+		absDir, _ := filepath.Abs(dir)
+		hookPath := filepath.Join(absDir, "hooks", "pre-push")
+		
+		if _, err := os.Stat(hookPath); os.IsNotExist(err) {
+			return hookResultMsg{err: fmt.Errorf("no pre-push hook found to uninstall")}
+		}
+		
+		if err := os.Remove(hookPath); err != nil {
+			return hookResultMsg{err: err}
+		}
+		return hookResultMsg{msg: "Pre-push hook uninstalled!"}
+	}
+}
+
+func runProtectCheckCmd(cfg *config.Config) tea.Cmd {
+	return func() tea.Msg {
+		path, _ := os.Getwd()
+		ecfg := engine.Config{
+			ProjectPath: path,
+			APIKey:      cfg.GetAPIKey(),
+			Model:       cfg.GetModel(),
+			SkipAI:      true, // no AI for protect check
+		}
+		
+		result, err := engine.Run(ecfg, func(phase string) {
+			// Do nothing for phase updates since we're not listening to them here
+		})
+		if err != nil {
+			return hookResultMsg{err: err}
+		}
+		
+		criticals := result.ScanResult.CountBySeverity(3) // SeverityCritical
+		errors := result.ScanResult.CountBySeverity(2)    // SeverityError
+		
+		if criticals > 0 || errors > 0 {
+			return hookResultMsg{err: fmt.Errorf("protection check failed: %d critical, %d errors", criticals, errors)}
+		}
+		
+		return hookResultMsg{msg: "Protection Check Passed! No critical issues."}
 	}
 }

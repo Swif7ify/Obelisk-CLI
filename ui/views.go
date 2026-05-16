@@ -237,6 +237,7 @@ func RenderProtectView(subCursor int) string {
 		text string
 	}{
 		{"", "Install Pre-Push Hook"},
+		{"", "Uninstall Pre-Push Hook"},
 		{"", "Run Protection Check"},
 		{"", "Back to Menu"},
 	}
