@@ -2,6 +2,34 @@
 
 This guide explains how to deploy Obelisk MCP Server to the cloud so users can access it remotely via HTTP/SSE.
 
+## 🌐 Official Public Server
+
+**You can use our official hosted MCP server right now!**
+
+```
+https://mcp-obelisk.onedevph.online/sse
+```
+
+No deployment needed - just add this URL to your AI client configuration and start using Obelisk's code analysis tools immediately.
+
+### Quick Connect
+
+Add to your Bob IDE, Claude Desktop, or Cline configuration:
+
+```json
+{
+	"mcpServers": {
+		"obelisk-cloud": {
+			"url": "https://mcp-obelisk.onedevph.online/sse"
+		}
+	}
+}
+```
+
+That's it! You can now use all Obelisk tools through your AI assistant.
+
+---
+
 ## Overview
 
 Obelisk MCP Server supports two transport modes:
@@ -9,7 +37,7 @@ Obelisk MCP Server supports two transport modes:
 1. **stdio** (default): Local JSON-RPC over stdin/stdout - for local IDE integration
 2. **http**: HTTP/SSE transport - for cloud deployment and remote access
 
-## Quick Start - Deploy to Render
+## Deploy Your Own Instance
 
 ### Prerequisites
 

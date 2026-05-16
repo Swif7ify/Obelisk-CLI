@@ -14,16 +14,16 @@
 				}
 			}
 		},
-		"cloud_render": {
-			"description": "Cloud deployment via Render.com - HTTP/SSE transport",
+		"cloud_official": {
+			"description": "Official Obelisk Cloud MCP Server - Ready to use!",
 			"mcpServers": {
 				"obelisk-cloud": {
-					"url": "https://obelisk-mcp-server.onrender.com/sse"
+					"url": "https://mcp-obelisk.onedevph.online/sse"
 				}
 			}
 		},
 		"cloud_custom": {
-			"description": "Custom cloud deployment - replace with your URL",
+			"description": "Custom cloud deployment - replace with your own URL",
 			"mcpServers": {
 				"obelisk-cloud": {
 					"url": "https://your-app-name.onrender.com/sse"
