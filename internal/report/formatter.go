@@ -258,7 +258,7 @@ func FormatMarkdown(result *scanner.ScanResult, report *ai.HealthReport) string 
 			sb.WriteString("\n")
 		}
 	} else if report != nil && report.Error != "" {
-		sb.WriteString("## ⚠️ AI Generation Skipped\n\n")
+		sb.WriteString("##AI Generation Skipped\n\n")
 		sb.WriteString(fmt.Sprintf("**Error:** %s\n\n", report.Error))
 	}
 

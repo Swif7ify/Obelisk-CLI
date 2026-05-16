@@ -61,16 +61,18 @@ func (m MenuModel) View() string {
 
 	activeStyle := lipgloss.NewStyle().
 		Bold(true).
-		Foreground(lipgloss.Color("#1E1B2E")).
+		Foreground(ColorTextBold).
 		Background(ColorPrimary).
-		Padding(0, 1)
+		Padding(0, 2).
+		MarginLeft(2)
 
 	inactiveStyle := lipgloss.NewStyle().
 		Foreground(ColorText).
-		Padding(0, 1)
+		Padding(0, 1).
+		MarginLeft(2)
 
 	descActiveStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#C4B5FD")).
+		Foreground(ColorHighlight).
 		Italic(true)
 
 	descInactiveStyle := lipgloss.NewStyle().
@@ -80,7 +82,7 @@ func (m MenuModel) View() string {
 	cursorActive := lipgloss.NewStyle().
 		Foreground(ColorPrimary).
 		Bold(true).
-		Render("❯")
+		Render("▶")
 
 	cursorInactive := lipgloss.NewStyle().
 		Render(" ")
@@ -99,8 +101,8 @@ func (m MenuModel) View() string {
 			desc = descInactiveStyle.Render(item.Description)
 		}
 
-		line := fmt.Sprintf("  %s %s  %s", cursor, label, desc)
-		sb.WriteString(line + "\n")
+		line := fmt.Sprintf(" %s %s  %s", cursor, label, desc)
+		sb.WriteString(line + "\n\n") // added extra newline for breathing room
 	}
 
 	return sb.String()

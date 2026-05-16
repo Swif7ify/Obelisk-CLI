@@ -4,7 +4,7 @@ import "github.com/charmbracelet/lipgloss"
 
 // Color palette
 var (
-	ColorPrimary   = lipgloss.Color("#7C3AED") // Purple
+	ColorPrimary   = lipgloss.Color("#8B5CF6") // Vibrant Purple
 	ColorSecondary = lipgloss.Color("#06B6D4") // Cyan
 	ColorSuccess   = lipgloss.Color("#10B981") // Green
 	ColorWarning   = lipgloss.Color("#F59E0B") // Amber
@@ -16,15 +16,16 @@ var (
 	ColorCardBg    = lipgloss.Color("#2D2640") // Card bg
 	ColorText      = lipgloss.Color("#E5E7EB") // Light gray
 	ColorTextBold  = lipgloss.Color("#F9FAFB") // White
+	ColorHighlight = lipgloss.Color("#C4B5FD") // Light Purple
 )
 
 // Grade colors
 var GradeColors = map[string]lipgloss.Color{
-	"A": lipgloss.Color("#10B981"),
-	"B": lipgloss.Color("#34D399"),
-	"C": lipgloss.Color("#F59E0B"),
-	"D": lipgloss.Color("#F97316"),
-	"F": lipgloss.Color("#EF4444"),
+	"A": lipgloss.Color("#10B981"), // Green
+	"B": lipgloss.Color("#34D399"), // Light Green
+	"C": lipgloss.Color("#F59E0B"), // Amber
+	"D": lipgloss.Color("#F97316"), // Orange
+	"F": lipgloss.Color("#EF4444"), // Red
 }
 
 // Styles
@@ -39,12 +40,20 @@ var (
 	SubtitleStyle = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(ColorSecondary).
+			Border(lipgloss.NormalBorder(), false, false, true, false). // bottom border
+			BorderForeground(ColorSecondary).
 			MarginBottom(1)
 
 	CardStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(ColorPrimary).
-			Padding(1, 2).
+			Padding(1, 3).
+			MarginBottom(1)
+
+	ActiveCardStyle = lipgloss.NewStyle().
+			Border(lipgloss.ThickBorder()).
+			BorderForeground(ColorSecondary).
+			Padding(1, 3).
 			MarginBottom(1)
 
 	GradeStyle = lipgloss.NewStyle().
@@ -89,4 +98,8 @@ var (
 	PraiseStyle = lipgloss.NewStyle().
 			Foreground(ColorSuccess).
 			PaddingLeft(2)
+
+	HighlightStyle = lipgloss.NewStyle().
+			Foreground(ColorHighlight).
+			Bold(true)
 )

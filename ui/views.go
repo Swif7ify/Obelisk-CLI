@@ -17,6 +17,8 @@ func RenderAPIKeyView(cfg *config.Config, subCursor int) string {
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(ColorSecondary).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		BorderForeground(ColorSecondary).
 		MarginBottom(1)
 
 	sb.WriteString(headerStyle.Render("API Key Management") + "\n\n")
@@ -26,7 +28,7 @@ func RenderAPIKeyView(cfg *config.Config, subCursor int) string {
 	if cfg.GetAPIKey() != "" {
 		sb.WriteString(statusLabel + SuccessStyle.Render("✓ Configured") + "\n")
 		sb.WriteString(lipgloss.NewStyle().Foreground(ColorMuted).Render("  Key:    ") +
-			lipgloss.NewStyle().Foreground(ColorText).Render(cfg.MaskedAPIKey()) + "\n")
+			lipgloss.NewStyle().Foreground(ColorHighlight).Render(cfg.MaskedAPIKey()) + "\n")
 
 		source := "config file"
 		if cfg.APIKey == "" {
@@ -57,16 +59,16 @@ func RenderAPIKeyView(cfg *config.Config, subCursor int) string {
 	}
 
 	for i, opt := range options {
-		cursor := "  "
+		cursor := "   "
 		style := lipgloss.NewStyle().Foreground(ColorText)
 		if i == subCursor {
-			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render("❯ ")
-			style = lipgloss.NewStyle().Bold(true).Foreground(ColorPrimary)
+			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render(" ▶ ")
+			style = lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Background(ColorPrimary).Padding(0, 1)
 		}
-		sb.WriteString(fmt.Sprintf("  %s%s %s\n", cursor, opt.icon, style.Render(opt.text)))
+		sb.WriteString(fmt.Sprintf(" %s%s %s\n\n", cursor, opt.icon, style.Render(opt.text)))
 	}
 
-	return CardStyle.Width(60).Render(sb.String())
+	return CardStyle.Width(64).Render(sb.String())
 }
 
 // RenderSettingsView renders the settings configuration view.
@@ -76,13 +78,15 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(ColorSecondary).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		BorderForeground(ColorSecondary).
 		MarginBottom(1)
 
 	sb.WriteString(headerStyle.Render("Settings") + "\n\n")
 
 	// Current settings
 	labelStyle := lipgloss.NewStyle().Bold(true).Foreground(ColorText).Width(18)
-	valueStyle := lipgloss.NewStyle().Foreground(ColorSecondary)
+	valueStyle := lipgloss.NewStyle().Foreground(ColorHighlight)
 
 	sb.WriteString(fmt.Sprintf("  %s %s\n",
 		labelStyle.Render("Model:"),
@@ -144,16 +148,16 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 	}
 
 	for i, opt := range options {
-		cursor := "  "
+		cursor := "   "
 		style := lipgloss.NewStyle().Foreground(ColorText)
 		if i == subCursor {
-			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render("❯ ")
-			style = lipgloss.NewStyle().Bold(true).Foreground(ColorPrimary)
+			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render(" ▶ ")
+			style = lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Background(ColorPrimary).Padding(0, 1)
 		}
-		sb.WriteString(fmt.Sprintf("  %s%s %s\n", cursor, opt.icon, style.Render(opt.text)))
+		sb.WriteString(fmt.Sprintf(" %s%s %s\n", cursor, opt.icon, style.Render(opt.text)))
 	}
 
-	return CardStyle.Width(60).Render(sb.String())
+	return CardStyle.Width(64).Render(sb.String())
 }
 
 // RenderHelpView renders the help/commands view.
@@ -162,7 +166,10 @@ func RenderHelpView() string {
 
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
-		Foreground(ColorSecondary)
+		Foreground(ColorSecondary).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		BorderForeground(ColorSecondary).
+		MarginBottom(1)
 
 	cmdStyle := lipgloss.NewStyle().
 		Bold(true).
@@ -191,13 +198,13 @@ func RenderHelpView() string {
 		{"obelisk version", "Show version info"},
 	}
 
-	sb.WriteString(lipgloss.NewStyle().Bold(true).Foreground(ColorText).Render("  Commands:") + "\n\n")
+	sb.WriteString(lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Render("  Commands:") + "\n\n")
 	for _, c := range commands {
 		sb.WriteString(fmt.Sprintf("  %s %s\n", cmdStyle.Render(c.cmd), descStyle.Render(c.desc)))
 	}
 
 	sb.WriteString("\n")
-	sb.WriteString(lipgloss.NewStyle().Bold(true).Foreground(ColorText).Render("  Global Flags:") + "\n\n")
+	sb.WriteString(lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Render("  Global Flags:") + "\n\n")
 
 	flags := []struct {
 		flag string
@@ -216,7 +223,7 @@ func RenderHelpView() string {
 	sb.WriteString("\n")
 	sb.WriteString(MutedStyle.Render("  Press Esc or Backspace to go back") + "\n")
 
-	return CardStyle.Width(70).Render(sb.String())
+	return CardStyle.Width(76).Render(sb.String())
 }
 
 // RenderProtectView renders the protect sub-menu view.
@@ -225,7 +232,10 @@ func RenderProtectView(subCursor int) string {
 
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
-		Foreground(ColorSecondary)
+		Foreground(ColorSecondary).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		BorderForeground(ColorSecondary).
+		MarginBottom(1)
 
 	sb.WriteString(headerStyle.Render("Git Protection") + "\n\n")
 
@@ -244,16 +254,16 @@ func RenderProtectView(subCursor int) string {
 	}
 
 	for i, opt := range options {
-		cursor := "  "
+		cursor := "   "
 		style := lipgloss.NewStyle().Foreground(ColorText)
 		if i == subCursor {
-			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render("❯ ")
-			style = lipgloss.NewStyle().Bold(true).Foreground(ColorPrimary)
+			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render(" ▶ ")
+			style = lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Background(ColorPrimary).Padding(0, 1)
 		}
-		sb.WriteString(fmt.Sprintf("  %s%s %s\n", cursor, opt.icon, style.Render(opt.text)))
+		sb.WriteString(fmt.Sprintf(" %s%s %s\n\n", cursor, opt.icon, style.Render(opt.text)))
 	}
 
-	return CardStyle.Width(60).Render(sb.String())
+	return CardStyle.Width(64).Render(sb.String())
 }
 
 // RenderStatusMessage renders a temporary status message.

@@ -98,8 +98,9 @@ func renderScoreBar(score int) string {
 		color = lipgloss.Color("#F59E0B")
 	}
 
-	bar := lipgloss.NewStyle().Background(color).Render(strings.Repeat(" ", filled))
-	empty := lipgloss.NewStyle().Background(lipgloss.Color("#374151")).Render(strings.Repeat(" ", barWidth-filled))
+	// Use unicode blocks for a more premium look
+	bar := lipgloss.NewStyle().Foreground(color).Render(strings.Repeat("█", filled))
+	empty := lipgloss.NewStyle().Foreground(lipgloss.Color("#374151")).Render(strings.Repeat("░", barWidth-filled))
 
 	return fmt.Sprintf("%s%s %s",
 		bar, empty,
@@ -166,7 +167,7 @@ func RenderSummary(report *ai.HealthReport) string {
 	if strings.HasPrefix(report.Summary, "Project analysis completed without AI") {
 		if report.Error != "" {
 			var sb strings.Builder
-			sb.WriteString(SubtitleStyle.Render("⚠️ AI Generation Skipped") + "\n\n")
+			sb.WriteString(SubtitleStyle.Render("AI Generation Skipped") + "\n\n")
 			sb.WriteString(lipgloss.NewStyle().Foreground(ColorError).Render(report.Error) + "\n")
 			return CardStyle.Width(76).Render(sb.String())
 		}
