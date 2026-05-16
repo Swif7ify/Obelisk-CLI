@@ -179,12 +179,13 @@ func RenderHelpView() string {
 		desc string
 	}{
 		{"obelisk", "Launch interactive TUI"},
+		{"obelisk mcp", "Run as MCP server for AI assistants"},
 		{"obelisk scan", "Headless scan (CI/CD friendly)"},
 		{"obelisk scan --format json", "Output scan results as JSON"},
 		{"obelisk scan --strict", "Exit code 1 on critical/errors"},
 		{"obelisk check [path]", "Run health check with dashboard"},
 		{"obelisk report [path]", "Generate & export report"},
-		{"obelisk protect --install", "Install git pre-push hook"},
+		{"obelisk protect install", "Install git pre-push hook"},
 		{"obelisk config set api-key <k>", "Store your Gemini API key"},
 		{"obelisk config list", "Show all config values"},
 		{"obelisk version", "Show version info"},

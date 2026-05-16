@@ -190,7 +190,8 @@ obelisk report --export=markdown
 obelisk report --export=json
 
 # 5. Git Hooks
-obelisk protect --install
+obelisk protect install
+obelisk protect uninstall
 
 # 6. Configuration Management
 obelisk config list

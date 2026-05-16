@@ -75,11 +75,14 @@ obelisk check  /path/to/project
 
 **Flags:**
 
-- ` string` - Path to project directory (required)
-- `--skip-ai` - Skip AI analysis (faster, local-only checks)
+- `-p, --path string` - Path to project directory (default: current directory)
+- `-o, --output string` - Output file path (default: obelisk-report-<timestamp>.md)
+- `--skip-ai` - Skip AI analysis (offline mode)
 - `--no-save` - Do not auto-save report file even if there are problems
 - `--api-key string` - Gemini API key
 - `--model string` - AI model to use
+- `--no-color` - Disable colored output
+- `-v, --verbose` - Enable verbose output
 
 **Output:**
 
@@ -101,16 +104,17 @@ obelisk scan  /path/to/project
 
 **Flags:**
 
-- ` string` - Path to project directory (required)
+- `-p, --path string` - Path to project directory (default: current directory)
+- `-o, --output string` - Write output to file
+- `-f, --format string` - Output format: text, json, markdown (default "text")
 - `--skip-ai` - Skip AI analysis
 - `--no-save` - Do not auto-save report file even if there are problems
-- `--fail-on-critical` - Exit with code 1 if critical issues found
-- `--output string` - Output format: text, json, or markdown
+- `--strict` - Exit code 1 on critical/error findings
 
 **Exit Codes:**
 
-- `0` - No critical issues
-- `1` - Critical issues found (with --fail-on-critical)
+- `0` - No strict issues found
+- `1` - Critical/error issues found (with --strict)
 - `2` - Scan error
 
 **Example CI/CD Usage:**
@@ -119,7 +123,7 @@ obelisk scan  /path/to/project
 # GitHub Actions
 - name: Run Obelisk Scan
   run: |
-      obelisk scan  . --fail-on-critical --output json > scan-results.json
+      obelisk scan . --strict --format json > scan-results.json
 ```
 
 ---
@@ -134,9 +138,8 @@ obelisk report /path/to/project --export=json
 
 **Flags:**
 
-- `path` - Path to project directory (optional)
+- `[path]` - Path to project directory (optional positional argument)
 - `--export string` - Export format: markdown, json (default: "markdown")
-- `--skip-ai` - Skip AI analysis
 
 **Supported Formats:**
 
@@ -163,21 +166,23 @@ obelisk config list
 # Set AI model
 obelisk config set model gemini-2.5-flash
 
-# Enable/disable AI
-obelisk config set skip-ai true
+# Set auto-save
+obelisk config set auto-save false
 ```
 
 **Available Settings:**
 
 - `api-key` - Gemini API key
 - `model` - AI model to use
-- `skip-ai` - Skip AI analysis (true/false)
+- `path` - Default project path
 - `no-color` - Disable colored output (true/false)
+- `auto-save` - Auto-save reports (true/false)
+- `report-format` - Default report format (md/txt)
 
 **Config File Location:**
 
-- Windows: `%USERPROFILE%\.obelisk\config.yaml`
-- Linux/macOS: `~/.obelisk/config.yaml`
+- Windows: `%USERPROFILE%\.obelisk\config.json`
+- Linux/macOS: `~/.obelisk/config.json`
 
 ---
 
@@ -191,9 +196,6 @@ obelisk protect install
 
 # Uninstall hook
 obelisk protect uninstall
-
-# Check hook status
-obelisk protect status
 ```
 
 **What it does:**
