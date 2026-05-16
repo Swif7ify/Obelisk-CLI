@@ -42,6 +42,7 @@ Obelisk is designed for both humans and machines:
 - **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system with scrollable results.
 - **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a report file in your project directory.
 - **Headless Mode (`obelisk scan`)** — Completely bypasses the UI and prints standard text directly to `stdout`. Designed for automated pipelines (GitHub Actions, Jenkins). Supports raw JSON (`--format json`) and strict mode (`--strict`) which fails the pipeline with an Exit Code 1 if critical issues are found.
+- **MCP Server Mode (`obelisk mcp`)** — Runs as a Model Context Protocol server, exposing code analysis capabilities to AI assistants and IDEs via JSON-RPC 2.0 over stdio. See [MCP_GUIDE.md](MCP_GUIDE.md) for details.
 
 ### 🛡️ Security Shield
 
@@ -195,7 +196,12 @@ obelisk protect --install
 obelisk config list
 obelisk config set api-key YOUR_API_KEY
 obelisk config set report-format txt
+
+# 7. MCP Server Mode (For AI Assistants)
+obelisk mcp
 ```
+
+**🤖 MCP Server Mode:** Run Obelisk as a Model Context Protocol server to expose code analysis capabilities to AI assistants. See [MCP_GUIDE.md](MCP_GUIDE.md) for complete setup and usage instructions.
 
 ### Ignored Files
 
