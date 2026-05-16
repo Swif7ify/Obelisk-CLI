@@ -17,7 +17,7 @@
 
 ---
 
-**Obelisk** is a high-performance CLI tool built in **Go** that acts as a final gatekeeper for your project. It doesn't just check for syntax errors — it evaluates project integrity, security, and architectural health using a combination of deep static analysis, native code parsing, and LLM intelligence.
+**Obelisk** is a high-performance tool ecosystem consisting of a Go-based CLI, a VS Code extension, and an integrated Model Context Protocol (MCP) server. Acting as a final gatekeeper for your project, it doesn't just check for syntax errors — it evaluates project integrity, security, and architectural health using a combination of deep static analysis, native code parsing, and LLM intelligence directly within your terminal, IDE, or AI agents.
 
 ## ⚡ Why Obelisk?
 
