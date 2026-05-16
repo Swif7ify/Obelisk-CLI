@@ -130,7 +130,9 @@ func (m InteractiveModel) handleTextInput(msg tea.KeyMsg, cancelView Interactive
 // --- Submit callbacks ---
 
 func (m InteractiveModel) onScanSubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
-	path := value
+	path := strings.TrimSpace(value)
+	path = strings.Trim(path, `"'`) // Strip surrounding quotes
+	
 	if path == "" {
 		path, _ = os.Getwd()
 	}

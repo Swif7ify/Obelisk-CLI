@@ -56,6 +56,18 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 	}
 	detection := detector.Detect(absPath)
 
+	// For now, only support JavaScript/TypeScript projects
+	supportedTypes := map[detector.ProjectType]bool{
+		detector.TypeJavaScript: true,
+		detector.TypeTypeScript: true,
+		detector.TypeReact:      true,
+		detector.TypeNextJS:     true,
+	}
+
+	if !supportedTypes[detection.Type] {
+		return nil, fmt.Errorf("unsupported project type: %s\nCurrently, Obelisk only supports JavaScript/TypeScript projects", detection.Type)
+	}
+
 	// Step 2: Load adapter
 	adapter := getAdapter(detection.Type)
 

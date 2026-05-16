@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
@@ -35,6 +36,8 @@ var checkCmd = &cobra.Command{
 				return err
 			}
 		}
+		
+		projectPath = strings.Trim(strings.TrimSpace(projectPath), `"'`)
 
 		// Validate project path exists
 		if _, err := os.Stat(projectPath); os.IsNotExist(err) {

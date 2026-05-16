@@ -136,8 +136,8 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 | Framework | Status |
 |-----------|--------|
 | JavaScript / TypeScript (React, Next.js) | ✅ Supported |
-| Go (Golang) | ✅ Supported |
-| Laravel (PHP) | ✅ Supported |
+| Go (Golang) | 🔜 Coming Soon |
+| Laravel (PHP) | 🔜 Coming Soon |
 | Python (Django/Flask) | 🔜 Planned |
 
 ---

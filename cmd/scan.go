@@ -45,6 +45,8 @@ Examples:
 			}
 		}
 
+		projectPath = strings.Trim(strings.TrimSpace(projectPath), `"'`)
+
 		if _, err := os.Stat(projectPath); os.IsNotExist(err) {
 			return fmt.Errorf("project path does not exist: %s", projectPath)
 		}
@@ -145,7 +147,7 @@ func printScanText(result *engine.Result) error {
 		fmt.Println(line)
 	}
 
-	if r != nil && r.Summary != "" {
+	if r != nil && r.Summary != "" && !strings.HasPrefix(r.Summary, "Project analysis completed without AI") {
 		fmt.Printf("\n━━━ Summary ━━━\n%s\n", r.Summary)
 	}
 
