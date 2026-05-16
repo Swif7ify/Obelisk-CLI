@@ -146,46 +146,22 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 		aiClient, err := ai.NewClient(cfg.APIKey, cfg.Model)
 		if err != nil {
 			// Fallback to non-AI report
-			report = ai.FallbackReport(
-				result.CountBySeverity(scanner.SeverityCritical),
-				result.CountBySeverity(scanner.SeverityError),
-				result.CountBySeverity(scanner.SeverityWarning),
-				result.CountBySeverity(scanner.SeverityInfo),
-				err,
-			)
+			report = ai.FallbackReport(result, err)
 		} else {
 			prompt := ai.BuildPrompt(result)
 			ctx := context.Background()
 			response, err := aiClient.GenerateContent(ctx, prompt)
 			if err != nil {
-				report = ai.FallbackReport(
-					result.CountBySeverity(scanner.SeverityCritical),
-					result.CountBySeverity(scanner.SeverityError),
-					result.CountBySeverity(scanner.SeverityWarning),
-					result.CountBySeverity(scanner.SeverityInfo),
-					err,
-				)
+				report = ai.FallbackReport(result, err)
 			} else {
 				report, err = ai.ParseReport(response)
 				if err != nil {
-					report = ai.FallbackReport(
-						result.CountBySeverity(scanner.SeverityCritical),
-						result.CountBySeverity(scanner.SeverityError),
-						result.CountBySeverity(scanner.SeverityWarning),
-						result.CountBySeverity(scanner.SeverityInfo),
-						err,
-					)
+					report = ai.FallbackReport(result, err)
 				}
 			}
 		}
 	} else {
-		report = ai.FallbackReport(
-			result.CountBySeverity(scanner.SeverityCritical),
-			result.CountBySeverity(scanner.SeverityError),
-			result.CountBySeverity(scanner.SeverityWarning),
-			result.CountBySeverity(scanner.SeverityInfo),
-			nil,
-		)
+		report = ai.FallbackReport(result, nil)
 	}
 
 	return &Result{

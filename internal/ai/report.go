@@ -3,6 +3,8 @@ package ai
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/Swif7ify/Obelisk-CLI/internal/scanner"
 )
 
 // HealthReport represents the AI-generated health assessment.
@@ -63,34 +65,53 @@ func ParseReport(response string) (*HealthReport, error) {
 }
 
 // FallbackReport creates a report when AI is unavailable.
-func FallbackReport(criticals, errors, warnings, infos int, aiErr error) *HealthReport {
+func FallbackReport(result *scanner.ScanResult, aiErr error) *HealthReport {
+	secScore := 100
+	archScore := 100
+	qualScore := 100
+
+	criticals := result.CountBySeverity(scanner.SeverityCritical)
+	errors := result.CountBySeverity(scanner.SeverityError)
+	warnings := result.CountBySeverity(scanner.SeverityWarning)
+	infos := result.CountBySeverity(scanner.SeverityInfo)
 	total := criticals + errors + warnings + infos
-	score := 100
-	
-	score -= criticals * 40
-	score -= errors * 25
-	score -= warnings * 5
 
-	if score < 0 {
-		score = 0
+	for _, f := range result.Findings {
+		penalty := 0
+		switch f.Severity {
+		case scanner.SeverityCritical:
+			penalty = 40
+		case scanner.SeverityError:
+			penalty = 25
+		case scanner.SeverityWarning:
+			penalty = 5
+		}
+
+		switch f.Category {
+		case scanner.CategorySecurity:
+			secScore -= penalty
+		case scanner.CategoryArchitecture:
+			archScore -= penalty
+		default:
+			qualScore -= penalty
+		}
 	}
 
-	// Hard ceilings for major issues
-	if criticals > 0 && score > 39 {
-		score = 39 // F
-	} else if errors > 0 && score > 59 {
-		score = 59 // F
-	}
+	secScore = clamp(secScore, 0, 100)
+	archScore = clamp(archScore, 0, 100)
+	qualScore = clamp(qualScore, 0, 100)
+
+	overallScore := (secScore + archScore + qualScore) / 3
 
 	grade := "A"
 	switch {
-	case score >= 90:
+	case overallScore >= 90:
 		grade = "A"
-	case score >= 75:
+	case overallScore >= 75:
 		grade = "B"
-	case score >= 60:
+	case overallScore >= 60:
 		grade = "C"
-	case score >= 40:
+	case overallScore >= 40:
 		grade = "D"
 	default:
 		grade = "F"
@@ -110,10 +131,10 @@ func FallbackReport(criticals, errors, warnings, infos int, aiErr error) *Health
 
 	return &HealthReport{
 		Grade:             grade,
-		SecurityScore:     score,
-		ArchitectureScore: score,
-		QualityScore:      score,
-		OverallScore:      score,
+		SecurityScore:     secScore,
+		ArchitectureScore: archScore,
+		QualityScore:      qualScore,
+		OverallScore:      overallScore,
 		Summary:           summary,
 		Praise:            []string{"Scan completed successfully"},
 		Recommendations:   []string{"Run with an API key for AI-powered insights"},
