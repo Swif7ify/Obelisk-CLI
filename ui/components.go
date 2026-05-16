@@ -108,7 +108,7 @@ func renderScoreBar(score int) string {
 }
 
 // RenderFindings renders the findings list.
-func RenderFindings(findings []scanner.Finding) string {
+func RenderFindings(findings []scanner.Finding, reportPath string) string {
 	if len(findings) == 0 {
 		return CardStyle.Width(76).Render(
 			SuccessStyle.Render("✓ No issues found — excellent!"),
@@ -151,7 +151,11 @@ func RenderFindings(findings []scanner.Finding) string {
 	}
 
 	if len(findings) > maxShow {
-		sb.WriteString(MutedStyle.Render(fmt.Sprintf("\n  ... and %d more findings", len(findings)-maxShow)))
+		sb.WriteString(MutedStyle.Render(fmt.Sprintf("\n  ... and %d more findings\n", len(findings)-maxShow)))
+		if reportPath != "" {
+			sb.WriteString(MutedStyle.Render("  📄 Full report: "))
+			sb.WriteString(lipgloss.NewStyle().Foreground(ColorPrimary).Render(reportPath))
+		}
 	}
 
 	return CardStyle.Width(76).Render(sb.String())

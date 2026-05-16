@@ -70,7 +70,7 @@ func Execute() {
 
 func init() {
 	// Set custom version template
-	rootCmd.SetVersionTemplate(`🏛️ Obelisk CLI
+	rootCmd.SetVersionTemplate(`Obelisk CLI
   Version:    {{.Version}}
   Commit:     ` + Commit + `
   Built:      ` + BuildDate + `
