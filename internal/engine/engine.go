@@ -114,6 +114,18 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 	importFindings, _ := scanner.ScanImports(absPath)
 	result.Findings = append(result.Findings, importFindings...)
 
+	if onPhase != nil {
+		onPhase("Analyzing cyclomatic complexity...")
+	}
+	complexityFindings, _ := scanner.ScanComplexity(absPath)
+	result.Findings = append(result.Findings, complexityFindings...)
+
+	if onPhase != nil {
+		onPhase("Tracking technical debt...")
+	}
+	techDebtFindings, _ := scanner.ScanTechDebt(absPath)
+	result.Findings = append(result.Findings, techDebtFindings...)
+
 	// Step 5: Orchestrated Linting (ESLint)
 	if onPhase != nil {
 		onPhase("Running linters...")

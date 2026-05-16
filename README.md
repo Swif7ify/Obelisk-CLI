@@ -43,8 +43,10 @@ Obelisk is designed for both humans and machines:
 - **Pre-Push Hook** — Integrates into Git to automatically block pushes with security vulnerabilities
 - **Ignore Engine** — Automatically reads `.gitignore` and `.obelisk-ignore` to exclude files/folders across all scans.
 
-### 🧹 Architectural & Syntax Linting
+### 🧹 Architectural & Code Quality Linting
 - **Native Syntax Checking** — If ESLint is missing, Obelisk uses its own blazing-fast embedded `esbuild` engine to natively parse JS/TS files and catch syntax errors.
+- **Cyclomatic Complexity Scanner** — Mathematically analyzes your code's branching density (`if/for/switch`) to detect and flag highly unmaintainable "Spaghetti Code".
+- **Technical Debt Tracker** — Hunts down lingering `TODO`, `FIXME`, and `HACK` comments across your codebase and aggregates them into architectural debt warnings.
 - **Naming Enforcer** — Validates file/folder naming conventions per framework (PascalCase for React, kebab-case for assets)
 - **Dependency Audit** — Scans `package.json` for deprecated or vulnerable packages
 - **Import Integrity** — Flags circular dependencies and enforces clean import patterns

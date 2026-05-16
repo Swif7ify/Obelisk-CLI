@@ -138,9 +138,17 @@ func checkTrackedSensitiveFiles(projectPath string) []Finding {
 	trackedFiles := strings.Split(string(output), "\n")
 	for _, tracked := range trackedFiles {
 		tracked = strings.TrimSpace(tracked)
+		if tracked == "" {
+			continue
+		}
 		for _, sensitive := range sensitiveFiles {
 			basename := filepath.Base(tracked)
 			if basename == sensitive || strings.HasPrefix(basename, ".env") {
+				// Exempt example/template files
+				if strings.HasSuffix(basename, ".example") || strings.HasSuffix(basename, ".template") || strings.HasSuffix(basename, ".sample") {
+					continue
+				}
+
 				findings = append(findings, Finding{
 					Category:    CategorySecurity,
 					Severity:    SeverityCritical,
