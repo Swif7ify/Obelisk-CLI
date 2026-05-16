@@ -1,0 +1,140 @@
+{
+  "name": "obelisk-cli",
+  "displayName": "Obelisk CLI",
+  "description": "AI-Powered Automated Tech Lead — scan your project for security issues, architectural problems, and code quality right from the IDE.",
+  "version": "0.1.0",
+  "publisher": "onedev-ph",
+  "license": "MIT",
+  "icon": "resources/obelisk-icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Swif7ify/Obelisk-CLI"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "obelisk",
+    "security",
+    "code-quality",
+    "linting",
+    "ai",
+    "tech-lead"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "obelisk-panel",
+          "title": "Obelisk",
+          "icon": "resources/obelisk-icon.png"
+        }
+      ]
+    },
+    "views": {
+      "obelisk-panel": [
+        {
+          "id": "obeliskFindings",
+          "name": "Findings",
+          "icon": "resources/obelisk-icon.png"
+        },
+        {
+          "id": "obeliskSummary",
+          "name": "Health Summary",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "obelisk.scan",
+        "title": "Obelisk: Scan Project",
+        "icon": "$(play)"
+      },
+      {
+        "command": "obelisk.refresh",
+        "title": "Obelisk: Refresh Scan",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "obelisk.clear",
+        "title": "Obelisk: Clear Findings",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "obelisk.stop",
+        "title": "Obelisk: Stop Scan",
+        "icon": "$(debug-stop)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "obelisk.scan",
+          "when": "view == obeliskFindings",
+          "group": "navigation@1"
+        },
+        {
+          "command": "obelisk.refresh",
+          "when": "view == obeliskFindings",
+          "group": "navigation@2"
+        },
+        {
+          "command": "obelisk.clear",
+          "when": "view == obeliskFindings",
+          "group": "navigation@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Obelisk CLI",
+      "properties": {
+        "obelisk.executablePath": {
+          "type": "string",
+          "default": "obelisk",
+          "description": "Path to the Obelisk CLI executable. Use 'obelisk' if it's on your PATH."
+        },
+        "obelisk.scanOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan when a workspace is opened."
+        },
+        "obelisk.scanOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically re-scan when a file is saved (with debounce)."
+        },
+        "obelisk.scanOnSaveDelay": {
+          "type": "number",
+          "default": 3000,
+          "description": "Delay in milliseconds before auto-scanning after save."
+        },
+        "obelisk.skipAI": {
+          "type": "boolean",
+          "default": false,
+          "description": "Skip AI analysis during scans (faster, no API key needed)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "npx vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  }
+}
