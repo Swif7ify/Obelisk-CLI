@@ -240,16 +240,15 @@ export class SummaryViewProvider implements vscode.WebviewViewProvider {
             .score-bar {
                 flex: 1;
                 height: 6px;
-                background: var(--vscode-progressBar-background);
+                background: rgba(128, 128, 128, 0.2);
                 border-radius: 3px;
                 overflow: hidden;
-                opacity: 0.3;
             }
             .score-fill {
                 height: 100%;
                 background: var(--vscode-progressBar-background);
                 border-radius: 3px;
-                opacity: 1;
+                transition: width 0.3s ease;
             }
             .score-value {
                 width: 28px;
