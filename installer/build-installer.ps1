@@ -18,7 +18,7 @@ $projectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Pa
 Push-Location $projectRoot
 
 try {
-    # ── Check if WiX is installed ───────────────────────────────────────────
+    # -- Check if WiX is installed ------------------------------------------------
     $wixPath = "${env:WIX}bin"
     if (-not (Test-Path $wixPath)) {
         # Fallback: try finding candle.exe on PATH
@@ -26,7 +26,7 @@ try {
         if ($candleOnPath) {
             $wixPath = Split-Path $candleOnPath.Source
         } else {
-            Write-Host "❌ WiX Toolset not found!" -ForegroundColor Red
+            Write-Host "[ERROR] WiX Toolset not found!" -ForegroundColor Red
             Write-Host ""
             Write-Host "Please install WiX Toolset 3.11 or later:" -ForegroundColor Yellow
             Write-Host "  Option A: choco install wixtoolset" -ForegroundColor White
@@ -37,12 +37,15 @@ try {
         }
     }
 
-    Write-Host "✓ WiX Toolset found at: $wixPath" -ForegroundColor Green
+    Write-Host "[OK] WiX Toolset found at: $wixPath" -ForegroundColor Green
 
-    # ── Build the Go executable ─────────────────────────────────────────────
+    # -- Build the Go executable ---------------------------------------------------
     $ldflagsPkg = "github.com/Swif7ify/Obelisk-CLI/cmd"
-    $commitHash = (git rev-parse --short HEAD 2>$null) ?? "unknown"
-    $buildDate  = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
+    $commitHash = git rev-parse --short HEAD 2>$null
+    if (-not $commitHash) {
+        $commitHash = "unknown"
+    }
+    $buildDate = Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
     $ldflags = "-s -w -X $ldflagsPkg.Version=$Version -X $ldflagsPkg.Commit=$commitHash -X $ldflagsPkg.BuildDate=$buildDate"
 
     if (-not $SkipBuild) {
@@ -50,7 +53,7 @@ try {
         Write-Host "Building Obelisk executable..." -ForegroundColor Yellow
 
         if (-not (Test-Path "main.go")) {
-            Write-Host "❌ main.go not found. Please run this script from the project root." -ForegroundColor Red
+            Write-Host "[ERROR] main.go not found. Please run this script from the project root." -ForegroundColor Red
             exit 1
         }
 
@@ -67,23 +70,23 @@ try {
         go build -o "bin\obelisk.exe" -ldflags $ldflags .
 
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "❌ Build failed!" -ForegroundColor Red
+            Write-Host "[ERROR] Build failed!" -ForegroundColor Red
             exit 1
         }
 
-        $exeSize = (Get-Item "bin\obelisk.exe").Length / 1MB
-        Write-Host "✓ Build successful: bin\obelisk.exe ($([math]::Round($exeSize, 2)) MB)" -ForegroundColor Green
+        $exeSize = [math]::Round((Get-Item "bin\obelisk.exe").Length / 1MB, 2)
+        Write-Host "[OK] Build successful: bin\obelisk.exe - $exeSize MB" -ForegroundColor Green
     } else {
         Write-Host ""
-        Write-Host "⚠️  Skipping build (using existing bin\obelisk.exe)" -ForegroundColor Yellow
+        Write-Host "[WARN] Skipping build (using existing bin\obelisk.exe)" -ForegroundColor Yellow
 
         if (-not (Test-Path "bin\obelisk.exe")) {
-            Write-Host "❌ bin\obelisk.exe not found! Run without -SkipBuild first." -ForegroundColor Red
+            Write-Host "[ERROR] bin\obelisk.exe not found! Run without -SkipBuild first." -ForegroundColor Red
             exit 1
         }
     }
 
-    # ── Verify required installer assets ────────────────────────────────────
+    # -- Verify required installer assets ------------------------------------------
     Write-Host ""
     Write-Host "Checking installer assets..." -ForegroundColor Yellow
 
@@ -103,16 +106,16 @@ try {
     }
 
     if ($missingFiles.Count -gt 0) {
-        Write-Host "❌ Missing required files:" -ForegroundColor Red
+        Write-Host "[ERROR] Missing required files:" -ForegroundColor Red
         foreach ($file in $missingFiles) {
             Write-Host "  - $file" -ForegroundColor Red
         }
         exit 1
     }
 
-    Write-Host "✓ All required files present" -ForegroundColor Green
+    Write-Host "[OK] All required files present" -ForegroundColor Green
 
-    # ── Compile WiX source ──────────────────────────────────────────────────
+    # -- Compile WiX source --------------------------------------------------------
     Write-Host ""
     Write-Host "Compiling WiX source..." -ForegroundColor Yellow
 
@@ -120,7 +123,7 @@ try {
     $lightExe  = Join-Path $wixPath "light.exe"
     $binDir    = Join-Path $projectRoot "bin"
 
-    # Run candle (compiler) — pass variables for portable paths
+    # Run candle (compiler) - pass variables for portable paths
     & $candleExe -nologo `
         -arch x64 `
         "-dBinDir=$binDir" `
@@ -129,13 +132,13 @@ try {
         "installer\obelisk.wxs"
 
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ WiX compilation failed!" -ForegroundColor Red
+        Write-Host "[ERROR] WiX compilation failed!" -ForegroundColor Red
         exit 1
     }
 
-    Write-Host "✓ WiX compilation successful" -ForegroundColor Green
+    Write-Host "[OK] WiX compilation successful" -ForegroundColor Green
 
-    # ── Link MSI installer ──────────────────────────────────────────────────
+    # -- Link MSI installer --------------------------------------------------------
     Write-Host ""
     Write-Host "Linking MSI installer..." -ForegroundColor Yellow
 
@@ -148,21 +151,21 @@ try {
         "installer\obelisk.wixobj"
 
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ MSI linking failed!" -ForegroundColor Red
+        Write-Host "[ERROR] MSI linking failed!" -ForegroundColor Red
         exit 1
     }
 
-    # ── Clean up intermediate files ─────────────────────────────────────────
+    # -- Clean up intermediate files -----------------------------------------------
     Remove-Item "installer\obelisk.wixobj" -Force -ErrorAction SilentlyContinue
     Remove-Item "installer\ObeliskCLI-$Version-x64.wixpdb" -Force -ErrorAction SilentlyContinue
 
-    # ── Done ────────────────────────────────────────────────────────────────
-    $msiSize = (Get-Item $msiOutput).Length / 1MB
+    # -- Done ----------------------------------------------------------------------
+    $msiSize = [math]::Round((Get-Item $msiOutput).Length / 1MB, 2)
     Write-Host ""
-    Write-Host "✅ Installer built successfully!" -ForegroundColor Green
+    Write-Host "[SUCCESS] Installer built successfully!" -ForegroundColor Green
     Write-Host ""
     Write-Host "  Output:    $msiOutput" -ForegroundColor Cyan
-    Write-Host "  File size: $([math]::Round($msiSize, 2)) MB" -ForegroundColor Gray
+    Write-Host "  File size: $msiSize MB" -ForegroundColor Gray
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Yellow
     Write-Host "  1. Test the installer:  .\$msiOutput" -ForegroundColor White

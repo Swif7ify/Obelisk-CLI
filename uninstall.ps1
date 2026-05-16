@@ -21,7 +21,7 @@ if (Test-Path $systemPath) {
 }
 
 if ($null -eq $installPath) {
-    Write-Host "✓ Obelisk is not installed" -ForegroundColor Green
+    Write-Host "[OK] Obelisk is not installed" -ForegroundColor Green
     exit 0
 }
 
@@ -32,15 +32,13 @@ $currentPath = [Environment]::GetEnvironmentVariable("Path", $envScope)
 if ($currentPath -like "*$installPath*") {
     $newPath = ($currentPath -split ';' | Where-Object { $_ -ne $installPath }) -join ';'
     [Environment]::SetEnvironmentVariable("Path", $newPath, $envScope)
-    Write-Host "✓ Removed from PATH" -ForegroundColor Green
+    Write-Host "[OK] Removed from PATH" -ForegroundColor Green
 }
 
 # Remove directory
 Remove-Item -Path $installPath -Recurse -Force
-Write-Host "✓ Removed installation directory" -ForegroundColor Green
+Write-Host "[OK] Removed installation directory" -ForegroundColor Green
 
 Write-Host ""
-Write-Host "✅ Uninstallation complete!" -ForegroundColor Green
-Write-Host "   Please restart your terminal for PATH changes to take effect" -ForegroundColor Yellow
-
-# Made with Bob
+Write-Host "[SUCCESS] Uninstallation complete!" -ForegroundColor Green
+Write-Host "  Please restart your terminal for PATH changes to take effect" -ForegroundColor Yellow

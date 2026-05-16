@@ -26,19 +26,19 @@ Write-Host ""
 # Create install directory
 if (!(Test-Path $installPath)) {
     New-Item -ItemType Directory -Path $installPath -Force | Out-Null
-    Write-Host "✓ Created directory: $installPath" -ForegroundColor Green
+    Write-Host "[OK] Created directory: $installPath" -ForegroundColor Green
 }
 
 # Copy executable
 $exePath = ".\bin\obelisk.exe"
 if (!(Test-Path $exePath)) {
-    Write-Host "✗ Error: obelisk.exe not found at $exePath" -ForegroundColor Red
+    Write-Host "[ERROR] obelisk.exe not found at $exePath" -ForegroundColor Red
     Write-Host "  Please run 'go build -o bin/obelisk.exe' first" -ForegroundColor Yellow
     exit 1
 }
 
 Copy-Item $exePath "$installPath\obelisk.exe" -Force
-Write-Host "✓ Copied obelisk.exe to $installPath" -ForegroundColor Green
+Write-Host "[OK] Copied obelisk.exe to $installPath" -ForegroundColor Green
 
 # Add to PATH
 $currentPath = [Environment]::GetEnvironmentVariable("Path", $envScope)
@@ -48,15 +48,15 @@ if ($currentPath -notlike "*$installPath*") {
         "$currentPath;$installPath",
         $envScope
     )
-    Write-Host "✓ Added to PATH" -ForegroundColor Green
+    Write-Host "[OK] Added to PATH" -ForegroundColor Green
     Write-Host ""
-    Write-Host "⚠️  Please restart your terminal for PATH changes to take effect" -ForegroundColor Yellow
+    Write-Host "[NOTE] Please restart your terminal for PATH changes to take effect" -ForegroundColor Yellow
 } else {
-    Write-Host "✓ Already in PATH" -ForegroundColor Green
+    Write-Host "[OK] Already in PATH" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "✅ Installation complete!" -ForegroundColor Green
+Write-Host "[SUCCESS] Installation complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Usage:" -ForegroundColor Cyan
 Write-Host "  obelisk              # Launch interactive TUI" -ForegroundColor White
@@ -69,5 +69,3 @@ Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "  1. Restart your terminal" -ForegroundColor White
 Write-Host "  2. Run: obelisk config set api-key YOUR_KEY" -ForegroundColor White
 Write-Host "  3. Run: obelisk" -ForegroundColor White
-
-# Made with Bob
