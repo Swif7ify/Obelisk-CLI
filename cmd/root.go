@@ -27,10 +27,11 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "obelisk",
-	Short: "🏛️ Obelisk — The AI-Powered Automated Tech Lead",
-	Long: `Obelisk is a high-performance CLI tool that acts as a final gatekeeper 
-for your project. It evaluates project integrity, security, and architectural 
+	Use:     "obelisk",
+	Short:   "Obelisk — The AI-Powered Automated Tech Lead",
+	Version: Version,
+	Long: `Obelisk is a high-performance CLI tool that acts as a final gatekeeper
+for your project. It evaluates project integrity, security, and architectural
 health using static analysis and LLM intelligence.
 
 Run with no subcommand to launch the interactive TUI.
@@ -68,6 +69,13 @@ func Execute() {
 }
 
 func init() {
+	// Set custom version template
+	rootCmd.SetVersionTemplate(`🏛️ Obelisk CLI
+  Version:    {{.Version}}
+  Commit:     ` + Commit + `
+  Built:      ` + BuildDate + `
+`)
+
 	rootCmd.PersistentFlags().BoolVarP(&flagVerbose, "verbose", "v", false, "Enable verbose output")
 	rootCmd.PersistentFlags().StringVar(&flagAPIKey, "api-key", "", "Gemini API key (overrides GOOGLE_API_KEY env var)")
 	rootCmd.PersistentFlags().StringVar(&flagModel, "model", "gemini-2.5-flash", "AI model to use")
