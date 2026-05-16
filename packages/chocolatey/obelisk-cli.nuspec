@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <!-- Required -->
+    <id>obelisk-cli</id>
+    <version>0.1.0</version>
+    <title>Obelisk CLI</title>
+    <authors>OneDev PH</authors>
+    <description>
+Obelisk CLI is an AI-powered automated tech lead for modern codebases. It acts as a final gatekeeper for your project, evaluating project integrity, security, and architectural health using deep static analysis, native code parsing, and LLM intelligence.
+
+## Features
+
+- **Security Shield**: Deep-scans for hardcoded secrets, API keys, and security vulnerabilities
+- **Code Quality**: Native syntax checking, cyclomatic complexity analysis, and technical debt tracking
+- **AI Analysis**: Health scores (A-F), vibe checks, and plain-English summaries powered by Google Gemini
+- **Multiple Modes**: Interactive TUI, local dashboard, and headless CI/CD mode
+- **Git Integration**: Pre-push hooks to block commits with critical issues
+- **Report Generation**: Automatic markdown/text reports with timestamps
+
+## Usage
+
+After installation, run:
+- `obelisk` - Launch interactive TUI
+- `obelisk check` - Run health check with visual dashboard
+- `obelisk scan` - Headless mode for CI/CD pipelines
+- `obelisk config` - Manage configuration
+- `obelisk --help` - Show all commands
+
+Built with IBM Bob IDE for the IBM Bob Hackathon 2026.
+    </description>
+
+    <!-- URLs -->
+    <projectUrl>https://github.com/Swif7ify/Obelisk-CLI</projectUrl>
+    <packageSourceUrl>https://github.com/Swif7ify/Obelisk-CLI/tree/main/packages/chocolatey</packageSourceUrl>
+    <projectSourceUrl>https://github.com/Swif7ify/Obelisk-CLI</projectSourceUrl>
+    <docsUrl>https://github.com/Swif7ify/Obelisk-CLI/blob/main/README.md</docsUrl>
+    <bugTrackerUrl>https://github.com/Swif7ify/Obelisk-CLI/issues</bugTrackerUrl>
+    <licenseUrl>https://github.com/Swif7ify/Obelisk-CLI/blob/main/LICENSE</licenseUrl>
+    <iconUrl>https://raw.githubusercontent.com/Swif7ify/Obelisk-CLI/main/installer/icon.png</iconUrl>
+
+    <!-- License -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2026 OneDev PH</copyright>
+    <licenseUrl>https://github.com/Swif7ify/Obelisk-CLI/blob/main/LICENSE</licenseUrl>
+
+    <!-- Tags -->
+    <tags>obelisk cli developer-tools ai code-quality security linter static-analysis tech-lead automation gemini</tags>
+
+    <!-- Release Notes -->
+    <releaseNotes>https://github.com/Swif7ify/Obelisk-CLI/blob/main/CHANGELOG.md</releaseNotes>
+
+    <!-- Dependencies -->
+    <dependencies>
+      <!-- No dependencies - standalone executable -->
+    </dependencies>
+  </metadata>
+
+  <files>
+    <!-- Include the executable -->
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
+
+<!-- Made with Bob -->

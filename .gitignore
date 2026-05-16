@@ -47,3 +47,8 @@ __debug_bin*
 
 project.md
 userFILE.md
+
+# Installer build artifacts
+*.msi
+*.wixobj
+*.wixpdb

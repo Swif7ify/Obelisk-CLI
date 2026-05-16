@@ -12,9 +12,11 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 # Determine install location
 if ($isAdmin) {
     $installPath = "C:\Program Files\Obelisk"
+    $envScope = "Machine"
     Write-Host "Installing to: $installPath (System-wide)" -ForegroundColor Green
 } else {
     $installPath = "$env:LOCALAPPDATA\Obelisk"
+    $envScope = "User"
     Write-Host "Installing to: $installPath (User-only)" -ForegroundColor Yellow
     Write-Host "Tip: Run as Administrator for system-wide installation" -ForegroundColor Gray
 }
@@ -39,12 +41,12 @@ Copy-Item $exePath "$installPath\obelisk.exe" -Force
 Write-Host "✓ Copied obelisk.exe to $installPath" -ForegroundColor Green
 
 # Add to PATH
-$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$currentPath = [Environment]::GetEnvironmentVariable("Path", $envScope)
 if ($currentPath -notlike "*$installPath*") {
     [Environment]::SetEnvironmentVariable(
         "Path",
         "$currentPath;$installPath",
-        "User"
+        $envScope
     )
     Write-Host "✓ Added to PATH" -ForegroundColor Green
     Write-Host ""

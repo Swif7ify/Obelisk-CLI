@@ -1,0 +1,57 @@
+# Created using wingetcreate 1.5.0.0
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.5.0.schema.json
+
+PackageIdentifier: OneDev.ObeliskCLI
+PackageVersion: 0.1.0
+PackageLocale: en-US
+Publisher: OneDev PH
+PublisherUrl: https://github.com/Swif7ify
+PublisherSupportUrl: https://github.com/Swif7ify/Obelisk-CLI/issues
+# PrivacyUrl:
+Author: OneDev PH
+PackageName: Obelisk CLI
+PackageUrl: https://github.com/Swif7ify/Obelisk-CLI
+License: MIT
+LicenseUrl: https://github.com/Swif7ify/Obelisk-CLI/blob/main/LICENSE
+Copyright: Copyright (c) 2026 OneDev PH
+# CopyrightUrl:
+ShortDescription: AI-Powered Automated Tech Lead for Modern Codebases
+Description: |-
+    Obelisk CLI is a high-performance command-line tool that acts as a final gatekeeper for your project.
+    It evaluates project integrity, security, and architectural health using deep static analysis,
+    native code parsing, and LLM intelligence powered by Google Gemini.
+
+    Features:
+    - Security Shield: Deep-scans for hardcoded secrets, API keys, and vulnerabilities
+    - Code Quality: Native syntax checking, cyclomatic complexity analysis, technical debt tracking
+    - AI Analysis: Health scores (A-F), vibe checks, and plain-English summaries
+    - Multiple Modes: Interactive TUI, local dashboard, and headless CI/CD mode
+    - Git Integration: Pre-push hooks to block commits with critical issues
+    - Report Generation: Automatic markdown/text reports with timestamps
+
+    Built with IBM Bob IDE for the IBM Bob Hackathon 2026.
+Moniker: obelisk
+Tags:
+    - cli
+    - developer-tools
+    - ai
+    - code-quality
+    - security
+    - linter
+    - static-analysis
+    - tech-lead
+    - automation
+    - gemini
+# ReleaseNotes:
+ReleaseNotesUrl: https://github.com/Swif7ify/Obelisk-CLI/releases/tag/v0.1.0
+# PurchaseUrl:
+# InstallationNotes:
+Documentations:
+    - DocumentLabel: README
+      DocumentUrl: https://github.com/Swif7ify/Obelisk-CLI/blob/main/README.md
+    - DocumentLabel: Distribution Guide
+      DocumentUrl: https://github.com/Swif7ify/Obelisk-CLI/blob/main/DISTRIBUTION.md
+ManifestType: defaultLocale
+ManifestVersion: 1.5.0
+
+# Made with Bob

@@ -11,10 +11,13 @@ $systemPath = "C:\Program Files\Obelisk"
 $userPath = "$env:LOCALAPPDATA\Obelisk"
 
 $installPath = $null
+$envScope = "User"
 if (Test-Path $systemPath) {
     $installPath = $systemPath
+    $envScope = "Machine"
 } elseif (Test-Path $userPath) {
     $installPath = $userPath
+    $envScope = "User"
 }
 
 if ($null -eq $installPath) {
@@ -25,10 +28,10 @@ if ($null -eq $installPath) {
 Write-Host "Found installation at: $installPath" -ForegroundColor Yellow
 
 # Remove from PATH
-$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$currentPath = [Environment]::GetEnvironmentVariable("Path", $envScope)
 if ($currentPath -like "*$installPath*") {
     $newPath = ($currentPath -split ';' | Where-Object { $_ -ne $installPath }) -join ';'
-    [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+    [Environment]::SetEnvironmentVariable("Path", $newPath, $envScope)
     Write-Host "✓ Removed from PATH" -ForegroundColor Green
 }
 
