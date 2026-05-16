@@ -28,7 +28,7 @@ npm install -g ovsx
 
 1. Go to https://marketplace.visualstudio.com/manage
 2. Sign in with Microsoft account
-3. Create a publisher (e.g., `onedev-ph`)
+3. Create a publisher (e.g., `OneDevPH`)
 4. Generate a Personal Access Token (PAT):
     - Go to https://dev.azure.com/
     - User Settings → Personal Access Tokens

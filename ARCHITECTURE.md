@@ -728,4 +728,4 @@ go tool cover -html=coverage.out
 
 ---
 
-**Built with ❤️ by OneDev PH for the IBM Bob Hackathon 2026**
+**Built by OneDev PH for the IBM Bob Hackathon 2026**

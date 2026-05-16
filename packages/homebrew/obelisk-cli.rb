@@ -33,7 +33,7 @@ class ObeliskCli < Formula
            obelisk
 
         3. Or run a quick check:
-           obelisk check --path /path/to/project
+           obelisk check  /path/to/project
 
       Documentation: https://github.com/Swif7ify/Obelisk-CLI
     EOS

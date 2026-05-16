@@ -1,13 +1,11 @@
 import * as vscode from "vscode";
 import { ObeliskRunner } from "./obeliskRunner";
-import { MCPClient } from "./mcpClient";
 import { FindingsProvider, FindingItem } from "./findingsProvider";
 import { DiagnosticsManager } from "./diagnosticsManager";
 import { StatusBarManager } from "./statusBar";
 import { SummaryViewProvider } from "./summaryView";
 
 let runner: ObeliskRunner;
-let mcpClient: MCPClient | undefined;
 let findingsProvider: FindingsProvider;
 let diagnosticsManager: DiagnosticsManager;
 let statusBar: StatusBarManager;
@@ -23,17 +21,6 @@ export function activate(context: vscode.ExtensionContext) {
 	diagnosticsManager = new DiagnosticsManager();
 	statusBar = new StatusBarManager();
 	summaryView = new SummaryViewProvider(context.extensionUri);
-
-	// Initialize MCP client if in cloud mode
-	const config = vscode.workspace.getConfiguration("obelisk");
-	if (config.get<string>("mode") === "cloud") {
-		const serverUrl = config.get<string>(
-			"cloudServerUrl",
-			"https://mcp-obelisk.onedevph.online/sse",
-		);
-		mcpClient = new MCPClient(serverUrl);
-		vscode.window.showInformationMessage("Obelisk: Using Cloud MCP Server");
-	}
 
 	// Register TreeView
 	const treeView = vscode.window.createTreeView("obeliskFindings", {
@@ -76,6 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	// Auto-scan on open
+	const config = vscode.workspace.getConfiguration("obelisk");
 	if (config.get<boolean>("scanOnOpen", true)) {
 		// Small delay to let the workspace fully load
 		setTimeout(() => runScan(), 2000);
@@ -114,20 +102,9 @@ async function runScan(): Promise<void> {
 
 	try {
 		const cfg = vscode.workspace.getConfiguration("obelisk");
-		const mode = cfg.get<string>("mode", "local");
-		let result;
-
-		if (mode === "cloud" && mcpClient) {
-			// Use cloud MCP server
-			const skipAI = cfg.get<boolean>("skipAI", false);
-			result = await mcpClient.scanProject(
-				workspaceFolder.uri.fsPath,
-				skipAI,
-			);
-		} else {
-			// Use local CLI
-			result = await runner.scan(workspaceFolder.uri.fsPath);
-		}
+		
+		// Use local CLI
+		const result = await runner.scan(workspaceFolder.uri.fsPath);
 
 		// Update all views
 		findingsProvider.setResults(result, workspaceFolder.uri.fsPath);

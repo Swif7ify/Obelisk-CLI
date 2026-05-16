@@ -70,4 +70,4 @@ The extension runs `obelisk scan --format json` on your workspace and parses the
 
 ---
 
-Built with love by **OneDev PH** for the IBM Bob Hackathon 2026.
+Built by **OneDev PH** for the IBM Bob Hackathon 2026.

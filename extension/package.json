@@ -97,20 +97,6 @@
 		"configuration": {
 			"title": "Obelisk CLI",
 			"properties": {
-				"obelisk.mode": {
-					"type": "string",
-					"enum": [
-						"local",
-						"cloud"
-					],
-					"default": "local",
-					"description": "Scan mode: 'local' uses installed CLI, 'cloud' uses Obelisk Cloud MCP server"
-				},
-				"obelisk.cloudServerUrl": {
-					"type": "string",
-					"default": "https://mcp-obelisk.onedevph.online/sse",
-					"description": "URL of the Obelisk Cloud MCP server (only used in cloud mode)"
-				},
 				"obelisk.executablePath": {
 					"type": "string",
 					"default": "obelisk",

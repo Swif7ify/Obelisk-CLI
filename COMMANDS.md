@@ -69,12 +69,12 @@ obelisk
 Run a comprehensive health check on your project with detailed output.
 
 ```bash
-obelisk check --path /path/to/project
+obelisk check  /path/to/project
 ```
 
 **Flags:**
 
-- `--path string` - Path to project directory (required)
+- ` string` - Path to project directory (required)
 - `--skip-ai` - Skip AI analysis (faster, local-only checks)
 - `--api-key string` - Gemini API key
 - `--model string` - AI model to use
@@ -94,12 +94,12 @@ obelisk check --path /path/to/project
 Run a headless health check optimized for CI/CD pipelines.
 
 ```bash
-obelisk scan --path /path/to/project
+obelisk scan  /path/to/project
 ```
 
 **Flags:**
 
-- `--path string` - Path to project directory (required)
+- ` string` - Path to project directory (required)
 - `--skip-ai` - Skip AI analysis
 - `--fail-on-critical` - Exit with code 1 if critical issues found
 - `--output string` - Output format: text, json, or markdown
@@ -116,7 +116,7 @@ obelisk scan --path /path/to/project
 # GitHub Actions
 - name: Run Obelisk Scan
   run: |
-      obelisk scan --path . --fail-on-critical --output json > scan-results.json
+      obelisk scan  . --fail-on-critical --output json > scan-results.json
 ```
 
 ---
@@ -126,12 +126,12 @@ obelisk scan --path /path/to/project
 Generate and export a detailed health report.
 
 ```bash
-obelisk report --path /path/to/project --output report.json
+obelisk report  /path/to/project --output report.json
 ```
 
 **Flags:**
 
-- `--path string` - Path to project directory (required)
+- ` string` - Path to project directory (required)
 - `--output string` - Output file path (required)
 - `--format string` - Report format: json, markdown, html (default: json)
 - `--skip-ai` - Skip AI analysis
@@ -309,39 +309,39 @@ These flags work with all commands:
 
 ```bash
 # Quick check
-obelisk check --path .
+obelisk check  .
 
 # With AI analysis
-obelisk check --path . --api-key YOUR_KEY
+obelisk check  . --api-key YOUR_KEY
 
 # Skip AI (faster)
-obelisk check --path . --skip-ai
+obelisk check  . --skip-ai
 ```
 
 ### CI/CD Integration
 
 ```bash
 # GitHub Actions
-obelisk scan --path . --fail-on-critical --output json
+obelisk scan  . --fail-on-critical --output json
 
 # GitLab CI
-obelisk scan --path $CI_PROJECT_DIR --fail-on-critical
+obelisk scan  $CI_PROJECT_DIR --fail-on-critical
 
 # Jenkins
-obelisk scan --path ${WORKSPACE} --fail-on-critical
+obelisk scan  ${WORKSPACE} --fail-on-critical
 ```
 
 ### Report Generation
 
 ```bash
 # JSON report
-obelisk report --path . --output report.json --format json
+obelisk report  . --output report.json --format json
 
 # Markdown report
-obelisk report --path . --output REPORT.md --format markdown
+obelisk report  . --output REPORT.md --format markdown
 
 # HTML report
-obelisk report --path . --output report.html --format html
+obelisk report  . --output report.html --format html
 ```
 
 ### Configuration
@@ -352,7 +352,7 @@ obelisk config set api-key YOUR_API_KEY
 obelisk config set model gemini-2.5-flash
 
 # Then use without flags
-obelisk check --path .
+obelisk check  .
 ```
 
 ---

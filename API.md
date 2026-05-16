@@ -752,4 +752,4 @@ For API questions and issues:
 
 ---
 
-**Built with ❤️ by OneDev PH for the IBM Bob Hackathon 2026**
+**Built by OneDev PH for the IBM Bob Hackathon 2026**

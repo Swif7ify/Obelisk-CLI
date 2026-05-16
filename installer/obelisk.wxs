@@ -96,7 +96,6 @@
     <Property Id="ARPURLINFOABOUT" Value="https://github.com/Swif7ify/Obelisk-CLI" />
     <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" />
 
-    <!-- Icon (uncomment these 2 lines after placing installer/icon.ico) -->
     <Icon Id="ObeliskIcon" SourceFile="$(var.ProjectDir)\installer\icon.ico" />
     <Property Id="ARPPRODUCTICON" Value="ObeliskIcon" />
 
