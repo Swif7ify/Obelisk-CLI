@@ -5,9 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-17
+
+> 🚀 **Official Release** — The AI-Powered Automated Tech Lead.
+
+    ### Added
+    - Complete UI redesign for the interactive TUI with a premium aesthetic
+    - Polished component architecture and scorecard rendering
+    - Streamlined MCP server documentation focusing exclusively on local stdio integration
+
 ## [0.1.0] - 2026-05-17
 
-> 🏆 Initial release — Built during the **IBM Bob Hackathon** (May 15–17, 2026) by **OneDev PH**.
+> 🏆 Initial Pre-release — Built during the **IBM Bob Hackathon** (May 15–17, 2026) by **OneDev PH**.
 
 ### Added
 

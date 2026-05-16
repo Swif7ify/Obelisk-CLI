@@ -9,10 +9,10 @@ To scan your local codebase, Obelisk must be run locally on your machine. Config
 ### For Bob IDE
 
 1. Open your Bob configuration file (`.bob/config.json` or `~/.bob/config.json`)
-2. Add this configurartion:
+2. Add this configuration:
 
 ```json
-{r
+{
 	"mcpServers": {
 		"obelisk": {
 			"command": "obelisk",
