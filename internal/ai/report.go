@@ -16,6 +16,7 @@ type HealthReport struct {
 	Praise            []string    `json:"praise"`
 	Summary           string      `json:"summary"`
 	Recommendations   []string    `json:"recommendations"`
+	Error             string      `json:"error,omitempty"`
 }
 
 // Issue represents a prioritized issue from the AI analysis.
@@ -62,7 +63,7 @@ func ParseReport(response string) (*HealthReport, error) {
 }
 
 // FallbackReport creates a report when AI is unavailable.
-func FallbackReport(criticals, errors, warnings, infos int) *HealthReport {
+func FallbackReport(criticals, errors, warnings, infos int, aiErr error) *HealthReport {
 	total := criticals + errors + warnings + infos
 	score := 100
 	
@@ -102,6 +103,11 @@ func FallbackReport(criticals, errors, warnings, infos int) *HealthReport {
 		summary += "Issues were found that should be addressed."
 	}
 
+	errMsg := ""
+	if aiErr != nil {
+		errMsg = aiErr.Error()
+	}
+
 	return &HealthReport{
 		Grade:             grade,
 		SecurityScore:     score,
@@ -111,6 +117,7 @@ func FallbackReport(criticals, errors, warnings, infos int) *HealthReport {
 		Summary:           summary,
 		Praise:            []string{"Scan completed successfully"},
 		Recommendations:   []string{"Run with an API key for AI-powered insights"},
+		Error:             errMsg,
 	}
 }
 

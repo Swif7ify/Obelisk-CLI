@@ -151,6 +151,7 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 				result.CountBySeverity(scanner.SeverityError),
 				result.CountBySeverity(scanner.SeverityWarning),
 				result.CountBySeverity(scanner.SeverityInfo),
+				err,
 			)
 		} else {
 			prompt := ai.BuildPrompt(result)
@@ -162,6 +163,7 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 					result.CountBySeverity(scanner.SeverityError),
 					result.CountBySeverity(scanner.SeverityWarning),
 					result.CountBySeverity(scanner.SeverityInfo),
+					err,
 				)
 			} else {
 				report, err = ai.ParseReport(response)
@@ -171,6 +173,7 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 						result.CountBySeverity(scanner.SeverityError),
 						result.CountBySeverity(scanner.SeverityWarning),
 						result.CountBySeverity(scanner.SeverityInfo),
+						err,
 					)
 				}
 			}
@@ -181,6 +184,7 @@ func Run(cfg Config, onPhase OnPhaseChange) (*Result, error) {
 			result.CountBySeverity(scanner.SeverityError),
 			result.CountBySeverity(scanner.SeverityWarning),
 			result.CountBySeverity(scanner.SeverityInfo),
+			nil,
 		)
 	}
 
