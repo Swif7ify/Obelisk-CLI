@@ -65,13 +65,20 @@ func ParseReport(response string) (*HealthReport, error) {
 func FallbackReport(criticals, errors, warnings, infos int) *HealthReport {
 	total := criticals + errors + warnings + infos
 	score := 100
-	if criticals > 0 {
-		score -= criticals * 25
-	}
-	score -= errors * 10
-	score -= warnings * 3
+	
+	score -= criticals * 40
+	score -= errors * 25
+	score -= warnings * 5
+
 	if score < 0 {
 		score = 0
+	}
+
+	// Hard ceilings for major issues
+	if criticals > 0 && score > 39 {
+		score = 39 // F
+	} else if errors > 0 && score > 59 {
+		score = 59 // F
 	}
 
 	grade := "A"

@@ -76,11 +76,11 @@ Respond with ONLY a JSON object (no markdown, no code fences) in this exact form
 }
 
 GRADING RUBRIC:
-- A (90-100): Excellent. No critical issues, strong architecture, good practices.
-- B (75-89): Good. Minor issues, mostly well-structured.
+- A (90-100): Excellent. No critical issues, no syntax errors, strong architecture.
+- B (75-89): Good. Minor issues, mostly well-structured. No critical issues.
 - C (60-74): Fair. Several issues need attention.
-- D (40-59): Poor. Significant problems across multiple areas.
-- F (0-39): Failing. Critical security/architectural issues.
+- D (40-59): Poor. Significant problems. If there are ANY [ERROR] severity issues (like syntax errors), the maximum score is 59 (D or F).
+- F (0-39): Failing. If there are ANY [CRITICAL] severity issues (like leaked secrets), the maximum score is 39 (F).
 
 Be constructive and specific. Provide actionable advice.`)
 
