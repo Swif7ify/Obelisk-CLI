@@ -9,11 +9,15 @@
     <a href="https://github.com/Swif7ify/Obelisk-CLI/releases"><img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version"></a>
     <a href="https://github.com/Swif7ify/Obelisk-CLI/actions"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status"></a>
   </p>
+  <p align="center">
+    <em>🏆 Created during the <strong>IBM Bob Hackathon</strong> (May 15–17, 2026)</em><br/>
+    <em>By <strong>OneDev PH</strong> — built with the help of <strong>IBM Bob IDE</strong></em>
+  </p>
 </p>
 
 ---
 
-**Obelisk** is a high-performance CLI tool built in **Go** that acts as a final gatekeeper for your project. It doesn't just check for syntax errors — it evaluates project integrity, security, and architectural health using a combination of static analysis and LLM intelligence.
+**Obelisk** is a high-performance CLI tool built in **Go** that acts as a final gatekeeper for your project. It doesn't just check for syntax errors — it evaluates project integrity, security, and architectural health using a combination of deep static analysis, native code parsing, and LLM intelligence.
 
 ## ⚡ Why Obelisk?
 
@@ -33,33 +37,38 @@ One command. Full project health report. AI-graded score.
 
 ### 💻 CLI Modes
 Obelisk is designed for both humans and machines:
-- **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system.
-- **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a Markdown report file in your project directory upon exiting.
+- **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system with scrollable results.
+- **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a report file in your project directory.
 - **Headless Mode (`obelisk scan`)** — Completely bypasses the UI and prints standard text directly to `stdout`. Designed for automated pipelines (GitHub Actions, Jenkins). Supports raw JSON (`--format json`) and strict mode (`--strict`) which fails the pipeline with an Exit Code 1 if critical issues are found.
 
 ### 🛡️ Security Shield
-- **Secret Scanner** — Deep-scans files for hardcoded API keys, JWTs, AWS credentials, and private keys using regex + entropy analysis
-- **Integrity Validator** — Ensures `.gitignore` and `.env` setups prevent sensitive files from reaching version control
+- **Secret Scanner** — Deep-scans files for hardcoded API keys, JWTs, AWS credentials, and private keys using regex + Shannon entropy analysis
+- **Integrity Validator** — Ensures `.gitignore` and `.env` setups prevent sensitive files from reaching version control. Intelligently exempts safe files like `.env.example`.
 - **Pre-Push Hook** — Integrates into Git to automatically block pushes with security vulnerabilities
-- **Ignore Engine** — Automatically reads `.gitignore` and `.obelisk-ignore` to exclude files/folders across all scans.
+- **Ignore Engine** — Automatically reads `.gitignore` and `.obelisk-ignore` to exclude files/folders across all scans
 
 ### 🧹 Architectural & Code Quality Linting
-- **Native Syntax Checking** — If ESLint is missing, Obelisk uses its own blazing-fast embedded `esbuild` engine to natively parse JS/TS files and catch syntax errors.
-- **Cyclomatic Complexity Scanner** — Mathematically analyzes your code's branching density (`if/for/switch`) to detect and flag highly unmaintainable "Spaghetti Code".
-- **Technical Debt Tracker** — Hunts down lingering `TODO`, `FIXME`, and `HACK` comments across your codebase and aggregates them into architectural debt warnings.
+- **Native Syntax Checking (esbuild)** — If ESLint is missing, Obelisk uses its own blazing-fast embedded `esbuild` engine to natively parse `.js`, `.ts`, `.jsx`, and `.tsx` files and catch syntax errors — no Node.js required!
+- **Cyclomatic Complexity Scanner** — Mathematically analyzes your code's branching density (`if/for/switch/&&/||`) to detect and flag highly unmaintainable "Spaghetti Code"
+- **Technical Debt Tracker** — Hunts down lingering `TODO`, `FIXME`, `HACK`, and `XXX` comments across your codebase and aggregates them into architectural debt warnings
 - **Naming Enforcer** — Validates file/folder naming conventions per framework (PascalCase for React, kebab-case for assets)
 - **Dependency Audit** — Scans `package.json` for deprecated or vulnerable packages
 - **Import Integrity** — Flags circular dependencies and enforces clean import patterns
 - **Unused Dependency Detection** — Identifies and flags packages declared but never imported
 
+### 🔐 Enterprise-Grade Security Architecture
+- **OS-Level Keyring Encryption** — Your Gemini API key is securely encrypted and stored natively in your Operating System's Credential Manager (Windows Credential Manager / macOS Keychain / Linux Secret Service). It is **never** saved in plaintext to disk.
+- **Automatic Security Migration** — If upgrading from an older version that stored the key in `config.json`, Obelisk automatically detects it, migrates it into the secure OS keychain, and permanently scrubs the plaintext from the configuration file.
+- **Zero Trust Config** — The `config.json` file contains only non-sensitive settings (model, report format, default path). Credentials are strictly isolated in the OS vault.
+- **Environment Variable Support** — For CI/CD pipelines, pass keys securely at runtime via `GEMINI_API_KEY` or `GOOGLE_API_KEY` environment variables.
+
 ### 🧠 AI "Senior Dev" Brain
-- **OS-Level Keyring Encryption** — Your Gemini API key is securely encrypted and stored natively in your Operating System's Credential Manager (Windows Credential Manager / macOS Keychain). It is **never** saved in plaintext.
-- **Health Score (A–F)** — Composite grade based on Security, Architecture, and Code Quality rubrics
-- **Vibe Check** — AI analyzes your project structure against industry-standard patterns
+- **Health Score (A–F)** — Composite grade based on Security, Architecture, and Code Quality rubrics with strict hard-ceiling enforcement (errors cap score at D, criticals cap at F)
+- **Vibe Check** — AI analyzes your project structure against industry-standard patterns (MVC, Atomic Design, feature-based)
 - **Technical Debt Summary** — Plain-English summary of critical issues + praise for good practices
 
 ### 📄 Automatic Report Generation
-- **Markdown or Text** — Automatically save reports to `obelisk-report-<timestamp>.md` or configure it to save as `.txt`.
+- **Markdown or Text** — Automatically save reports to `obelisk-report-<timestamp>.md` or configure it to save as `.txt`
 - **Custom Output Paths** — Use `--output` flag to save reports to any location
 - **Persistent Configuration** — Manage global settings via `~/.obelisk/config.json`
 
@@ -96,14 +105,14 @@ obelisk scan
 obelisk scan --format json
 obelisk scan --strict # Exit code 1 on errors
 
-# 3. Report Generation
+# 4. Report Generation
 obelisk report --export=markdown
 obelisk report --export=json
 
-# 4. Git Hooks
+# 5. Git Hooks
 obelisk protect --install
 
-# 5. Configuration Management
+# 6. Configuration Management
 obelisk config list
 obelisk config set api-key YOUR_API_KEY
 obelisk config set report-format txt
@@ -146,12 +155,32 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 
 ---
 
+## 🔐 Security Model
+
+Obelisk takes security extremely seriously — both as a scanning tool and in its own implementation:
+
+| Layer | Protection |
+|---|---|
+| **API Key Storage** | OS-native Credential Manager encryption (Windows Credential Manager, macOS Keychain, Linux Secret Service) via `go-keyring`. Never stored in plaintext. |
+| **API Communication** | HTTPS (TLS 1.2+) exclusively to Google Gemini API |
+| **Config File** | `~/.obelisk/config.json` contains zero credentials — only non-sensitive preferences |
+| **Migration Safety** | Automatic detection and secure migration of legacy plaintext keys |
+| **CI/CD** | Supports environment variable injection (`GEMINI_API_KEY`) for zero-persistence pipelines |
+| **File Permissions** | Config directory created with `0700`, config file with `0600` (owner-only read/write) |
+
+For full details, see the [Security Policy](SECURITY.md).
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Core Logic:** [Go (Golang)](https://golang.org) — High-speed concurrency, tiny binaries, cross-platform
 - **Terminal UI:** [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss) — Premium interactive CLI experience
+- **Native Parser:** [esbuild](https://esbuild.github.io/) — Embedded Go-native JS/TS syntax checker (no Node.js required)
 - **AI Engine:** [Google Gemini API](https://ai.google.dev/) — Synthesizes findings into architectural insights
+- **Credential Security:** [go-keyring](https://github.com/zalando/go-keyring) — OS-native encrypted credential storage
 - **CLI Framework:** [Cobra](https://github.com/spf13/cobra) — Industry-standard Go CLI toolkit
+- **Scrollable Output:** [Bubbles Viewport](https://github.com/charmbracelet/bubbles) — Scrollable TUI results panel
 
 ---
 
@@ -159,30 +188,56 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 
 ```
 Obelisk-CLI/
-├── main.go                 # Entry point
-├── cmd/                    # Cobra command definitions
-│   ├── root.go             # Root command (Launches TUI)
-│   ├── check.go            # Original health check command
-│   ├── scan.go             # Headless scan mode
-│   ├── config_cmd.go       # Config management
-│   ├── report.go           # Export report command
-│   ├── protect.go          # Git hook integration
-│   └── version.go          # Version info
-├── ui/                     # Bubble Tea TUI layer
-│   ├── interactive.go      # Main menu state machine
-│   ├── handlers.go         # Key press routing
-│   ├── components.go       # Reusable views (Input, Spinner)
-│   └── styles.go           # Lip Gloss styling
-├── internal/               # Core logic
-│   ├── config/             # Persistent JSON settings
-│   ├── scanner/            # All scanning modules (.obelisk-ignore)
-│   ├── detector/           # Framework detection
-│   ├── ai/                 # Gemini API integration
-│   └── engine/             # Orchestrator
-└── adapters/               # Framework-specific rules
-    ├── javascript.go       # JS/TS/React/Next.js
-    ├── laravel.go          # PHP/Laravel
-    └── golang.go           # Go
+├── main.go                        # Entry point
+├── cmd/                           # Cobra command definitions
+│   ├── root.go                    # Root command (launches interactive TUI)
+│   ├── check.go                   # Visual health check dashboard
+│   ├── scan.go                    # Headless CI/CD scan mode
+│   ├── config_cmd.go              # Configuration management (get/set/list)
+│   ├── report.go                  # Export report command
+│   ├── protect.go                 # Git pre-push hook integration
+│   └── version.go                 # Version info
+├── ui/                            # Bubble Tea TUI layer
+│   ├── interactive.go             # Main menu state machine + viewport
+│   ├── handlers.go                # Key press routing & scan orchestration
+│   ├── components.go              # Reusable UI components (ScoreCard, Findings)
+│   ├── views.go                   # Settings, API Key, Help, Protect views
+│   ├── dashboard.go               # Standalone dashboard model
+│   ├── input.go                   # Text input widget
+│   ├── menu.go                    # Menu navigation widget
+│   ├── spinner.go                 # Animated scanning spinner
+│   └── styles.go                  # Lip Gloss style definitions
+├── internal/                      # Core logic (private packages)
+│   ├── config/                    # Persistent config + OS keyring integration
+│   │   └── config.go              # Load, Save, SetAPIKey (keyring), GetAPIKey
+│   ├── scanner/                   # All scanning modules
+│   │   ├── secrets.go             # Secret scanner (regex + entropy)
+│   │   ├── gitignore.go           # .gitignore validator & sensitive file tracker
+│   │   ├── gitignore_matcher.go   # Merged .gitignore + .obelisk-ignore matcher
+│   │   ├── naming.go              # File/folder naming convention enforcer
+│   │   ├── dependencies.go        # package.json dependency auditor
+│   │   ├── imports.go             # Circular dependency & import scanner
+│   │   ├── complexity.go          # Cyclomatic Complexity (Spaghetti Code) scanner
+│   │   ├── techdebt.go            # Technical Debt (TODO/FIXME) tracker
+│   │   └── types.go               # Finding, ScanResult type definitions
+│   ├── linter/                    # Orchestrated linting
+│   │   ├── eslint.go              # ESLint integration with auto-fallback
+│   │   └── native.go              # Native esbuild-powered syntax checker
+│   ├── detector/                  # Framework detection
+│   │   └── detector.go            # Identifies project type from signature files
+│   ├── ai/                        # Gemini API integration
+│   │   ├── client.go              # Gemini API client
+│   │   ├── prompt.go              # AI prompt builder with grading rubric
+│   │   └── report.go              # Health report parser + fallback scoring
+│   ├── engine/                    # Scan orchestrator
+│   │   └── engine.go              # Coordinates all scanners + AI pipeline
+│   └── report/                    # Report generation
+│       ├── formatter.go           # Markdown/Text report formatters
+│       └── writer.go              # File output writer
+└── adapters/                      # Framework-specific naming rules
+    ├── javascript.go              # JS/TS/React/Next.js rules
+    ├── laravel.go                 # PHP/Laravel rules (Coming Soon)
+    └── golang.go                  # Go rules (Coming Soon)
 ```
 
 ---
@@ -202,5 +257,7 @@ For security concerns, please see our [Security Policy](SECURITY.md).
 ---
 
 <p align="center">
-  Built using IBM BOB and Go for the hackathon
+  🏆 Built during the <strong>IBM Bob Hackathon</strong> (May 15–17, 2026)<br/>
+  By <strong>OneDev PH</strong> — with the help of <strong>IBM Bob IDE</strong><br/><br/>
+  <em>Powered by Go & Google Gemini AI</em>
 </p>

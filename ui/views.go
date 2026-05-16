@@ -19,7 +19,7 @@ func RenderAPIKeyView(cfg *config.Config, subCursor int) string {
 		Foreground(ColorSecondary).
 		MarginBottom(1)
 
-	sb.WriteString(headerStyle.Render("🔑 API Key Management") + "\n\n")
+	sb.WriteString(headerStyle.Render("API Key Management") + "\n\n")
 
 	// Show current status
 	statusLabel := lipgloss.NewStyle().Bold(true).Foreground(ColorText).Render("  Status: ")
@@ -51,9 +51,9 @@ func RenderAPIKeyView(cfg *config.Config, subCursor int) string {
 		icon string
 		text string
 	}{
-		{"📝", "Set API Key"},
-		{"🗑️", "Remove API Key"},
-		{"🔙", "Back to Menu"},
+		{"", "Set API Key"},
+		{"", "Remove API Key"},
+		{"", "Back to Menu"},
 	}
 
 	for i, opt := range options {
@@ -78,7 +78,7 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 		Foreground(ColorSecondary).
 		MarginBottom(1)
 
-	sb.WriteString(headerStyle.Render("⚙️  Settings") + "\n\n")
+	sb.WriteString(headerStyle.Render("Settings") + "\n\n")
 
 	// Current settings
 	labelStyle := lipgloss.NewStyle().Bold(true).Foreground(ColorText).Width(18)
@@ -115,12 +115,12 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 		icon string
 		text string
 	}{
-		{"🤖", "Change Model"},
-		{"📁", "Set Default Path"},
-		{"🎨", "Toggle No Color"},
-		{"📄", "Toggle Report Format"},
-		{"🔄", "Reset All Settings"},
-		{"🔙", "Back to Menu"},
+		{"", "Change Model"},
+		{"", "Set Default Path"},
+		{"", "Toggle No Color"},
+		{"", "Toggle Report Format"},
+		{"", "Reset All Settings"},
+		{"", "Back to Menu"},
 	}
 
 	for i, opt := range options {
@@ -152,7 +152,7 @@ func RenderHelpView() string {
 	descStyle := lipgloss.NewStyle().
 		Foreground(ColorText)
 
-	sb.WriteString(headerStyle.Render("❓ Commands & Usage") + "\n\n")
+	sb.WriteString(headerStyle.Render("Commands & Usage") + "\n\n")
 
 	commands := []struct {
 		cmd  string
@@ -206,7 +206,7 @@ func RenderProtectView(subCursor int) string {
 		Bold(true).
 		Foreground(ColorSecondary)
 
-	sb.WriteString(headerStyle.Render("🛡️ Git Protection") + "\n\n")
+	sb.WriteString(headerStyle.Render("Git Protection") + "\n\n")
 
 	sb.WriteString(lipgloss.NewStyle().Foreground(ColorText).Render(
 		"  Install Obelisk as a Git pre-push hook to automatically\n"+
@@ -216,9 +216,9 @@ func RenderProtectView(subCursor int) string {
 		icon string
 		text string
 	}{
-		{"📥", "Install Pre-Push Hook"},
-		{"🔍", "Run Protection Check"},
-		{"🔙", "Back to Menu"},
+		{"", "Install Pre-Push Hook"},
+		{"", "Run Protection Check"},
+		{"", "Back to Menu"},
 	}
 
 	for i, opt := range options {

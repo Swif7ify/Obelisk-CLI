@@ -1,5 +1,7 @@
 # Contributing to Obelisk CLI
 
+> 🏆 Created during the **IBM Bob Hackathon** (May 15–17, 2026) by **OneDev PH**.
+
 First off, thank you for considering contributing to Obelisk CLI! 🎉
 
 ## 📋 Table of Contents

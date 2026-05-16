@@ -68,12 +68,12 @@ type hookResultMsg struct {
 // NewInteractive creates a new interactive TUI model.
 func NewInteractive(cfg *config.Config, version string) InteractiveModel {
 	menuItems := []MenuItem{
-		{Icon: "🔍", Title: "Scan Project", Description: "Run a full health check", Key: "scan"},
-		{Icon: "🛡️", Title: "Protect", Description: "Git pre-push hook", Key: "protect"},
-		{Icon: "🔑", Title: "API Key", Description: "Manage your Gemini key", Key: "apikey"},
-		{Icon: "⚙️", Title: "Settings", Description: "Configure Obelisk", Key: "settings"},
-		{Icon: "❓", Title: "Help", Description: "Commands & usage", Key: "help"},
-		{Icon: "🚪", Title: "Quit", Description: "Exit Obelisk", Key: "quit"},
+		{Icon: "", Title: "Scan Project", Description: "Run a full health check", Key: "scan"},
+		{Icon: "", Title: "Protect", Description: "Git pre-push hook", Key: "protect"},
+		{Icon: "", Title: "API Key", Description: "Manage your Gemini key", Key: "apikey"},
+		{Icon: "", Title: "Settings", Description: "Configure Obelisk", Key: "settings"},
+		{Icon: "", Title: "Help", Description: "Commands & usage", Key: "help"},
+		{Icon: "", Title: "Quit", Description: "Exit Obelisk", Key: "quit"},
 	}
 
 	vp := viewport.New(80, 20)
@@ -159,7 +159,7 @@ func (m InteractiveModel) View() string {
 		sb.WriteString("\n")
 		sb.WriteString(MutedStyle.Render("  ↑/↓ Navigate  Enter Select  q Quit") + "\n")
 	case ViewScanInput:
-		sb.WriteString(SubtitleStyle.Render("  🔍 Scan Project") + "\n\n")
+		sb.WriteString(SubtitleStyle.Render("  Scan Project") + "\n\n")
 		sb.WriteString(m.Input.View() + "\n\n")
 		sb.WriteString(MutedStyle.Render("  Enter to scan  Esc to cancel") + "\n")
 	case ViewScanning:
@@ -175,18 +175,18 @@ func (m InteractiveModel) View() string {
 	case ViewAPIKey:
 		sb.WriteString(RenderAPIKeyView(m.Config, m.SubCursor))
 	case ViewAPIKeyInput:
-		sb.WriteString(SubtitleStyle.Render("  🔑 Enter API Key") + "\n\n")
+		sb.WriteString(SubtitleStyle.Render("  API Key") + "\n\n")
 		sb.WriteString(m.Input.View() + "\n\n")
 		sb.WriteString(MutedStyle.Render("  Enter to save  Esc to cancel") + "\n")
 	case ViewSettings:
 		sb.WriteString(RenderSettingsView(m.Config, m.SubCursor))
 	case ViewSettingsModelInput:
-		sb.WriteString(SubtitleStyle.Render("  🤖 Set AI Model") + "\n\n")
+		sb.WriteString(SubtitleStyle.Render("  Set AI Model") + "\n\n")
 		sb.WriteString(m.Input.View() + "\n\n")
 		sb.WriteString(MutedStyle.Render("  Models: gemini-2.5-flash, gemini-2.5-pro") + "\n")
 		sb.WriteString(MutedStyle.Render("  Enter to save  Esc to cancel") + "\n")
 	case ViewSettingsPathInput:
-		sb.WriteString(SubtitleStyle.Render("  📁 Set Default Path") + "\n\n")
+		sb.WriteString(SubtitleStyle.Render("  Set Default Path") + "\n\n")
 		sb.WriteString(m.Input.View() + "\n\n")
 		sb.WriteString(MutedStyle.Render("  Leave empty for current directory") + "\n")
 		sb.WriteString(MutedStyle.Render("  Enter to save  Esc to cancel") + "\n")
