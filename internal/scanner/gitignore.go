@@ -41,7 +41,7 @@ func ScanGitignore(projectPath string) ([]Finding, error) {
 	if _, err := os.Stat(gitignorePath); os.IsNotExist(err) {
 		findings = append(findings, Finding{
 			Category:    CategorySecurity,
-			Severity:    SeverityError,
+			Severity:    SeverityWarning,
 			Title:       "Missing .gitignore file",
 			Description: "No .gitignore file found in the project root. Sensitive files may be committed to version control",
 			File:        ".gitignore",

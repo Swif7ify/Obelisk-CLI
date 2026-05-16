@@ -73,7 +73,7 @@ func ScanTechDebt(projectPath string) ([]Finding, error) {
 		if debtCount > 10 {
 			findings = append(findings, Finding{
 				Category:    CategoryQuality,
-				Severity:    SeverityError,
+				Severity:    SeverityWarning,
 				Title:       "High Technical Debt Accumulation",
 				Description: fmt.Sprintf("File contains %d unresolved TODO/FIXME/HACK comments.", debtCount),
 				File:        relPath,
@@ -82,7 +82,7 @@ func ScanTechDebt(projectPath string) ([]Finding, error) {
 		} else if debtCount > 3 {
 			findings = append(findings, Finding{
 				Category:    CategoryQuality,
-				Severity:    SeverityWarning,
+				Severity:    SeverityInfo,
 				Title:       "Lingering Technical Debt",
 				Description: fmt.Sprintf("File contains %d TODO/FIXME/HACK comments.", debtCount),
 				File:        relPath,
