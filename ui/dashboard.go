@@ -93,10 +93,7 @@ func (m DashboardModel) View() string {
 		if m.Err != nil {
 			s += ErrorStyle.Render("✗ Error: " + m.Err.Error()) + "\n"
 		} else if m.Report != nil && m.Result != nil {
-			s += RenderStats(m.Result) + "\n\n"
 			s += RenderScoreCard(m.Report) + "\n"
-			s += RenderFindings(m.Result.Findings) + "\n"
-			s += RenderSummary(m.Report) + "\n"
 		}
 	}
 

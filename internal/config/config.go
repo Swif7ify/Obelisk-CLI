@@ -13,7 +13,8 @@ type Config struct {
 	APIKey      string `json:"api_key,omitempty"`
 	Model       string `json:"model,omitempty"`
 	DefaultPath string `json:"default_path,omitempty"`
-	NoColor     bool   `json:"no_color,omitempty"`
+	NoColor      bool   `json:"no_color,omitempty"`
+	ReportFormat string `json:"report_format,omitempty"`
 }
 
 const configDirName = ".obelisk"
@@ -127,6 +128,14 @@ func (c *Config) GetModel() string {
 		return c.Model
 	}
 	return "gemini-2.5-flash"
+}
+
+// GetReportFormat returns the configured report format or the default ("md").
+func (c *Config) GetReportFormat() string {
+	if c.ReportFormat == "txt" {
+		return "txt"
+	}
+	return "md"
 }
 
 // Reset clears all config values back to defaults.

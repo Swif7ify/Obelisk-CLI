@@ -4,15 +4,20 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/Swif7ify/Obelisk-CLI/internal/ai"
 	"github.com/Swif7ify/Obelisk-CLI/internal/scanner"
 )
 
 // WriteToFile writes the formatted report to a file.
-func WriteToFile(result *scanner.ScanResult, report *ai.HealthReport, outputPath string) error {
-	// Generate the plain text report
-	content := FormatPlainText(result, report)
+func WriteToFile(result *scanner.ScanResult, report *ai.HealthReport, outputPath string, format string) error {
+	var content string
+	if format == "txt" {
+		content = FormatPlainText(result, report)
+	} else {
+		content = FormatMarkdown(result, report)
+	}
 
 	// Ensure the directory exists
 	dir := filepath.Dir(outputPath)
@@ -29,8 +34,14 @@ func WriteToFile(result *scanner.ScanResult, report *ai.HealthReport, outputPath
 }
 
 // GetDefaultOutputPath returns the default output path for the report.
-func GetDefaultOutputPath(projectPath string) string {
-	return filepath.Join(projectPath, "obelisk-report.txt")
+func GetDefaultOutputPath(projectPath string, format string) string {
+	timestamp := time.Now().Format("20060102-150405")
+	ext := format
+	if ext == "" {
+		ext = "md"
+	}
+	filename := fmt.Sprintf("obelisk-report-%s.%s", timestamp, ext)
+	return filepath.Join(projectPath, filename)
 }
 
 // Made with Bob

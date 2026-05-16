@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 
+	"github.com/Swif7ify/Obelisk-CLI/internal/config"
 	"github.com/Swif7ify/Obelisk-CLI/internal/detector"
 	"github.com/Swif7ify/Obelisk-CLI/internal/engine"
 	"github.com/Swif7ify/Obelisk-CLI/internal/report"
@@ -39,6 +40,10 @@ var checkCmd = &cobra.Command{
 		if _, err := os.Stat(projectPath); os.IsNotExist(err) {
 			return fmt.Errorf("project path does not exist: %s", projectPath)
 		}
+
+		// Load config to get format preference
+		cfg, _ := config.Load()
+		format := cfg.GetReportFormat()
 
 		// Detect project type
 		detection := detector.Detect(projectPath)
@@ -112,11 +117,11 @@ var checkCmd = &cobra.Command{
 		case result := <-resultChan:
 			outputPath := flagOutputFile
 			if outputPath == "" {
-				outputPath = report.GetDefaultOutputPath(projectPath)
+				outputPath = report.GetDefaultOutputPath(projectPath, format)
 			}
 
 			// Write the report to file
-			if err := report.WriteToFile(result.ScanResult, result.Report, outputPath); err != nil {
+			if err := report.WriteToFile(result.ScanResult, result.Report, outputPath, format); err != nil {
 				fmt.Fprintf(os.Stderr, "\nWarning: Could not save report to file: %v\n", err)
 			} else {
 				fmt.Printf("\n✓ Report saved to: %s\n", outputPath)
@@ -135,6 +140,6 @@ var checkCmd = &cobra.Command{
 func init() {
 	checkCmd.Flags().StringVarP(&flagCheckPath, "path", "p", "", "Path to project (default: current directory)")
 	checkCmd.Flags().BoolVar(&flagSkipAI, "skip-ai", false, "Skip AI analysis (offline mode)")
-	checkCmd.Flags().StringVarP(&flagOutputFile, "output", "o", "", "Output file path (default: obelisk-report.txt in project directory)")
+	checkCmd.Flags().StringVarP(&flagOutputFile, "output", "o", "", "Output file path (default: obelisk-report-<timestamp>.md in project directory)")
 	rootCmd.AddCommand(checkCmd)
 }
