@@ -11,6 +11,7 @@ import (
 
 	"github.com/Swif7ify/Obelisk-CLI/internal/ai"
 	"github.com/Swif7ify/Obelisk-CLI/internal/config"
+	"github.com/Swif7ify/Obelisk-CLI/internal/report"
 	"github.com/Swif7ify/Obelisk-CLI/internal/scanner"
 )
 
@@ -135,6 +136,24 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			
 			m.Viewport.SetContent(content.String())
 			m.Viewport.GotoTop()
+			
+			// Auto-save report to file (matching CLI behavior)
+			if m.ScanResult != nil && m.ScanReport != nil {
+				format := m.Config.GetReportFormat()
+				if format == "" {
+					format = "txt"
+				}
+				outputPath := report.GetDefaultOutputPath(m.ScanResult.ProjectPath, format)
+				if err := report.WriteToFile(m.ScanResult, m.ScanReport, outputPath, format); err != nil {
+					// Don't show error in TUI, just silently fail
+					// User can still see results in the viewport
+				} else {
+					// Show success message briefly
+					m.StatusMsg = "Report saved to: " + outputPath
+					m.StatusIsError = false
+					return m, clearStatusAfter(5 * time.Second)
+				}
+			}
 		}
 		return m, nil
 	case statusClearMsg:

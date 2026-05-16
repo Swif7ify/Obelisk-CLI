@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- Product Definition -->
+  <Product Id="*" 
+           Name="Obelisk CLI" 
+           Language="1033" 
+           Version="0.1.0" 
+           Manufacturer="OneDev PH" 
+           UpgradeCode="12345678-1234-1234-1234-123456789012">
+    
+    <!-- Package Information -->
+    <Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perMachine" 
+             Description="Obelisk CLI - AI-Powered Automated Tech Lead"
+             Comments="Built with IBM Bob IDE for the IBM Bob Hackathon 2026"
+             Manufacturer="OneDev PH" />
+
+    <!-- Media Definition -->
+    <Media Id="1" Cabinet="obelisk.cab" EmbedCab="yes" />
+
+    <!-- Upgrade Logic -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <!-- Installation Directory Structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- Program Files -->
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Obelisk CLI">
+          <Component Id="ObeliskExecutable" Guid="87654321-4321-4321-4321-210987654321">
+            <!-- Main Executable -->
+            <File Id="ObeliskExe" 
+                  Source="../bin/obelisk.exe" 
+                  KeyPath="yes" 
+                  Checksum="yes" />
+            
+            <!-- Add to PATH -->
+            <Environment Id="PATH" 
+                         Name="PATH" 
+                         Value="[INSTALLFOLDER]" 
+                         Permanent="no" 
+                         Part="last" 
+                         Action="set" 
+                         System="yes" />
+          </Component>
+
+          <!-- Documentation -->
+          <Component Id="Documentation" Guid="11111111-2222-3333-4444-555555555555">
+            <File Id="ReadmeFile" Source="../README.md" KeyPath="yes" />
+            <File Id="LicenseFile" Source="../LICENSE" />
+            <File Id="ChangelogFile" Source="../CHANGELOG.md" />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <!-- Start Menu Shortcuts -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Obelisk CLI">
+          <Component Id="ApplicationShortcut" Guid="22222222-3333-4444-5555-666666666666">
+            <Shortcut Id="UninstallProduct"
+                      Name="Uninstall Obelisk CLI"
+                      Description="Uninstalls Obelisk CLI"
+                      Target="[SystemFolder]msiexec.exe"
+                      Arguments="/x [ProductCode]" />
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+            <RegistryValue Root="HKCU" 
+                          Key="Software\OneDev\Obelisk" 
+                          Name="installed" 
+                          Type="integer" 
+                          Value="1" 
+                          KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <!-- Features -->
+    <Feature Id="ProductFeature" 
+             Title="Obelisk CLI" 
+             Level="1"
+             Description="The complete Obelisk CLI installation including the executable and documentation.">
+      <ComponentRef Id="ObeliskExecutable" />
+      <ComponentRef Id="Documentation" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+
+    <!-- User Interface -->
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- License Agreement -->
+    <WixVariable Id="WixUILicenseRtf" Value="installer\License.rtf" />
+    
+    <!-- Installer Images -->
+    <WixVariable Id="WixUIBannerBmp" Value="installer\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="installer\dialog.bmp" />
+
+    <!-- Custom Actions -->
+    <CustomAction Id="LaunchApplication" 
+                  FileKey="ObeliskExe" 
+                  ExeCommand="version" 
+                  Execute="immediate" 
+                  Impersonate="yes" 
+                  Return="asyncNoWait" />
+
+    <!-- Installation Sequence -->
+    <InstallExecuteSequence>
+      <Custom Action="LaunchApplication" After="InstallFinalize">NOT Installed</Custom>
+    </InstallExecuteSequence>
+
+    <!-- Properties -->
+    <Property Id="ARPPRODUCTICON" Value="ObeliskIcon" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/Swif7ify/Obelisk-CLI" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/Swif7ify/Obelisk-CLI" />
+    <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" />
+    
+    <!-- Icon -->
+    <Icon Id="ObeliskIcon" SourceFile="installer\icon.ico" />
+
+  </Product>
+</Wix>
+
+<!-- Made with Bob -->

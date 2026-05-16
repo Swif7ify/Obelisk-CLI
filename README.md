@@ -36,18 +36,22 @@ One command. Full project health report. AI-graded score.
 ## ✨ Features
 
 ### 💻 CLI Modes
+
 Obelisk is designed for both humans and machines:
+
 - **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system with scrollable results.
 - **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a report file in your project directory.
 - **Headless Mode (`obelisk scan`)** — Completely bypasses the UI and prints standard text directly to `stdout`. Designed for automated pipelines (GitHub Actions, Jenkins). Supports raw JSON (`--format json`) and strict mode (`--strict`) which fails the pipeline with an Exit Code 1 if critical issues are found.
 
 ### 🛡️ Security Shield
+
 - **Secret Scanner** — Deep-scans files for hardcoded API keys, JWTs, AWS credentials, and private keys using regex + Shannon entropy analysis
 - **Integrity Validator** — Ensures `.gitignore` and `.env` setups prevent sensitive files from reaching version control. Intelligently exempts safe files like `.env.example`.
 - **Pre-Push Hook** — Integrates into Git to automatically block pushes with security vulnerabilities
 - **Ignore Engine** — Automatically reads `.gitignore` and `.obelisk-ignore` to exclude files/folders across all scans
 
 ### 🧹 Architectural & Code Quality Linting
+
 - **Native Syntax Checking (esbuild)** — If ESLint is missing, Obelisk uses its own blazing-fast embedded `esbuild` engine to natively parse `.js`, `.ts`, `.jsx`, and `.tsx` files and catch syntax errors — no Node.js required!
 - **Cyclomatic Complexity Scanner** — Mathematically analyzes your code's branching density (`if/for/switch/&&/||`) to detect and flag highly unmaintainable "Spaghetti Code"
 - **Technical Debt Tracker** — Hunts down lingering `TODO`, `FIXME`, `HACK`, and `XXX` comments across your codebase and aggregates them into architectural debt warnings
@@ -57,17 +61,20 @@ Obelisk is designed for both humans and machines:
 - **Unused Dependency Detection** — Identifies and flags packages declared but never imported
 
 ### 🔐 Enterprise-Grade Security Architecture
+
 - **OS-Level Keyring Encryption** — Your Gemini API key is securely encrypted and stored natively in your Operating System's Credential Manager (Windows Credential Manager / macOS Keychain / Linux Secret Service). It is **never** saved in plaintext to disk.
 - **Automatic Security Migration** — If upgrading from an older version that stored the key in `config.json`, Obelisk automatically detects it, migrates it into the secure OS keychain, and permanently scrubs the plaintext from the configuration file.
 - **Zero Trust Config** — The `config.json` file contains only non-sensitive settings (model, report format, default path). Credentials are strictly isolated in the OS vault.
 - **Environment Variable Support** — For CI/CD pipelines, pass keys securely at runtime via `GEMINI_API_KEY` or `GOOGLE_API_KEY` environment variables.
 
 ### 🧠 AI "Senior Dev" Brain
+
 - **Health Score (A–F)** — Composite grade based on Security, Architecture, and Code Quality rubrics with strict hard-ceiling enforcement (errors cap score at D, criticals cap at F)
 - **Vibe Check** — AI analyzes your project structure against industry-standard patterns (MVC, Atomic Design, feature-based)
 - **Technical Debt Summary** — Plain-English summary of critical issues + praise for good practices
 
 ### 📄 Automatic Report Generation
+
 - **Markdown or Text** — Automatically save reports to `obelisk-report-<timestamp>.md` or configure it to save as `.txt`
 - **Custom Output Paths** — Use `--output` flag to save reports to any location
 - **Persistent Configuration** — Manage global settings via `~/.obelisk/config.json`
@@ -78,15 +85,85 @@ Obelisk is designed for both humans and machines:
 
 ### Installation
 
-```bash
-# Install from source
-go install github.com/Swif7ify/Obelisk-CLI@latest
+#### Option 1: MSI Installer (Windows - Recommended) 🎯
 
-# Or clone and build
+**For End Users - Professional Installation Experience**
+
+1. **Download the installer** from [GitHub Releases](https://github.com/Swif7ify/Obelisk-CLI/releases)
+2. **Double-click** `ObeliskCLI-0.1.0-x64.msi`
+3. **Follow the wizard:**
+    - Accept the license agreement
+    - Choose installation directory
+    - Click Install
+4. **Done!** Open a new terminal and run:
+    ```powershell
+    obelisk version
+    ```
+
+**Features:**
+
+- ✅ Professional installation wizard with EULA
+- ✅ Automatic PATH configuration
+- ✅ Custom installation directory
+- ✅ Start menu shortcuts
+- ✅ Clean uninstallation via Windows Settings
+
+**To build the MSI yourself:**
+
+```powershell
+# Requires WiX Toolset (https://wixtoolset.org/releases/)
+git clone https://github.com/Swif7ify/Obelisk-CLI.git
+cd Obelisk-CLI
+.\installer\build-installer.ps1
+```
+
+---
+
+#### Option 2: PowerShell Quick Install
+
+**For Developers - Fast Command-Line Installation**
+
+```powershell
+# 1. Clone and build
 git clone https://github.com/Swif7ify/Obelisk-CLI.git
 cd Obelisk-CLI
 make build
+
+# 2. Run installer (adds to PATH automatically)
+powershell -ExecutionPolicy Bypass -File install.ps1
+
+# 3. Restart terminal
+obelisk version
 ```
+
+**To uninstall:**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File uninstall.ps1
+```
+
+---
+
+#### Option 3: Go Install
+
+**For Go Developers**
+
+```bash
+go install github.com/Swif7ify/Obelisk-CLI@latest
+```
+
+---
+
+#### Option 4: Portable Executable
+
+**No Installation Required**
+
+1. Download `obelisk.exe` from [GitHub Releases](https://github.com/Swif7ify/Obelisk-CLI/releases)
+2. Run directly: `.\obelisk.exe version`
+
+---
+
+**📦 See [DISTRIBUTION.md](DISTRIBUTION.md) for complete distribution guide including Chocolatey, Winget, and Homebrew.**
 
 ### Usage
 
@@ -119,6 +196,7 @@ obelisk config set report-format txt
 ```
 
 ### Ignored Files
+
 To completely skip scanning specific files or folders, create a `.obelisk-ignore` file at the root of your project. Obelisk natively respects both `.gitignore` and `.obelisk-ignore`.
 
 ```text
@@ -146,12 +224,12 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 
 ### Supported Frameworks
 
-| Framework | Status |
-|-----------|--------|
-| JavaScript / TypeScript (React, Next.js) | ✅ Supported |
-| Go (Golang) | 🔜 Coming Soon |
-| Laravel (PHP) | 🔜 Coming Soon |
-| Python (Django/Flask) | 🔜 Planned |
+| Framework                                | Status         |
+| ---------------------------------------- | -------------- |
+| JavaScript / TypeScript (React, Next.js) | ✅ Supported   |
+| Go (Golang)                              | 🔜 Coming Soon |
+| Laravel (PHP)                            | 🔜 Coming Soon |
+| Python (Django/Flask)                    | 🔜 Planned     |
 
 ---
 
@@ -159,14 +237,14 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 
 Obelisk takes security extremely seriously — both as a scanning tool and in its own implementation:
 
-| Layer | Protection |
-|---|---|
-| **API Key Storage** | OS-native Credential Manager encryption (Windows Credential Manager, macOS Keychain, Linux Secret Service) via `go-keyring`. Never stored in plaintext. |
-| **API Communication** | HTTPS (TLS 1.2+) exclusively to Google Gemini API |
-| **Config File** | `~/.obelisk/config.json` contains zero credentials — only non-sensitive preferences |
-| **Migration Safety** | Automatic detection and secure migration of legacy plaintext keys |
-| **CI/CD** | Supports environment variable injection (`GEMINI_API_KEY`) for zero-persistence pipelines |
-| **File Permissions** | Config directory created with `0700`, config file with `0600` (owner-only read/write) |
+| Layer                 | Protection                                                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **API Key Storage**   | OS-native Credential Manager encryption (Windows Credential Manager, macOS Keychain, Linux Secret Service) via `go-keyring`. Never stored in plaintext. |
+| **API Communication** | HTTPS (TLS 1.2+) exclusively to Google Gemini API                                                                                                       |
+| **Config File**       | `~/.obelisk/config.json` contains zero credentials — only non-sensitive preferences                                                                     |
+| **Migration Safety**  | Automatic detection and secure migration of legacy plaintext keys                                                                                       |
+| **CI/CD**             | Supports environment variable injection (`GEMINI_API_KEY`) for zero-persistence pipelines                                                               |
+| **File Permissions**  | Config directory created with `0700`, config file with `0600` (owner-only read/write)                                                                   |
 
 For full details, see the [Security Policy](SECURITY.md).
 
