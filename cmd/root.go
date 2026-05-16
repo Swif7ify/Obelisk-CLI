@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
+
+	"github.com/Swif7ify/Obelisk-CLI/internal/config"
+	"github.com/Swif7ify/Obelisk-CLI/ui"
 )
 
 // Version info — injected via ldflags at build time.
@@ -29,7 +33,29 @@ var rootCmd = &cobra.Command{
 for your project. It evaluates project integrity, security, and architectural 
 health using static analysis and LLM intelligence.
 
-Run 'obelisk check' to scan the current directory.`,
+Run with no subcommand to launch the interactive TUI.
+Run 'obelisk scan' for headless CI/CD mode.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// Launch interactive TUI when no subcommand is given
+		cfg, _ := config.Load()
+
+		// Override config with flags if provided
+		if flagAPIKey != "" {
+			cfg.SetAPIKey(flagAPIKey)
+		}
+		if flagModel != "" && flagModel != "gemini-2.5-flash" {
+			cfg.Model = flagModel
+		}
+		if flagNoColor {
+			cfg.NoColor = true
+		}
+
+		model := ui.NewInteractive(cfg, Version)
+		p := tea.NewProgram(model, tea.WithAltScreen())
+
+		_, err := p.Run()
+		return err
+	},
 }
 
 // Execute runs the root command.

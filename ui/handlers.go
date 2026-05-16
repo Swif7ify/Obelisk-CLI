@@ -1,0 +1,347 @@
+package ui
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/Swif7ify/Obelisk-CLI/internal/config"
+	"github.com/Swif7ify/Obelisk-CLI/internal/engine"
+)
+
+func (m InteractiveModel) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if msg.String() == "ctrl+c" {
+		return m, tea.Quit
+	}
+	switch m.CurrentView {
+	case ViewMainMenu:
+		return m.handleMainMenu(msg.String())
+	case ViewScanInput:
+		return m.handleTextInput(msg, ViewMainMenu, m.onScanSubmit)
+	case ViewScanning:
+		if msg.String() == "q" || msg.String() == "esc" {
+			return m, tea.Quit
+		}
+	case ViewScanResults:
+		if msg.String() == "esc" || msg.String() == "backspace" || msg.String() == "q" || msg.String() == "b" {
+			m.CurrentView = ViewMainMenu
+			m.ScanResult = nil
+			m.ScanReport = nil
+			m.StatusMsg = ""
+		}
+	case ViewAPIKey:
+		return m.handleAPIKeyMenu(msg.String())
+	case ViewAPIKeyInput:
+		return m.handleTextInput(msg, ViewAPIKey, m.onAPIKeySubmit)
+	case ViewSettings:
+		return m.handleSettingsMenu(msg.String())
+	case ViewSettingsModelInput:
+		return m.handleTextInput(msg, ViewSettings, m.onModelSubmit)
+	case ViewSettingsPathInput:
+		return m.handleTextInput(msg, ViewSettings, m.onPathSubmit)
+	case ViewHelp:
+		if msg.String() == "esc" || msg.String() == "backspace" || msg.String() == "q" {
+			m.CurrentView = ViewMainMenu
+		}
+	case ViewProtect:
+		return m.handleProtectMenu(msg.String())
+	}
+	return m, nil
+}
+
+// --- Main Menu ---
+
+func (m InteractiveModel) handleMainMenu(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "up", "k":
+		m.Menu.MoveUp()
+	case "down", "j":
+		m.Menu.MoveDown()
+	case "enter":
+		switch m.Menu.Selected().Key {
+		case "scan":
+			cwd, _ := os.Getwd()
+			m.Input = NewInput("Project path:", cwd, false)
+			m.Input.Value = cwd
+			m.Input.Cursor = len(cwd)
+			m.CurrentView = ViewScanInput
+		case "protect":
+			m.SubCursor = 0
+			m.CurrentView = ViewProtect
+		case "apikey":
+			m.SubCursor = 0
+			m.CurrentView = ViewAPIKey
+		case "settings":
+			m.SubCursor = 0
+			m.CurrentView = ViewSettings
+		case "help":
+			m.CurrentView = ViewHelp
+		case "quit":
+			return m, tea.Quit
+		}
+	case "q":
+		return m, tea.Quit
+	}
+	return m, nil
+}
+
+// --- Generic text input handler ---
+
+type submitFunc func(m InteractiveModel, value string) (InteractiveModel, tea.Cmd)
+
+func (m InteractiveModel) handleTextInput(msg tea.KeyMsg, cancelView InteractiveView, onSubmit submitFunc) (tea.Model, tea.Cmd) {
+	key := msg.String()
+	switch key {
+	case "enter":
+		return onSubmit(m, strings.TrimSpace(m.Input.Value))
+	case "esc":
+		m.CurrentView = cancelView
+		return m, nil
+	case "backspace":
+		m.Input.DeleteChar()
+	case "delete":
+		m.Input.DeleteForward()
+	case "left":
+		m.Input.MoveLeft()
+	case "right":
+		m.Input.MoveRight()
+	case "home", "ctrl+a":
+		m.Input.MoveToStart()
+	case "end", "ctrl+e":
+		m.Input.MoveToEnd()
+	case "ctrl+u":
+		m.Input.Clear()
+	default:
+		if len(key) == 1 {
+			m.Input.InsertChar(rune(key[0]))
+		} else if key == "space" {
+			m.Input.InsertChar(' ')
+		}
+	}
+	return m, nil
+}
+
+// --- Submit callbacks ---
+
+func (m InteractiveModel) onScanSubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
+	path := value
+	if path == "" {
+		path, _ = os.Getwd()
+	}
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		im.StatusMsg = "Path does not exist: " + path
+		im.StatusIsError = true
+		return im, clearStatusAfter(3 * time.Second)
+	}
+	im.CurrentView = ViewScanning
+	im.Spinner = NewSpinner()
+	return im, tea.Batch(tickCmd(), startScanCmd(path, im.Config))
+}
+
+func (m InteractiveModel) onAPIKeySubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
+	if value == "" {
+		im.StatusMsg = "API key cannot be empty"
+		im.StatusIsError = true
+		return im, clearStatusAfter(3 * time.Second)
+	}
+	im.Config.SetAPIKey(value)
+	if err := im.Config.Save(); err != nil {
+		im.StatusMsg = "Failed to save: " + err.Error()
+		im.StatusIsError = true
+	} else {
+		im.StatusMsg = "API key saved successfully!"
+		im.StatusIsError = false
+	}
+	im.CurrentView = ViewAPIKey
+	return im, clearStatusAfter(3 * time.Second)
+}
+
+func (m InteractiveModel) onModelSubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
+	if value != "" {
+		im.Config.Model = value
+	}
+	if err := im.Config.Save(); err != nil {
+		im.StatusMsg = "Failed to save: " + err.Error()
+		im.StatusIsError = true
+	} else {
+		im.StatusMsg = "Model set to: " + im.Config.GetModel()
+		im.StatusIsError = false
+	}
+	im.CurrentView = ViewSettings
+	return im, clearStatusAfter(3 * time.Second)
+}
+
+func (m InteractiveModel) onPathSubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
+	im.Config.DefaultPath = value
+	if err := im.Config.Save(); err != nil {
+		im.StatusMsg = "Failed to save: " + err.Error()
+		im.StatusIsError = true
+	} else {
+		d := value
+		if d == "" {
+			d = "(current directory)"
+		}
+		im.StatusMsg = "Default path: " + d
+		im.StatusIsError = false
+	}
+	im.CurrentView = ViewSettings
+	return im, clearStatusAfter(3 * time.Second)
+}
+
+// --- API Key Sub-Menu ---
+
+func (m InteractiveModel) handleAPIKeyMenu(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "up", "k":
+		if m.SubCursor > 0 {
+			m.SubCursor--
+		}
+	case "down", "j":
+		if m.SubCursor < 2 {
+			m.SubCursor++
+		}
+	case "enter":
+		switch m.SubCursor {
+		case 0: // Set
+			m.Input = NewInput("API Key:", "paste your Gemini API key", true)
+			m.CurrentView = ViewAPIKeyInput
+		case 1: // Remove
+			m.Config.ClearAPIKey()
+			_ = m.Config.Save()
+			m.StatusMsg = "API key removed"
+			m.StatusIsError = false
+			return m, clearStatusAfter(3 * time.Second)
+		case 2: // Back
+			m.CurrentView = ViewMainMenu
+		}
+	case "esc", "backspace":
+		m.CurrentView = ViewMainMenu
+	}
+	return m, nil
+}
+
+// --- Settings Sub-Menu ---
+
+func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "up", "k":
+		if m.SubCursor > 0 {
+			m.SubCursor--
+		}
+	case "down", "j":
+		if m.SubCursor < 4 {
+			m.SubCursor++
+		}
+	case "enter":
+		switch m.SubCursor {
+		case 0: // Model
+			m.Input = NewInput("Model:", m.Config.GetModel(), false)
+			m.Input.Value = m.Config.GetModel()
+			m.Input.Cursor = len(m.Input.Value)
+			m.CurrentView = ViewSettingsModelInput
+		case 1: // Path
+			m.Input = NewInput("Default path:", "(current directory)", false)
+			m.Input.Value = m.Config.DefaultPath
+			m.Input.Cursor = len(m.Input.Value)
+			m.CurrentView = ViewSettingsPathInput
+		case 2: // Toggle no-color
+			m.Config.NoColor = !m.Config.NoColor
+			_ = m.Config.Save()
+			s := "disabled"
+			if m.Config.NoColor {
+				s = "enabled"
+			}
+			m.StatusMsg = "No color: " + s
+			m.StatusIsError = false
+			return m, clearStatusAfter(3 * time.Second)
+		case 3: // Reset
+			m.Config.Reset()
+			_ = m.Config.Save()
+			m.StatusMsg = "Settings reset to defaults"
+			m.StatusIsError = false
+			return m, clearStatusAfter(3 * time.Second)
+		case 4: // Back
+			m.CurrentView = ViewMainMenu
+		}
+	case "esc", "backspace":
+		m.CurrentView = ViewMainMenu
+	}
+	return m, nil
+}
+
+// --- Protect Sub-Menu ---
+
+func (m InteractiveModel) handleProtectMenu(key string) (tea.Model, tea.Cmd) {
+	switch key {
+	case "up", "k":
+		if m.SubCursor > 0 {
+			m.SubCursor--
+		}
+	case "down", "j":
+		if m.SubCursor < 2 {
+			m.SubCursor++
+		}
+	case "enter":
+		switch m.SubCursor {
+		case 0: // Install hook
+			return m, installHookCmd()
+		case 1: // Run check
+			cwd, _ := os.Getwd()
+			m.CurrentView = ViewScanning
+			m.Spinner = NewSpinner()
+			return m, tea.Batch(tickCmd(), startScanCmd(cwd, m.Config))
+		case 2: // Back
+			m.CurrentView = ViewMainMenu
+		}
+	case "esc", "backspace":
+		m.CurrentView = ViewMainMenu
+	}
+	return m, nil
+}
+
+// --- Tea Commands ---
+
+func startScanCmd(path string, cfg *config.Config) tea.Cmd {
+	return func() tea.Msg {
+		ecfg := engine.Config{
+			ProjectPath: path,
+			APIKey:      cfg.GetAPIKey(),
+			Model:       cfg.GetModel(),
+			SkipAI:      cfg.GetAPIKey() == "",
+		}
+		result, err := engine.Run(ecfg, nil)
+		if err != nil {
+			return scanCompleteMsg{err: err}
+		}
+		return scanCompleteMsg{result: result.ScanResult, report: result.Report}
+	}
+}
+
+func installHookCmd() tea.Cmd {
+	return func() tea.Msg {
+		cmd := exec.Command("git", "rev-parse", "--git-dir")
+		output, err := cmd.Output()
+		if err != nil {
+			return hookResultMsg{err: fmt.Errorf("not a git repository")}
+		}
+		dir := strings.TrimSpace(string(output))
+		absDir, _ := filepath.Abs(dir)
+		hookPath := filepath.Join(absDir, "hooks", "pre-push")
+		hook := "#!/bin/sh\necho \"🏛️ Obelisk pre-push check...\"\nobelisk protect --strict\nif [ $? -ne 0 ]; then\n  echo \"❌ Push blocked\"\n  exit 1\nfi\necho \"✅ Passed!\"\nexit 0\n"
+		_ = os.MkdirAll(filepath.Dir(hookPath), 0755)
+		perm := os.FileMode(0755)
+		if runtime.GOOS == "windows" {
+			perm = 0644
+		}
+		if err := os.WriteFile(hookPath, []byte(hook), perm); err != nil {
+			return hookResultMsg{err: err}
+		}
+		return hookResultMsg{msg: "Pre-push hook installed!"}
+	}
+}
