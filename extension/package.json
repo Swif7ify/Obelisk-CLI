@@ -60,9 +60,9 @@
 				"icon": "$(play)"
 			},
 			{
-				"command": "obelisk.refresh",
-				"title": "Obelisk: Refresh Scan",
-				"icon": "$(refresh)"
+				"command": "obelisk.generateReport",
+				"title": "Obelisk: Generate Report",
+				"icon": "$(save)"
 			},
 			{
 				"command": "obelisk.clear",
@@ -83,7 +83,7 @@
 					"group": "navigation@1"
 				},
 				{
-					"command": "obelisk.refresh",
+					"command": "obelisk.generateReport",
 					"when": "view == obeliskFindings",
 					"group": "navigation@2"
 				},

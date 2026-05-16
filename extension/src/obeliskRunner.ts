@@ -124,4 +124,52 @@ export class ObeliskRunner {
             this.process = null;
         }
     }
+
+    async generateReport(workspacePath: string): Promise<string> {
+        const config = vscode.workspace.getConfiguration('obelisk');
+        const executable = config.get<string>('executablePath', 'obelisk');
+        const skipAI = config.get<boolean>('skipAI', false);
+
+        const args = ['report', workspacePath];
+        if (skipAI) {
+            args.push('--skip-ai');
+        }
+
+        return new Promise<string>((resolve, reject) => {
+            let stdout = '';
+            let stderr = '';
+
+            const proc = cp.spawn(executable, args, {
+                cwd: workspacePath,
+                env: { ...process.env },
+                windowsHide: true,
+            });
+
+            proc.stdout?.on('data', (data) => {
+                stdout += data.toString();
+            });
+
+            proc.stderr?.on('data', (data) => {
+                stderr += data.toString();
+            });
+
+            proc.on('close', (code) => {
+                if (code !== 0 && code !== null) {
+                    reject(new Error(stderr.trim() || `Obelisk exited with code ${code}`));
+                    return;
+                }
+                resolve(stdout.trim());
+            });
+
+            proc.on('error', (err) => {
+                if ((err as any).code === 'ENOENT') {
+                    reject(new Error(
+                        `Could not find '${executable}'. Install Obelisk CLI or set obelisk.executablePath in settings.`
+                    ));
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    }
 }

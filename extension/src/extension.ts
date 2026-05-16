@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Register commands
 	context.subscriptions.push(
 		vscode.commands.registerCommand("obelisk.scan", () => runScan()),
-		vscode.commands.registerCommand("obelisk.refresh", () => runScan()),
+		vscode.commands.registerCommand("obelisk.generateReport", () => generateReport()),
 		vscode.commands.registerCommand("obelisk.clear", () => clearFindings()),
 		vscode.commands.registerCommand("obelisk.stop", () => runner.stop()),
 	);
@@ -128,6 +128,35 @@ async function runScan(): Promise<void> {
 		findingsProvider.setLoading(false);
 		vscode.window.showErrorMessage(`Obelisk: ${err.message}`);
 	}
+}
+
+async function generateReport(): Promise<void> {
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	if (!workspaceFolder) {
+		vscode.window.showWarningMessage("Obelisk: No workspace folder open.");
+		return;
+	}
+
+	statusBar.setScanning();
+	vscode.window.withProgress(
+		{
+			location: vscode.ProgressLocation.Notification,
+			title: "Obelisk: Generating Report...",
+			cancellable: false,
+		},
+		async () => {
+			try {
+				const output = await runner.generateReport(workspaceFolder.uri.fsPath);
+				vscode.window.showInformationMessage("Obelisk: Report generated successfully!");
+				// If the output contains a path, we can try to open it, or just let the user see it
+				console.log(output);
+			} catch (err: any) {
+				vscode.window.showErrorMessage(`Obelisk: Failed to generate report - ${err.message}`);
+			} finally {
+				statusBar.reset();
+			}
+		}
+	);
 }
 
 function clearFindings(): void {
