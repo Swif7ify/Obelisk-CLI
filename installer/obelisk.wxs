@@ -74,6 +74,54 @@
       </Directory>
     </Directory>
 
+    <!--
+      Custom Action: Prompt user during uninstall with a native Windows dialog.
+      This is an inline VBScript that runs IMMEDIATELY (before deferred actions),
+      so it can show a UI popup even when uninstalling from Add/Remove Programs.
+      It directly deletes ~/.obelisk and removes the keyring entry if user says Yes.
+    -->
+    <CustomAction Id="PromptAndCleanupUserData" Script="vbscript" Execute="immediate" Return="ignore">
+      <![CDATA[
+        Dim shell, fso, userProfile, configDir, result
+
+        Set shell = CreateObject("WScript.Shell")
+        Set fso   = CreateObject("Scripting.FileSystemObject")
+
+        userProfile = shell.ExpandEnvironmentStrings("%USERPROFILE%")
+        configDir   = userProfile & "\.obelisk"
+
+        ' Only prompt if user data actually exists
+        If fso.FolderExists(configDir) Then
+          result = MsgBox( _
+            "Obelisk found user data at:" & vbCrLf & _
+            configDir & vbCrLf & vbCrLf & _
+            "This includes your configuration and saved API keys." & vbCrLf & vbCrLf & _
+            "Do you want to DELETE all user data?" & vbCrLf & _
+            "(Click No to keep your settings for a future reinstall)", _
+            vbYesNo + vbQuestion + vbDefaultButton2, _
+            "Obelisk CLI - Uninstall Cleanup")
+
+          If result = vbYes Then
+            ' Delete the config directory
+            fso.DeleteFolder configDir, True
+
+            ' Remove stored API key from Windows Credential Manager
+            shell.Run "cmdkey /delete:obelisk-cli", 0, True
+          End If
+        End If
+
+        Set fso   = Nothing
+        Set shell = Nothing
+      ]]>
+    </CustomAction>
+
+    <InstallExecuteSequence>
+      <!-- Show the cleanup prompt only during a full uninstall, before files are removed -->
+      <Custom Action="PromptAndCleanupUserData" Before="RemoveFiles">
+        REMOVE="ALL"
+      </Custom>
+    </InstallExecuteSequence>
+
     <!-- Features -->
     <Feature Id="ProductFeature" 
              Title="Obelisk CLI" 
