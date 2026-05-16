@@ -196,6 +196,7 @@ obelisk protect --install
 obelisk config list
 obelisk config set api-key YOUR_API_KEY
 obelisk config set report-format txt
+obelisk config set auto-save false
 
 # 7. MCP Server Mode (For AI Assistants)
 obelisk mcp

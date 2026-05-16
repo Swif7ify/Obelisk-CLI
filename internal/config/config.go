@@ -18,6 +18,7 @@ type Config struct {
 	DefaultPath  string `json:"default_path,omitempty"`
 	NoColor      bool   `json:"no_color,omitempty"`
 	SkipAI       bool   `json:"skip_ai,omitempty"`
+	AutoSave     bool   `json:"auto_save"`
 	ReportFormat string `json:"report_format,omitempty"`
 }
 
@@ -170,10 +171,12 @@ func (c *Config) Reset() {
 	c.DefaultPath = ""
 	c.NoColor = false
 	c.SkipAI = false
+	c.AutoSave = true
 }
 
 func defaultConfig() *Config {
 	return &Config{
-		Model: "gemini-2.5-flash",
+		Model:    "gemini-2.5-flash",
+		AutoSave: true,
 	}
 }

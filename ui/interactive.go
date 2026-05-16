@@ -145,7 +145,7 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Viewport.GotoTop()
 			
 			// Auto-save report to file (matching CLI behavior)
-			if m.ScanResult != nil && m.ScanReport != nil {
+			if m.ScanResult != nil && m.ScanReport != nil && m.Config.AutoSave && len(m.ScanResult.Findings) > 0 {
 				if err := report.WriteToFile(m.ScanResult, m.ScanReport, outputPath, format); err != nil {
 					// Don't show error in TUI, just silently fail
 					// User can still see results in the viewport

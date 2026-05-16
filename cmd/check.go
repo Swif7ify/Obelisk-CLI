@@ -18,6 +18,7 @@ import (
 var flagCheckPath string
 var flagSkipAI bool
 var flagOutputFile string
+var flagCheckNoSave bool
 
 var checkCmd = &cobra.Command{
 	Use:   "check [path]",
@@ -144,11 +145,16 @@ var checkCmd = &cobra.Command{
 				outputPath = report.GetDefaultOutputPath(projectPath, format)
 			}
 
-			// Write the report to file
-			if err := report.WriteToFile(result.ScanResult, result.Report, outputPath, format); err != nil {
-				fmt.Fprintf(os.Stderr, "\nWarning: Could not save report to file: %v\n", err)
-			} else {
-				fmt.Printf("\n✓ Report saved to: %s\n", outputPath)
+			// Write the report to file if output is specified, OR if auto-save is enabled, there are findings, and we haven't opted out
+			hasFindings := len(result.ScanResult.Findings) > 0
+			shouldSave := flagOutputFile != "" || (!flagCheckNoSave && userCfg.AutoSave && hasFindings)
+
+			if shouldSave {
+				if err := report.WriteToFile(result.ScanResult, result.Report, outputPath, format); err != nil {
+					fmt.Fprintf(os.Stderr, "\nWarning: Could not save report to file: %v\n", err)
+				} else {
+					fmt.Printf("\n✓ Report saved to: %s\n", outputPath)
+				}
 			}
 		case err := <-errChan:
 			fmt.Fprintf(os.Stderr, "\nWarning: Scan failed, report not saved: %v\n", err)
@@ -164,6 +170,7 @@ var checkCmd = &cobra.Command{
 func init() {
 	checkCmd.Flags().StringVarP(&flagCheckPath, "path", "p", "", "Path to project (default: current directory)")
 	checkCmd.Flags().BoolVar(&flagSkipAI, "skip-ai", false, "Skip AI analysis (offline mode)")
+	checkCmd.Flags().BoolVar(&flagCheckNoSave, "no-save", false, "Do not auto-save report file even if there are problems")
 	checkCmd.Flags().StringVarP(&flagOutputFile, "output", "o", "", "Output file path (default: obelisk-report-<timestamp>.md in project directory)")
 	rootCmd.AddCommand(checkCmd)
 }

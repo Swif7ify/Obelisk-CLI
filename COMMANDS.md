@@ -25,6 +25,7 @@ obelisk report /path/to/project --export=json
 
 # Configure settings
 obelisk config set api-key YOUR_API_KEY
+obelisk config set auto-save false
 obelisk config get api-key
 obelisk config list
 
@@ -76,6 +77,7 @@ obelisk check  /path/to/project
 
 - ` string` - Path to project directory (required)
 - `--skip-ai` - Skip AI analysis (faster, local-only checks)
+- `--no-save` - Do not auto-save report file even if there are problems
 - `--api-key string` - Gemini API key
 - `--model string` - AI model to use
 
@@ -101,6 +103,7 @@ obelisk scan  /path/to/project
 
 - ` string` - Path to project directory (required)
 - `--skip-ai` - Skip AI analysis
+- `--no-save` - Do not auto-save report file even if there are problems
 - `--fail-on-critical` - Exit with code 1 if critical issues found
 - `--output string` - Output format: text, json, or markdown
 
@@ -346,6 +349,7 @@ obelisk report . --export=markdown
 # One-time setup
 obelisk config set api-key YOUR_API_KEY
 obelisk config set model gemini-2.5-flash
+obelisk config set auto-save false
 
 # Then use without flags
 obelisk check  .

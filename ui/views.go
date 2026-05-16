@@ -118,6 +118,14 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 		labelStyle.Render("Report Format:"),
 		valueStyle.Render(cfg.GetReportFormat())))
 
+	autoSaveStr := "Disabled"
+	if cfg.AutoSave {
+		autoSaveStr = "Enabled"
+	}
+	sb.WriteString(fmt.Sprintf("  %s %s\n",
+		labelStyle.Render("Auto-Save Report:"),
+		valueStyle.Render(autoSaveStr)))
+
 	sb.WriteString("\n")
 
 	// Sub-menu
@@ -130,6 +138,7 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 		{"", "Toggle AI (Offline Mode)"},
 		{"", "Toggle No Color"},
 		{"", "Toggle Report Format"},
+		{"", "Toggle Auto-Save Report"},
 		{"", "Reset All Settings"},
 		{"", "Back to Menu"},
 	}

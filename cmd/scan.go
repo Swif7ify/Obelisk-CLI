@@ -19,6 +19,7 @@ var flagScanFormat string
 var flagScanStrict bool
 var flagScanSkipAI bool
 var flagScanOutput string
+var flagScanNoSave bool
 
 var scanCmd = &cobra.Command{
 	Use:   "scan [path]",
@@ -98,11 +99,11 @@ Examples:
 		// Output
 		switch strings.ToLower(flagScanFormat) {
 		case "json":
-			return printScanJSON(result)
+			return printScanJSON(result, cfg)
 		case "markdown", "md":
-			return printScanMarkdown(result)
+			return printScanMarkdown(result, cfg)
 		default:
-			return printScanText(result)
+			return printScanText(result, cfg)
 		}
 	},
 	PostRunE: func(cmd *cobra.Command, args []string) error {
@@ -115,7 +116,7 @@ Examples:
 	},
 }
 
-func printScanText(result *engine.Result) error {
+func printScanText(result *engine.Result, cfg *config.Config) error {
 	s := result.ScanResult
 	r := result.Report
 
@@ -162,10 +163,13 @@ func printScanText(result *engine.Result) error {
 		fmt.Println(line)
 	}
 
-	// Generate and save report, then display the path
-	if len(s.Findings) > maxShow || flagOutputFile != "" {
+	// Generate and save report based on config and flags
+	hasFindings := len(s.Findings) > 0
+	shouldSave := flagScanOutput != "" || (!flagScanNoSave && cfg.AutoSave && hasFindings)
+
+	if shouldSave {
 		format := "md"
-		outputPath := flagOutputFile
+		outputPath := flagScanOutput
 		if outputPath == "" {
 			outputPath = report.GetDefaultOutputPath(s.ProjectPath, format)
 		}
@@ -192,7 +196,7 @@ func printScanText(result *engine.Result) error {
 	return nil
 }
 
-func printScanJSON(result *engine.Result) error {
+func printScanJSON(result *engine.Result, cfg *config.Config) error {
 	data, err := json.MarshalIndent(map[string]interface{}{
 		"scan_result": result.ScanResult,
 		"report":      result.Report,
@@ -212,7 +216,7 @@ func printScanJSON(result *engine.Result) error {
 	return nil
 }
 
-func printScanMarkdown(result *engine.Result) error {
+func printScanMarkdown(result *engine.Result, cfg *config.Config) error {
 	r := result.Report
 	s := result.ScanResult
 
@@ -259,6 +263,7 @@ func init() {
 	scanCmd.Flags().StringVarP(&flagScanFormat, "format", "f", "text", "Output format: text, json, markdown")
 	scanCmd.Flags().BoolVar(&flagScanStrict, "strict", false, "Exit code 1 on critical/error findings")
 	scanCmd.Flags().BoolVar(&flagScanSkipAI, "skip-ai", false, "Skip AI analysis")
+	scanCmd.Flags().BoolVar(&flagScanNoSave, "no-save", false, "Do not auto-save report file even if there are problems")
 	scanCmd.Flags().StringVarP(&flagScanOutput, "output", "o", "", "Write output to file")
 	rootCmd.AddCommand(scanCmd)
 }

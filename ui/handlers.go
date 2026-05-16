@@ -257,7 +257,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.SubCursor--
 		}
 	case "down", "j":
-		if m.SubCursor < 6 {
+		if m.SubCursor < 7 {
 			m.SubCursor++
 		}
 	case "enter":
@@ -300,13 +300,23 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.StatusMsg = "Report format: " + m.Config.ReportFormat
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 5: // Reset
+		case 5: // Toggle Auto-Save
+			m.Config.AutoSave = !m.Config.AutoSave
+			_ = m.Config.Save()
+			s := "Disabled"
+			if m.Config.AutoSave {
+				s = "Enabled"
+			}
+			m.StatusMsg = "Auto-save report: " + s
+			m.StatusIsError = false
+			return m, clearStatusAfter(3 * time.Second)
+		case 6: // Reset
 			m.Config.Reset()
 			_ = m.Config.Save()
 			m.StatusMsg = "Settings reset to defaults"
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 6: // Back
+		case 7: // Back
 			m.CurrentView = ViewMainMenu
 		}
 	case "esc", "backspace":
