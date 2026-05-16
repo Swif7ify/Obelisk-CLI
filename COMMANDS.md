@@ -21,7 +21,7 @@ obelisk check /path/to/project
 obelisk scan /path/to/project
 
 # Generate report
-obelisk report /path/to/project --output report.json
+obelisk report /path/to/project --export=json
 
 # Configure settings
 obelisk config set api-key YOUR_API_KEY
@@ -126,14 +126,13 @@ obelisk scan  /path/to/project
 Generate and export a detailed health report.
 
 ```bash
-obelisk report  /path/to/project --output report.json
+obelisk report /path/to/project --export=json
 ```
 
 **Flags:**
 
-- ` string` - Path to project directory (required)
-- `--output string` - Output file path (required)
-- `--format string` - Report format: json, markdown, html (default: json)
+- `path` - Path to project directory (optional)
+- `--export string` - Export format: markdown, json (default: "markdown")
 - `--skip-ai` - Skip AI analysis
 
 **Supported Formats:**
@@ -335,13 +334,10 @@ obelisk scan  ${WORKSPACE} --fail-on-critical
 
 ```bash
 # JSON report
-obelisk report  . --output report.json --format json
+obelisk report . --export=json
 
 # Markdown report
-obelisk report  . --output REPORT.md --format markdown
-
-# HTML report
-obelisk report  . --output report.html --format html
+obelisk report . --export=markdown
 ```
 
 ### Configuration

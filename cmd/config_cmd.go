@@ -34,7 +34,7 @@ var configListCmd = &cobra.Command{
 
 		configPath, _ := config.GetConfigPath()
 
-		fmt.Printf("🏛️ Obelisk Configuration\n\n")
+		fmt.Printf("Obelisk Configuration\n\n")
 		fmt.Printf("  %-18s %s\n", "Config file:", configPath)
 		fmt.Printf("  %-18s %s\n", "API Key:", cfg.MaskedAPIKey())
 		fmt.Printf("  %-18s %s\n", "Model:", cfg.GetModel())

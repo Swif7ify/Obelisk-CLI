@@ -417,7 +417,7 @@ func StartHTTPServer(version string, port string) error {
 
 	httpServer := NewHTTPServer(version)
 	
-	log.Printf("🏛️ Obelisk MCP Server starting...")
+	log.Printf("Obelisk MCP Server starting...")
 	log.Printf("Version: %s", version)
 	log.Printf("Listening on http://0.0.0.0%s", port)
 	log.Printf("SSE endpoint: http://0.0.0.0%s/sse", port)

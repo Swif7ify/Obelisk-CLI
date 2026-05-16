@@ -47,7 +47,7 @@ func (s *Server) Run() error {
 	reader := bufio.NewReader(os.Stdin)
 	
 	// Log to stderr (stdout is reserved for JSON-RPC)
-	fmt.Fprintln(os.Stderr, "🏛️ Obelisk MCP Server starting...")
+	fmt.Fprintln(os.Stderr, "Obelisk MCP Server starting...")
 	fmt.Fprintf(os.Stderr, "Version: %s\n", s.version)
 	fmt.Fprintln(os.Stderr, "Listening on stdio for JSON-RPC 2.0 messages...")
 	

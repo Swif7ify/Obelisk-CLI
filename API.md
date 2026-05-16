@@ -137,7 +137,6 @@ obelisk report [path] [flags]
 **Flags:**
 
 - `--export string` - Export format: markdown, json, text (default: "markdown")
-- `--output string` - Output file path (required)
 - `--skip-ai` - Skip AI analysis
 
 **Exit Codes:**
@@ -148,7 +147,7 @@ obelisk report [path] [flags]
 **Example:**
 
 ```bash
-obelisk report . --export markdown --output report.md
+obelisk report . --export=markdown
 ```
 
 ---

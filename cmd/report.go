@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/Swif7ify/Obelisk-CLI/internal/engine"
+	"github.com/Swif7ify/Obelisk-CLI/internal/report"
 	"github.com/Swif7ify/Obelisk-CLI/internal/scanner"
 )
 
@@ -40,14 +41,40 @@ var reportCmd = &cobra.Command{
 			return err
 		}
 
-		switch strings.ToLower(flagExport) {
-		case "json":
-			return exportJSON(result)
-		case "markdown", "md":
-			return exportMarkdown(result)
-		default:
-			return exportMarkdown(result)
+		exportFormat := strings.ToLower(flagExport)
+		
+		// Map 'markdown' to 'md' for file extension consistency
+		ext := exportFormat
+		if ext == "markdown" {
+			ext = "md"
 		}
+
+		outputPath := report.GetDefaultOutputPath(projectPath, ext)
+
+		if exportFormat == "json" {
+			// Write JSON manually since report.WriteToFile only handles txt/md
+			data, err := json.MarshalIndent(map[string]interface{}{
+				"scan_result": result.ScanResult,
+				"report":      result.Report,
+				"detection":   result.Detection,
+			}, "", "  ")
+			if err != nil {
+				return err
+			}
+			err = os.WriteFile(outputPath, data, 0644)
+			if err != nil {
+				return fmt.Errorf("failed to save JSON report: %w", err)
+			}
+		} else {
+			// Write Markdown/Text
+			err = report.WriteToFile(result.ScanResult, result.Report, outputPath, ext)
+			if err != nil {
+				return fmt.Errorf("failed to save report: %w", err)
+			}
+		}
+
+		fmt.Printf("\n✓ Report saved to: %s\n", outputPath)
+		return nil
 	},
 }
 

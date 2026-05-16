@@ -353,5 +353,5 @@ For security concerns, please see our [Security Policy](SECURITY.md).
 <p align="center">
   🏆 Built during the <strong>IBM Bob Hackathon</strong> (May 15–17, 2026)<br/>
   By <strong>OneDev PH</strong> — with the help of <strong>IBM Bob IDE</strong><br/><br/>
-  <em>Powered by Go & Google Gemini AI</em>
+  <em>Powered by Go, Google Gemini AI & IBM Bob</em>
 </p>
