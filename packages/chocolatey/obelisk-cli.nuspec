@@ -3,7 +3,7 @@
   <metadata>
     <!-- Required -->
     <id>obelisk-cli</id>
-    <version>0.1.0</version>
+    <version>1.1.0</version>
     <title>Obelisk CLI</title>
     <authors>OneDev PH</authors>
     <description>
@@ -36,7 +36,6 @@ Built with IBM Bob IDE for the IBM Bob Hackathon 2026.
     <projectSourceUrl>https://github.com/Swif7ify/Obelisk-CLI</projectSourceUrl>
     <docsUrl>https://github.com/Swif7ify/Obelisk-CLI/blob/main/README.md</docsUrl>
     <bugTrackerUrl>https://github.com/Swif7ify/Obelisk-CLI/issues</bugTrackerUrl>
-    <licenseUrl>https://github.com/Swif7ify/Obelisk-CLI/blob/main/LICENSE</licenseUrl>
     <iconUrl>https://raw.githubusercontent.com/Swif7ify/Obelisk-CLI/main/installer/icon.png</iconUrl>
 
     <!-- License -->

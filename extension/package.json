@@ -2,7 +2,7 @@
 	"name": "obelisk-cli",
 	"displayName": "Obelisk CLI",
 	"description": "AI-Powered Automated Tech Lead — scan your project for security issues, architectural problems, and code quality right from the IDE.",
-	"version": "0.1.1",
+	"version": "1.1.0",
 	"publisher": "OneDevPH",
 	"license": "MIT",
 	"icon": "resources/obelisk-icon.png",
