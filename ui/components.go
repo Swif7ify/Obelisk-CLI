@@ -37,23 +37,47 @@ func RenderScoreCard(report *ai.HealthReport) string {
 		Align(lipgloss.Center).
 		Render(fmt.Sprintf("  %s  ", report.Grade))
 
+	// Create aligned rows with fixed-width labels
+	labelWidth := 16
+	
+	securityLabel := lipgloss.NewStyle().
+		Foreground(ColorTextBold).
+		Width(labelWidth).
+		Render("Security:")
+	
+	archLabel := lipgloss.NewStyle().
+		Foreground(ColorTextBold).
+		Width(labelWidth).
+		Render("Architecture:")
+	
+	qualityLabel := lipgloss.NewStyle().
+		Foreground(ColorTextBold).
+		Width(labelWidth).
+		Render("Quality:")
+	
+	overallLabel := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(ColorTextBold).
+		Width(labelWidth).
+		Render("Overall:")
+	
 	scores := fmt.Sprintf(
 		"%s %s\n%s %s\n%s %s\n%s %s",
-		SubtitleStyle.Render("Security:"),
+		securityLabel,
 		renderScoreBar(report.SecurityScore),
-		SubtitleStyle.Render("Architecture:"),
+		archLabel,
 		renderScoreBar(report.ArchitectureScore),
-		SubtitleStyle.Render("Quality:"),
+		qualityLabel,
 		renderScoreBar(report.QualityScore),
-		lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Render("Overall:"),
+		overallLabel,
 		renderScoreBar(report.OverallScore),
 	)
 
 	left := lipgloss.NewStyle().Width(20).Align(lipgloss.Center).Render(grade)
-	right := lipgloss.NewStyle().Width(50).Render(scores)
+	right := lipgloss.NewStyle().Width(54).Render(scores)
 
 	content := lipgloss.JoinHorizontal(lipgloss.Top, left, "  ", right)
-	return CardStyle.Width(76).Render(content)
+	return CardStyle.Width(80).Render(content)
 }
 
 // renderScoreBar creates a visual progress bar for a score.

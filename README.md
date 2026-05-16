@@ -176,11 +176,13 @@ obelisk
 # Run a visual health check with an animated spinner
 obelisk check
 obelisk check "C:\path\to\your\project"
+obelisk check --skip-ai
 
 # 3. CI/CD Headless Mode (For Pipelines)
 obelisk scan
 obelisk scan --format json
 obelisk scan --strict # Exit code 1 on errors
+obelisk scan --skip-ai
 
 # 4. Report Generation
 obelisk report --export=markdown

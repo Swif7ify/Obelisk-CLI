@@ -48,12 +48,25 @@ var checkCmd = &cobra.Command{
 		}
 
 		// Load config to get format preference
-		cfg, _ := config.Load()
-		format := cfg.GetReportFormat()
+		userCfg, _ := config.Load()
+		format := userCfg.GetReportFormat()
 
-		if flagNoColor || cfg.NoColor {
+		if flagNoColor || userCfg.NoColor {
 			os.Setenv("NO_COLOR", "1")
 		}
+
+		// Get API key and model from config if not provided
+		apiKey := flagAPIKey
+		if apiKey == "" {
+			apiKey = userCfg.GetAPIKey()
+		}
+
+		model := flagModel
+		if model == "" || model == "gemini-2.5-flash" {
+			model = userCfg.GetModel()
+		}
+
+		skipAI := flagSkipAI || userCfg.SkipAI || apiKey == ""
 
 		// Detect project type
 		detection := detector.Detect(projectPath)
@@ -88,15 +101,15 @@ var checkCmd = &cobra.Command{
 
 		// Run engine in background
 		go func() {
-			cfg := engine.Config{
+			engineCfg := engine.Config{
 				ProjectPath: projectPath,
-				APIKey:      flagAPIKey,
-				Model:       flagModel,
-				SkipAI:      flagSkipAI || cfg.SkipAI || cfg.GetAPIKey() == "",
+				APIKey:      apiKey,
+				Model:       model,
+				SkipAI:      skipAI,
 				Verbose:     flagVerbose,
 			}
 
-			result, err := engine.Run(cfg, func(phase string) {
+			result, err := engine.Run(engineCfg, func(phase string) {
 				// Update spinner phase
 				p.Send(ui.PhaseUpdateMsg{Phase: phase})
 				if flagVerbose {
