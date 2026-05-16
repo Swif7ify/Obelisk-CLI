@@ -1,29 +1,22 @@
 # 🚀 Quick Start - Use Obelisk MCP Server
 
-Get started with Obelisk's AI-powered code analysis in under 2 minutes!
-
-## ⚡ Instant Access - No Installation Required
-
-Use our **official public MCP server** - no deployment, no setup, just connect and go!
-
-```
-https://mcp-obelisk.onedevph.online/sse
-```
-
----
+Get started with Obelisk's AI-powered code analysis in under 2 minutes by integrating it directly with your favorite AI assistant!
 
 ## 📱 Connect Your AI Client
+
+To scan your local codebase, Obelisk must be run locally on your machine. Configure your AI assistant to start Obelisk using its built-in MCP server mode.
 
 ### For Bob IDE
 
 1. Open your Bob configuration file (`.bob/config.json` or `~/.bob/config.json`)
-2. Add this configuration:
+2. Add this configurartion:
 
 ```json
-{
+{r
 	"mcpServers": {
 		"obelisk": {
-			"url": "https://mcp-obelisk.onedevph.online/sse"
+			"command": "obelisk",
+			"args": ["mcp"]
 		}
 	}
 }
@@ -44,7 +37,8 @@ https://mcp-obelisk.onedevph.online/sse
 {
 	"mcpServers": {
 		"obelisk": {
-			"url": "https://mcp-obelisk.onedevph.online/sse"
+			"command": "obelisk",
+			"args": ["mcp"]
 		}
 	}
 }
@@ -63,7 +57,8 @@ https://mcp-obelisk.onedevph.online/sse
 {
 	"mcpServers": {
 		"obelisk": {
-			"url": "https://mcp-obelisk.onedevph.online/sse"
+			"command": "obelisk",
+			"args": ["mcp"]
 		}
 	}
 }
@@ -80,28 +75,28 @@ Once connected, ask your AI assistant to:
 
 ### Security Analysis
 
-```
+```text
 "Use Obelisk to check my project for security vulnerabilities"
 "Scan for exposed API keys and secrets in my code"
 ```
 
 ### Code Quality
 
-```
+```text
 "Analyze the complexity of my codebase"
 "Find all TODO and FIXME comments in my project"
 ```
 
 ### Full Health Check
 
-```
+```text
 "Run a complete Obelisk scan on my project"
 "Generate a health report with recommendations"
 ```
 
 ### Dependency Audit
 
-```
+```text
 "Check my dependencies for vulnerabilities"
 "Audit my package.json for issues"
 ```
@@ -161,20 +156,13 @@ Access cached analysis results:
 
 ## 🔒 Privacy & Security
 
-- **Your code stays local** - Only analysis results are sent to the AI
-- **No code storage** - We don't store your source code
-- **Secure connection** - All communication over HTTPS
-- **Open source** - Audit the code yourself on GitHub
+- **Your code stays local** - All analysis is performed on your machine. Only summaries/results are shared with the LLM context.
+- **No code storage** - We don't store your source code.
+- **Open source** - Audit the code yourself on GitHub.
 
 ---
 
 ## 🆘 Troubleshooting
-
-### Connection Issues
-
-- Verify the URL is correct: `https://mcp-obelisk.onedevph.online/sse`
-- Check your internet connection
-- Restart your AI client
 
 ### Tool Not Working
 
@@ -183,27 +171,13 @@ Access cached analysis results:
 
 ### Need Help?
 
-- Check [DEPLOYMENT.md](DEPLOYMENT.md) for detailed documentation
 - Open an issue on [GitHub](https://github.com/Swif7ify/Obelisk-CLI/issues)
-
----
-
-## 🚀 Want Your Own Instance?
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) to deploy your own Obelisk MCP server on:
-
-- Render (free tier available)
-- Fly.io
-- Railway
-- Heroku
-- Any Docker-compatible platform
 
 ---
 
 ## 📚 Learn More
 
 - [Full Documentation](README.md)
-- [Deployment Guide](DEPLOYMENT.md)
 - [MCP Guide](MCP_GUIDE.md)
 - [API Reference](API.md)
 

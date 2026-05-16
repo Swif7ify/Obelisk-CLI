@@ -65,7 +65,7 @@ func RenderAPIKeyView(cfg *config.Config, subCursor int) string {
 			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render(" ▶ ")
 			style = lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Background(ColorPrimary).Padding(0, 1)
 		}
-		sb.WriteString(fmt.Sprintf(" %s%s %s\n\n", cursor, opt.icon, style.Render(opt.text)))
+		sb.WriteString(fmt.Sprintf(" %s%s %s\n", cursor, opt.icon, style.Render(opt.text)))
 	}
 
 	return CardStyle.Width(64).Render(sb.String())
@@ -260,7 +260,7 @@ func RenderProtectView(subCursor int) string {
 			cursor = lipgloss.NewStyle().Foreground(ColorPrimary).Bold(true).Render(" ▶ ")
 			style = lipgloss.NewStyle().Bold(true).Foreground(ColorTextBold).Background(ColorPrimary).Padding(0, 1)
 		}
-		sb.WriteString(fmt.Sprintf(" %s%s %s\n\n", cursor, opt.icon, style.Render(opt.text)))
+		sb.WriteString(fmt.Sprintf(" %s%s %s\n", cursor, opt.icon, style.Render(opt.text)))
 	}
 
 	return CardStyle.Width(64).Render(sb.String())

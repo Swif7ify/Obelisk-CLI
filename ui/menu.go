@@ -102,7 +102,7 @@ func (m MenuModel) View() string {
 		}
 
 		line := fmt.Sprintf(" %s %s  %s", cursor, label, desc)
-		sb.WriteString(line + "\n\n") // added extra newline for breathing room
+		sb.WriteString(line + "\n")
 	}
 
 	return sb.String()

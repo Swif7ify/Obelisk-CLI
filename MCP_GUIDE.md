@@ -7,7 +7,6 @@
 - [What is MCP?](#what-is-mcp)
 - [Quick Start](#quick-start)
 - [Local Setup](#local-setup)
-- [Cloud Deployment](#cloud-deployment)
 - [Available Tools](#available-tools)
 - [Available Resources](#available-resources)
 - [Client Configuration](#client-configuration)
@@ -36,9 +35,6 @@
 ```bash
 # Local mode (stdio transport)
 obelisk mcp
-
-# HTTP mode (for remote access)
-obelisk mcp --http --port 8080
 ```
 
 ### 2. Configure Your AI Assistant
@@ -75,26 +71,7 @@ obelisk mcp
 # Available tools: scan_project, check_security, analyze_complexity, ...
 ```
 
----
 
-## Cloud Deployment
-
-For remote access and team collaboration, deploy Obelisk MCP Server to the cloud.
-
-### Deploy to Render (Recommended)
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for complete cloud deployment guide.
-
-**Quick Deploy:**
-
-1. Push code to GitHub
-2. Connect to Render
-3. Set `GEMINI_API_KEY` environment variable
-4. Deploy with `obelisk mcp --http`
-
-Your server will be available at: `https://your-app.onrender.com/sse`
-
----
 
 ## Available Tools
 
@@ -311,18 +288,6 @@ Add to your Bob configuration:
 }
 ```
 
-For cloud deployment:
-
-```json
-{
-	"mcpServers": {
-		"obelisk-cloud": {
-			"url": "https://your-app.onrender.com/sse"
-		}
-	}
-}
-```
-
 ---
 
 ### Claude Desktop
@@ -374,17 +339,6 @@ const { spawn } = require("child_process");
 
 const server = spawn("obelisk", ["mcp"]);
 // Communicate via stdin/stdout using JSON-RPC 2.0
-```
-
-**HTTP/SSE Transport:**
-
-```javascript
-const eventSource = new EventSource("https://your-server.com/sse");
-
-eventSource.onmessage = (event) => {
-	const message = JSON.parse(event.data);
-	// Handle MCP messages
-};
 ```
 
 ---
@@ -463,9 +417,6 @@ obelisk version
 
 # Verify API key is set
 obelisk config get api-key
-
-# Check for port conflicts (HTTP mode)
-netstat -ano | findstr :8080
 ```
 
 ---
@@ -518,65 +469,7 @@ netstat -ano | findstr :8080
     obelisk mcp --verbose
     ```
 
----
 
-### HTTP Mode Issues
-
-**Issue:** Can't access HTTP endpoint
-
-**Solutions:**
-
-1. **Check firewall:**
-
-    ```bash
-    # Windows
-    netsh advfirewall firewall add rule name="Obelisk MCP" dir=in action=allow protocol=TCP localport=8080
-    ```
-
-2. **Verify port:**
-
-    ```bash
-    # Test endpoint
-    curl http://localhost:8080/health
-    ```
-
-3. **Check CORS:**
-    - Server includes CORS headers by default
-    - Verify client origin is allowed
-
----
-
-## Advanced Usage
-
-### Custom Port
-
-```bash
-# Use custom port
-obelisk mcp --http --port 3000
-```
-
-### Environment Variables
-
-```bash
-# Set via environment
-export GEMINI_API_KEY=your-key
-export OBELISK_MODEL=gemini-2.0-flash-exp
-export PORT=8080
-
-obelisk mcp --http
-```
-
-### Docker Deployment
-
-```bash
-# Build image
-docker build -t obelisk-mcp .
-
-# Run container
-docker run -p 8080:8080 \
-  -e GEMINI_API_KEY=your-key \
-  obelisk-mcp
-```
 
 ---
 
@@ -591,7 +484,6 @@ docker run -p 8080:8080 \
 
 ### Network Security
 
-- ✅ Use HTTPS in production (Render provides this)
 - ✅ Implement rate limiting for public endpoints
 - ✅ Consider authentication for team deployments
 - ✅ Monitor access logs
@@ -609,7 +501,6 @@ docker run -p 8080:8080 \
 
 - **MCP Specification:** https://modelcontextprotocol.io/
 - **Obelisk Documentation:** [README.md](README.md)
-- **Cloud Deployment:** [DEPLOYMENT.md](DEPLOYMENT.md)
 - **GitHub Issues:** https://github.com/Swif7ify/Obelisk-CLI/issues
 
 ---
