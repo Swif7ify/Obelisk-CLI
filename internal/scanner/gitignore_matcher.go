@@ -15,18 +15,24 @@ type GitignoreMatcher struct {
 
 // NewGitignoreMatcher creates a new gitignore matcher from a project path.
 func NewGitignoreMatcher(projectPath string) (*GitignoreMatcher, error) {
+	var allPatterns []string
+
+	// Try parsing .obelisk-ignore first
+	obeliskIgnorePath := filepath.Join(projectPath, ".obelisk-ignore")
+	obeliskPatterns, err := parseGitignoreFile(obeliskIgnorePath)
+	if err == nil {
+		allPatterns = append(allPatterns, obeliskPatterns...)
+	}
+
+	// Try parsing .gitignore
 	gitignorePath := filepath.Join(projectPath, ".gitignore")
-	patterns, err := parseGitignoreFile(gitignorePath)
-	if err != nil {
-		// If .gitignore doesn't exist or can't be read, return empty matcher
-		return &GitignoreMatcher{
-			patterns: []string{},
-			root:     projectPath,
-		}, nil
+	gitPatterns, err := parseGitignoreFile(gitignorePath)
+	if err == nil {
+		allPatterns = append(allPatterns, gitPatterns...)
 	}
 
 	return &GitignoreMatcher{
-		patterns: patterns,
+		patterns: allPatterns,
 		root:     projectPath,
 	}, nil
 }

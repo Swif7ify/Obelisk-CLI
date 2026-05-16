@@ -22,7 +22,7 @@ In fast-paced development, "tool fatigue" leads to missed security leaks and mes
 **Obelisk** solves this with a single command:
 
 ```bash
-obelisk check
+obelisk
 ```
 
 One command. Full project health report. AI-graded score.
@@ -31,10 +31,17 @@ One command. Full project health report. AI-graded score.
 
 ## ✨ Features
 
+### 💻 CLI Modes
+Obelisk is designed for both humans and machines:
+- **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system.
+- **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a Markdown report file in your project directory upon exiting.
+- **Headless Mode (`obelisk scan`)** — Completely bypasses the UI and prints standard text directly to `stdout`. Designed for automated pipelines (GitHub Actions, Jenkins). Supports raw JSON (`--format json`) and strict mode (`--strict`) which fails the pipeline with an Exit Code 1 if critical issues are found.
+
 ### 🛡️ Security Shield
 - **Secret Scanner** — Deep-scans files for hardcoded API keys, JWTs, AWS credentials, and private keys using regex + entropy analysis
 - **Integrity Validator** — Ensures `.gitignore` and `.env` setups prevent sensitive files from reaching version control
 - **Pre-Push Hook** — Integrates into Git to automatically block pushes with security vulnerabilities
+- **Ignore Engine** — Automatically reads `.gitignore` and `.obelisk-ignore` to exclude files/folders across all scans.
 
 ### 🧹 Architectural Linting
 - **Naming Enforcer** — Validates file/folder naming conventions per framework (PascalCase for React, kebab-case for assets)
@@ -48,9 +55,9 @@ One command. Full project health report. AI-graded score.
 - **Technical Debt Summary** — Plain-English summary of critical issues + praise for good practices
 
 ### 📄 Automatic Report Generation
-- **Plain Text Reports** — Every scan automatically saves a detailed, scrollable report to `obelisk-report.txt`
+- **Markdown or Text** — Automatically save reports to `obelisk-report-<timestamp>.md` or configure it to save as `.txt`.
 - **Custom Output Paths** — Use `--output` flag to save reports to any location
-- **Shareable Format** — Reports are in plain text format, perfect for sharing with team members or version control
+- **Persistent Configuration** — Manage global settings via `~/.obelisk/config.json`
 
 ---
 
@@ -68,43 +75,45 @@ cd Obelisk-CLI
 make build
 ```
 
-### Setup
-
-```bash
-# Set your Gemini API key
-export GOOGLE_API_KEY="your-api-key-here"
-```
-
 ### Usage
 
 ```bash
-# Run a full health check with interactive TUI
-# Automatically saves report to obelisk-report.txt
+# 1. Interactive TUI (Highly Recommended)
+# Launch the main menu to run scans and configure settings visually
+obelisk
+
+# 2. Local Dashboard (For Developers)
+# Run a visual health check with an animated spinner
 obelisk check
+obelisk check "C:\path\to\your\project"
 
-# Check a specific project path
-obelisk check --path "C:\path\to\your\project"
+# 3. CI/CD Headless Mode (For Pipelines)
+obelisk scan
+obelisk scan --format json
+obelisk scan --strict # Exit code 1 on errors
 
-# Run with an API key flag
-obelisk check --api-key="your-key"
-
-# Specify custom output file location
-obelisk check --output "C:\reports\my-scan.txt"
-
-# Export a health report as Markdown
+# 3. Report Generation
 obelisk report --export=markdown
-
-# Export as JSON
 obelisk report --export=json
 
-# Install as a Git pre-push hook
+# 4. Git Hooks
 obelisk protect --install
 
-# Run in strict mode (non-zero exit on failures)
-obelisk protect --strict
+# 5. Configuration Management
+obelisk config list
+obelisk config set api-key YOUR_API_KEY
+obelisk config set report-format txt
 ```
 
-**Note:** The `check` command now automatically saves a detailed plain-text report to `obelisk-report.txt` in the project directory. This file can be opened in any text editor for easy scrolling and review. Use the `--output` flag to specify a custom location.
+### Ignored Files
+To completely skip scanning specific files or folders, create a `.obelisk-ignore` file at the root of your project. Obelisk natively respects both `.gitignore` and `.obelisk-ignore`.
+
+```text
+# .obelisk-ignore
+*.log
+vendor/
+legacy_code.js
+```
 
 ---
 
@@ -127,8 +136,8 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 | Framework | Status |
 |-----------|--------|
 | JavaScript / TypeScript (React, Next.js) | ✅ Supported |
-| Laravel (PHP) | 🔜 Coming Soon |
-| Go | 🔜 Coming Soon |
+| Go (Golang) | ✅ Supported |
+| Laravel (PHP) | ✅ Supported |
 | Python (Django/Flask) | 🔜 Planned |
 
 ---
@@ -148,31 +157,28 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 Obelisk-CLI/
 ├── main.go                 # Entry point
 ├── cmd/                    # Cobra command definitions
-│   ├── root.go             # Root command & global flags
-│   ├── check.go            # Health check command (TUI)
+│   ├── root.go             # Root command (Launches TUI)
+│   ├── check.go            # Original health check command
+│   ├── scan.go             # Headless scan mode
+│   ├── config_cmd.go       # Config management
 │   ├── report.go           # Export report command
 │   ├── protect.go          # Git hook integration
 │   └── version.go          # Version info
 ├── ui/                     # Bubble Tea TUI layer
-│   ├── dashboard.go        # Main dashboard model
-│   ├── spinner.go          # Animated scan progress
-│   ├── styles.go           # Lip Gloss styling
-│   └── components.go       # Reusable view components
+│   ├── interactive.go      # Main menu state machine
+│   ├── handlers.go         # Key press routing
+│   ├── components.go       # Reusable views (Input, Spinner)
+│   └── styles.go           # Lip Gloss styling
 ├── internal/               # Core logic
-│   ├── scanner/            # All scanning modules
-│   │   ├── secrets.go      # Secret/credential detection
-│   │   ├── gitignore.go    # .gitignore validation
-│   │   ├── dependencies.go # Dependency auditing
-│   │   ├── naming.go       # Naming convention checks
-│   │   ├── imports.go      # Import/circular dep analysis
-│   │   └── types.go        # Shared types
+│   ├── config/             # Persistent JSON settings
+│   ├── scanner/            # All scanning modules (.obelisk-ignore)
 │   ├── detector/           # Framework detection
 │   ├── ai/                 # Gemini API integration
 │   └── engine/             # Orchestrator
 └── adapters/               # Framework-specific rules
     ├── javascript.go       # JS/TS/React/Next.js
-    ├── laravel.go          # PHP/Laravel (stub)
-    └── golang.go           # Go (stub)
+    ├── laravel.go          # PHP/Laravel
+    └── golang.go           # Go
 ```
 
 ---
