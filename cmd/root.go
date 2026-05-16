@@ -46,8 +46,9 @@ Run 'obelisk scan' for headless CI/CD mode.`,
 		if flagModel != "" && flagModel != "gemini-2.5-flash" {
 			cfg.Model = flagModel
 		}
-		if flagNoColor {
+		if flagNoColor || cfg.NoColor {
 			cfg.NoColor = true
+			os.Setenv("NO_COLOR", "1")
 		}
 
 		model := ui.NewInteractive(cfg, Version)

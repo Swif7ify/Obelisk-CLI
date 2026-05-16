@@ -70,10 +70,13 @@ func (m InteractiveModel) handleMainMenu(key string) (tea.Model, tea.Cmd) {
 	case "enter":
 		switch m.Menu.Selected().Key {
 		case "scan":
-			cwd, _ := os.Getwd()
-			m.Input = NewInput("Project path:", cwd, false)
-			m.Input.Value = cwd
-			m.Input.Cursor = len(cwd)
+			path := m.Config.DefaultPath
+			if path == "" {
+				path, _ = os.Getwd()
+			}
+			m.Input = NewInput("Project path:", path, false)
+			m.Input.Value = path
+			m.Input.Cursor = len(path)
 			m.CurrentView = ViewScanInput
 		case "protect":
 			m.SubCursor = 0
@@ -243,7 +246,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.SubCursor--
 		}
 	case "down", "j":
-		if m.SubCursor < 5 {
+		if m.SubCursor < 6 {
 			m.SubCursor++
 		}
 	case "enter":
@@ -258,7 +261,17 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.Input.Value = m.Config.DefaultPath
 			m.Input.Cursor = len(m.Input.Value)
 			m.CurrentView = ViewSettingsPathInput
-		case 2: // Toggle no-color
+		case 2: // Toggle AI
+			m.Config.SkipAI = !m.Config.SkipAI
+			_ = m.Config.Save()
+			s := "ON"
+			if m.Config.SkipAI {
+				s = "OFF"
+			}
+			m.StatusMsg = "AI is now " + s
+			m.StatusIsError = false
+			return m, clearStatusAfter(3 * time.Second)
+		case 3: // Toggle no-color
 			m.Config.NoColor = !m.Config.NoColor
 			_ = m.Config.Save()
 			s := "disabled"
@@ -268,7 +281,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.StatusMsg = "No color: " + s
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 3: // Toggle Report Format
+		case 4: // Toggle Report Format
 			if m.Config.GetReportFormat() == "md" {
 				m.Config.ReportFormat = "txt"
 			} else {
@@ -278,13 +291,13 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			m.StatusMsg = "Report format: " + m.Config.ReportFormat
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 4: // Reset
+		case 5: // Reset
 			m.Config.Reset()
 			_ = m.Config.Save()
 			m.StatusMsg = "Settings reset to defaults"
 			m.StatusIsError = false
 			return m, clearStatusAfter(3 * time.Second)
-		case 5: // Back
+		case 6: // Back
 			m.CurrentView = ViewMainMenu
 		}
 	case "esc", "backspace":
@@ -339,7 +352,7 @@ func startScanCmd(path string, cfg *config.Config) tea.Cmd {
 			ProjectPath: path,
 			APIKey:      cfg.GetAPIKey(),
 			Model:       cfg.GetModel(),
-			SkipAI:      cfg.GetAPIKey() == "",
+			SkipAI:      cfg.SkipAI || cfg.GetAPIKey() == "",
 		}
 		result, err := engine.Run(ecfg, func(phase string) {
 			enginePhaseChan <- phase

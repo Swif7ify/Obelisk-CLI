@@ -100,6 +100,16 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 	if cfg.NoColor {
 		noColorStr = "On"
 	}
+
+	skipAIStr := "Disabled (AI is ON)"
+	if cfg.SkipAI {
+		skipAIStr = "Enabled (AI is OFF)"
+	}
+
+	sb.WriteString(fmt.Sprintf("  %s %s\n",
+		labelStyle.Render("Skip AI:"),
+		valueStyle.Render(skipAIStr)))
+
 	sb.WriteString(fmt.Sprintf("  %s %s\n",
 		labelStyle.Render("No Color:"),
 		valueStyle.Render(noColorStr)))
@@ -117,6 +127,7 @@ func RenderSettingsView(cfg *config.Config, subCursor int) string {
 	}{
 		{"", "Change Model"},
 		{"", "Set Default Path"},
+		{"", "Toggle AI (Offline Mode)"},
 		{"", "Toggle No Color"},
 		{"", "Toggle Report Format"},
 		{"", "Reset All Settings"},

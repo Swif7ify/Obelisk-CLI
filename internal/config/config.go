@@ -17,6 +17,7 @@ type Config struct {
 	Model        string `json:"model,omitempty"`
 	DefaultPath  string `json:"default_path,omitempty"`
 	NoColor      bool   `json:"no_color,omitempty"`
+	SkipAI       bool   `json:"skip_ai,omitempty"`
 	ReportFormat string `json:"report_format,omitempty"`
 }
 
@@ -168,6 +169,7 @@ func (c *Config) Reset() {
 	c.Model = ""
 	c.DefaultPath = ""
 	c.NoColor = false
+	c.SkipAI = false
 }
 
 func defaultConfig() *Config {

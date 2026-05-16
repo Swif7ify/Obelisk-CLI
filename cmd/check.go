@@ -51,6 +51,10 @@ var checkCmd = &cobra.Command{
 		cfg, _ := config.Load()
 		format := cfg.GetReportFormat()
 
+		if flagNoColor || cfg.NoColor {
+			os.Setenv("NO_COLOR", "1")
+		}
+
 		// Detect project type
 		detection := detector.Detect(projectPath)
 		
@@ -88,7 +92,7 @@ var checkCmd = &cobra.Command{
 				ProjectPath: projectPath,
 				APIKey:      flagAPIKey,
 				Model:       flagModel,
-				SkipAI:      flagSkipAI,
+				SkipAI:      flagSkipAI || cfg.SkipAI || cfg.GetAPIKey() == "",
 				Verbose:     flagVerbose,
 			}
 

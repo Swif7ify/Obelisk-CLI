@@ -57,6 +57,10 @@ Examples:
 		// Load config for API key fallback
 		cfg, _ := config.Load()
 
+		if flagNoColor || cfg.NoColor {
+			os.Setenv("NO_COLOR", "1")
+		}
+
 		apiKey := flagAPIKey
 		if apiKey == "" {
 			apiKey = cfg.GetAPIKey()
@@ -67,7 +71,7 @@ Examples:
 			model = cfg.GetModel()
 		}
 
-		skipAI := flagScanSkipAI || apiKey == ""
+		skipAI := flagScanSkipAI || cfg.SkipAI || apiKey == ""
 
 		engineCfg := engine.Config{
 			ProjectPath: projectPath,
