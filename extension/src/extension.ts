@@ -126,6 +126,7 @@ async function runScan(): Promise<void> {
 	} catch (err: any) {
 		statusBar.setError();
 		findingsProvider.setLoading(false);
+		summaryView.updateError(err.message);
 		vscode.window.showErrorMessage(`Obelisk: ${err.message}`);
 	}
 }

@@ -84,7 +84,14 @@ export class ObeliskRunner {
                     // In strict mode, obelisk exits 1 on findings — that's OK
                     // Only reject if there's no stdout (actual error)
                     if (!stdout.trim()) {
-                        const errMsg = stderr.trim() || `Obelisk exited with code ${code}`;
+                        let errMsg = stderr.trim() || `Obelisk exited with code ${code}`;
+                        
+                        // Simplify unsupported project type error to avoid dumping CLI help text
+                        const match = errMsg.match(/unsupported project type:\s*(\w+)/i);
+                        if (match) {
+                            errMsg = `Unsupported Project Type: ${match[1]}`;
+                        }
+                        
                         reject(new Error(errMsg));
                         return;
                     }

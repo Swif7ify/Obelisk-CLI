@@ -8,6 +8,7 @@ import { ObeliskScanResult } from './obeliskRunner';
 export class SummaryViewProvider implements vscode.WebviewViewProvider {
     private view?: vscode.WebviewView;
     private result?: ObeliskScanResult;
+    private error?: string;
 
     constructor(private readonly extensionUri: vscode.Uri) {}
 
@@ -19,16 +20,29 @@ export class SummaryViewProvider implements vscode.WebviewViewProvider {
 
     updateSummary(result: ObeliskScanResult): void {
         this.result = result;
+        this.error = undefined;
+        this.render();
+    }
+
+    updateError(errMsg: string): void {
+        this.error = errMsg;
+        this.result = undefined;
         this.render();
     }
 
     clear(): void {
         this.result = undefined;
+        this.error = undefined;
         this.render();
     }
 
     private render(): void {
         if (!this.view) {
+            return;
+        }
+
+        if (this.error) {
+            this.view.webview.html = this.getErrorHtml(this.error);
             return;
         }
 
@@ -50,6 +64,21 @@ export class SummaryViewProvider implements vscode.WebviewViewProvider {
     <div class="empty">
         <p>No scan results yet.</p>
         <p class="muted">Run a scan to see your project health summary.</p>
+    </div>
+</body>
+</html>`;
+    }
+
+    private getErrorHtml(errMsg: string): string {
+        return `<!DOCTYPE html>
+<html>
+<head>
+    <style>${this.getStyles()}</style>
+</head>
+<body>
+    <div class="empty">
+        <h3 style="color: #dc3545; margin-bottom: 8px;">Scan Failed</h3>
+        <p style="color: var(--vscode-errorForeground);">${this.escapeHtml(errMsg)}</p>
     </div>
 </body>
 </html>`;
