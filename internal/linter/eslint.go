@@ -33,15 +33,8 @@ func RunESLint(projectPath string) ([]scanner.Finding, error) {
 	// Check if eslint is available
 	eslintBin := findESLint(projectPath)
 	if eslintBin == "" {
-		// ESLint not found — this is an info finding, not a blocker
-		findings = append(findings, scanner.Finding{
-			Category:    scanner.CategoryQuality,
-			Severity:    scanner.SeverityInfo,
-			Title:       "ESLint not found",
-			Description: "ESLint is not installed. Install it for code quality linting",
-			Suggestion:  "Run 'npm install --save-dev eslint' to add ESLint",
-		})
-		return findings, nil
+		// ESLint not found — fallback to our native esbuild syntax checker
+		return RunNativeSyntaxCheck(projectPath)
 	}
 
 	// Check if eslint config exists
