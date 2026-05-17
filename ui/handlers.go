@@ -16,9 +16,19 @@ import (
 )
 
 func (m InteractiveModel) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Global home shortcut (except in main menu and scanning)
+	if msg.String() == "h" && m.CurrentView != ViewMainMenu && m.CurrentView != ViewScanning {
+		m.CurrentView = ViewMainMenu
+		m.ScanResult = nil
+		m.ScanReport = nil
+		m.StatusMsg = ""
+		return m, nil
+	}
+	
 	if msg.String() == "ctrl+c" {
 		return m, tea.Quit
 	}
+	
 	switch m.CurrentView {
 	case ViewMainMenu:
 		return m.handleMainMenu(msg.String())
@@ -29,12 +39,15 @@ func (m InteractiveModel) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	case ViewScanResults:
-		if msg.String() == "esc" || msg.String() == "backspace" || msg.String() == "q" || msg.String() == "b" {
+		if msg.String() == "esc" || msg.String() == "backspace" {
 			m.CurrentView = ViewMainMenu
 			m.ScanResult = nil
 			m.ScanReport = nil
 			m.StatusMsg = ""
 			return m, nil
+		}
+		if msg.String() == "q" {
+			return m, tea.Quit
 		}
 		var cmd tea.Cmd
 		m.Viewport, cmd = m.Viewport.Update(msg)
@@ -50,8 +63,11 @@ func (m InteractiveModel) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case ViewSettingsPathInput:
 		return m.handleTextInput(msg, ViewSettings, m.onPathSubmit)
 	case ViewHelp:
-		if msg.String() == "esc" || msg.String() == "backspace" || msg.String() == "q" {
+		if msg.String() == "esc" || msg.String() == "backspace" {
 			m.CurrentView = ViewMainMenu
+		}
+		if msg.String() == "q" {
+			return m, tea.Quit
 		}
 	case ViewProtect:
 		return m.handleProtectMenu(msg.String())
@@ -201,7 +217,7 @@ func (m InteractiveModel) onModelSubmit(im InteractiveModel, value string) (Inte
 		im.StatusIsError = false
 	}
 	im.CurrentView = ViewSettings
-	return im, clearStatusAfter(3 * time.Second)
+	return im, clearStatusAfter(8 * time.Second)
 }
 
 func (m InteractiveModel) onPathSubmit(im InteractiveModel, value string) (InteractiveModel, tea.Cmd) {
@@ -243,7 +259,7 @@ func (m InteractiveModel) handleAPIKeyMenu(key string) (tea.Model, tea.Cmd) {
 			_ = m.Config.Save()
 			m.StatusMsg = "API key removed"
 			m.StatusIsError = false
-			return m, clearStatusAfter(3 * time.Second)
+			return m, clearStatusAfter(8 * time.Second)
 		case 2: // Back
 			m.CurrentView = ViewMainMenu
 		}
@@ -284,7 +300,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			}
 			m.StatusMsg = "AI is now " + s
 			m.StatusIsError = false
-			return m, clearStatusAfter(3 * time.Second)
+			return m, clearStatusAfter(8 * time.Second)
 		case 3: // Toggle no-color
 			m.Config.NoColor = !m.Config.NoColor
 			_ = m.Config.Save()
@@ -294,7 +310,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			}
 			m.StatusMsg = "No color: " + s
 			m.StatusIsError = false
-			return m, clearStatusAfter(3 * time.Second)
+			return m, clearStatusAfter(8 * time.Second)
 		case 4: // Toggle Report Format
 			if m.Config.GetReportFormat() == "md" {
 				m.Config.ReportFormat = "txt"
@@ -304,7 +320,7 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			_ = m.Config.Save()
 			m.StatusMsg = "Report format: " + m.Config.ReportFormat
 			m.StatusIsError = false
-			return m, clearStatusAfter(3 * time.Second)
+			return m, clearStatusAfter(8 * time.Second)
 		case 5: // Toggle Auto-Save
 			m.Config.AutoSave = !m.Config.AutoSave
 			_ = m.Config.Save()
@@ -314,13 +330,13 @@ func (m InteractiveModel) handleSettingsMenu(key string) (tea.Model, tea.Cmd) {
 			}
 			m.StatusMsg = "Auto-save report: " + s
 			m.StatusIsError = false
-			return m, clearStatusAfter(3 * time.Second)
+			return m, clearStatusAfter(8 * time.Second)
 		case 6: // Reset
 			m.Config.Reset()
 			_ = m.Config.Save()
 			m.StatusMsg = "Settings reset to defaults"
 			m.StatusIsError = false
-			return m, clearStatusAfter(3 * time.Second)
+			return m, clearStatusAfter(8 * time.Second)
 		case 7: // Back
 			m.CurrentView = ViewMainMenu
 		}
@@ -422,7 +438,7 @@ func installHookCmd() tea.Cmd {
 		if err := os.WriteFile(hookPath, []byte(hook), perm); err != nil {
 			return hookResultMsg{err: err}
 		}
-		return hookResultMsg{msg: "Pre-push hook installed!"}
+		return hookResultMsg{msg: "✓ Pre-push hook installed successfully!"}
 	}
 }
 
@@ -444,7 +460,7 @@ func uninstallHookCmd() tea.Cmd {
 		if err := os.Remove(hookPath); err != nil {
 			return hookResultMsg{err: err}
 		}
-		return hookResultMsg{msg: "Pre-push hook uninstalled!"}
+		return hookResultMsg{msg: "✓ Pre-push hook uninstalled successfully!"}
 	}
 }
 

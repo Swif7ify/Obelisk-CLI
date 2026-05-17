@@ -51,6 +51,7 @@ type InteractiveModel struct {
 	Height        int
 	Version       string
 	TargetFormat  string
+	Breadcrumb    BreadcrumbModel
 }
 
 // scanCompleteMsg is sent when a scan finishes.
@@ -93,6 +94,7 @@ func NewInteractive(cfg *config.Config, version string) InteractiveModel {
 		Width:       80,
 		Height:      40,
 		Version:     version,
+		Breadcrumb:  NewBreadcrumb("Home"),
 	}
 }
 
@@ -168,10 +170,10 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					// Don't show error in TUI, just silently fail
 					// User can still see results in the viewport
 				} else {
-					// Show success message briefly
-					m.StatusMsg = "Report saved to: " + outputPath
+					// Show success message
+					m.StatusMsg = "✓ Report saved to: " + outputPath
 					m.StatusIsError = false
-					return m, clearStatusAfter(5 * time.Second)
+					return m, clearStatusAfter(10 * time.Second)
 				}
 			}
 		}
@@ -190,7 +192,7 @@ func (m InteractiveModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.StatusMsg = msg.msg
 			m.StatusIsError = false
 		}
-		return m, clearStatusAfter(3 * time.Second)
+		return m, clearStatusAfter(8 * time.Second)
 	}
 	return m, nil
 }
@@ -199,49 +201,64 @@ func (m InteractiveModel) View() string {
 	var sb strings.Builder
 
 	sb.WriteString(RenderBanner())
-	sb.WriteString(MutedStyle.Render(fmt.Sprintf("  v%s", m.Version)) + "\n\n")
+	sb.WriteString(MutedStyle.Render(fmt.Sprintf("  v%s", m.Version)) + "\n")
+	
+	// Add breadcrumb navigation
+	m.Breadcrumb.Path = GetViewBreadcrumb(m.CurrentView)
+	sb.WriteString(m.Breadcrumb.View())
+	sb.WriteString("\n")
 
 	switch m.CurrentView {
 	case ViewMainMenu:
 		sb.WriteString(m.Menu.View())
-		sb.WriteString("\n")
-		sb.WriteString(MutedStyle.Render("  ↑/↓ Navigate  Enter Select  q Quit") + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewScanInput:
 		sb.WriteString(SubtitleStyle.Render("  Scan Project") + "\n\n")
-		sb.WriteString(m.Input.View() + "\n\n")
-		sb.WriteString(MutedStyle.Render("  Enter to scan  Esc to cancel") + "\n")
+		sb.WriteString(m.Input.View() + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewScanning:
 		sb.WriteString(m.Spinner.View())
-		sb.WriteString("\n" + MutedStyle.Render("  Scanning project... press q to abort") + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewScanResults:
 		if m.StatusIsError && m.StatusMsg != "" {
 			sb.WriteString(ErrorStyle.Render("  ✗ Error: "+m.StatusMsg) + "\n\n")
 		} else if m.ScanReport != nil && m.ScanResult != nil {
 			sb.WriteString(m.Viewport.View() + "\n")
+			// Add scroll indicator
+			if m.Viewport.TotalLineCount() > 0 {
+				percent := int(float64(m.Viewport.YOffset) / float64(m.Viewport.TotalLineCount()) * 100)
+				scrollInfo := fmt.Sprintf("  [%d%%] Line %d/%d",
+					percent, m.Viewport.YOffset+1, m.Viewport.TotalLineCount())
+				sb.WriteString(MutedStyle.Render(scrollInfo) + "\n")
+			}
 		}
-		sb.WriteString("\n" + MutedStyle.Render("  Press Esc or Backspace to go back, ↑/↓ to scroll") + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewAPIKey:
 		sb.WriteString(RenderAPIKeyView(m.Config, m.SubCursor))
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewAPIKeyInput:
 		sb.WriteString(SubtitleStyle.Render("  API Key") + "\n\n")
-		sb.WriteString(m.Input.View() + "\n\n")
-		sb.WriteString(MutedStyle.Render("  Enter to save  Esc to cancel") + "\n")
+		sb.WriteString(m.Input.View() + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewSettings:
 		sb.WriteString(RenderSettingsView(m.Config, m.SubCursor))
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewSettingsModelInput:
 		sb.WriteString(SubtitleStyle.Render("  Set AI Model") + "\n\n")
 		sb.WriteString(m.Input.View() + "\n\n")
 		sb.WriteString(MutedStyle.Render("  Models: gemini-2.5-flash, gemini-2.5-pro") + "\n")
-		sb.WriteString(MutedStyle.Render("  Enter to save  Esc to cancel") + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewSettingsPathInput:
 		sb.WriteString(SubtitleStyle.Render("  Set Default Path") + "\n\n")
 		sb.WriteString(m.Input.View() + "\n\n")
 		sb.WriteString(MutedStyle.Render("  Leave empty for current directory") + "\n")
-		sb.WriteString(MutedStyle.Render("  Enter to save  Esc to cancel") + "\n")
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewHelp:
 		sb.WriteString(RenderHelpView())
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	case ViewProtect:
 		sb.WriteString(RenderProtectView(m.SubCursor))
+		sb.WriteString(RenderNavigationFooter(m.CurrentView))
 	}
 
 	if m.StatusMsg != "" {
