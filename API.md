@@ -33,7 +33,7 @@ Available on all commands:
 
 ```bash
 --api-key string      Gemini API key (overrides env var)
---model string        AI model to use (default: "gemini-2.0-flash-exp")
+--model string        AI model to use (default: "gemini-2.5-flash")
 --no-color           Disable colored output
 -v, --verbose        Enable verbose output
 -h, --help           Show help
@@ -61,7 +61,7 @@ obelisk [flags]
 
 #### `obelisk check`
 
-Run visual health check dashboard.
+Run the visual health check dashboard.
 
 ```bash
 obelisk check [path] [flags]

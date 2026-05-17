@@ -1,10 +1,10 @@
 # 🚀 Quick Start - Use Obelisk MCP Server
 
-Get started with Obelisk's AI-powered code analysis in under 2 minutes by integrating it directly with your favorite AI assistant!
+Get started with Obelisk's code analysis in under 2 minutes by integrating it with your AI assistant.
 
 ## 📱 Connect Your AI Client
 
-To scan your local codebase, Obelisk must be run locally on your machine. Configure your AI assistant to start Obelisk using its built-in MCP server mode.
+To scan your local codebase, configure your AI assistant to start Obelisk using its built-in MCP server mode.
 
 ### For Bob IDE
 
@@ -23,7 +23,7 @@ To scan your local codebase, Obelisk must be run locally on your machine. Config
 ```
 
 3. Restart Bob IDE
-4. Done! Ask Bob to analyze your code using Obelisk tools
+4. Ask Bob to analyze your code using Obelisk tools
 
 ### For Claude Desktop
 
@@ -45,7 +45,7 @@ To scan your local codebase, Obelisk must be run locally on your machine. Config
 ```
 
 3. Restart Claude Desktop
-4. Done! Claude can now use Obelisk to analyze your projects
+4. Claude can now use Obelisk to analyze your projects
 
 ### For Cline (VS Code Extension)
 
@@ -65,7 +65,7 @@ To scan your local codebase, Obelisk must be run locally on your machine. Config
 ```
 
 4. Reload VS Code
-5. Done! Cline can now use Obelisk tools
+5. Cline can now use Obelisk tools
 
 ---
 

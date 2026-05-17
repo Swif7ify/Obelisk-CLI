@@ -149,7 +149,7 @@ winget install OneDev.ObeliskCLI
 
 - Ensure `main.go` exists in project root
 - Run `go mod tidy` to fix dependencies
-- Check Go version: `go version` (requires 1.21+)
+- Check Go version: `go version` (requires Go 1.26.3 or newer)
 
 ### "MSI linking failed"
 

@@ -1,6 +1,6 @@
 # Obelisk CLI — VS Code Extension
 
-> AI-Powered Automated Tech Lead for your codebase, right in your IDE.
+> AI-powered code health and analysis for your codebase, right in your IDE.
 
 ## Features
 
@@ -24,15 +24,16 @@ Click any finding to **jump directly to the file and line** where the issue was 
 
 ### Health Summary Panel
 
-A rich visual summary showing:
+A summary showing:
+
 - **Letter grade** (A-F) with color coding
 - **Score breakdown** — Security, Architecture, Quality bars
 - **AI-generated summary** and recommendations
-- **Praise notes** for good coding practices
+- **Notes** on good coding practices
 
 ### Status Bar
 
-Bottom status bar shows the current health grade at a glance. Click to re-scan.
+The status bar shows the current health grade at a glance. Click to re-scan.
 
 ## Requirements
 
@@ -42,22 +43,22 @@ Bottom status bar shows the current health grade at a glance. Click to re-scan.
 
 ## Extension Settings
 
-| Setting | Default | Description |
-|---|---|---|
-| `obelisk.executablePath` | `obelisk` | Path to the Obelisk CLI executable |
-| `obelisk.scanOnOpen` | `true` | Auto-scan when a workspace opens |
-| `obelisk.scanOnSave` | `false` | Auto re-scan on file save (debounced) |
-| `obelisk.scanOnSaveDelay` | `3000` | Debounce delay in ms for save-triggered scans |
-| `obelisk.skipAI` | `false` | Skip AI analysis (faster, no API key needed) |
+| Setting                   | Default   | Description                                   |
+| ------------------------- | --------- | --------------------------------------------- |
+| `obelisk.executablePath`  | `obelisk` | Path to the Obelisk CLI executable            |
+| `obelisk.scanOnOpen`      | `true`    | Auto-scan when a workspace opens              |
+| `obelisk.scanOnSave`      | `false`   | Auto re-scan on file save (debounced)         |
+| `obelisk.scanOnSaveDelay` | `3000`    | Debounce delay in ms for save-triggered scans |
+| `obelisk.skipAI`          | `false`   | Skip AI analysis (faster, no API key needed)  |
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `Obelisk: Scan Project` | Run a full health scan |
-| `Obelisk: Refresh Scan` | Re-run the scan |
+| Command                   | Description                        |
+| ------------------------- | ---------------------------------- |
+| `Obelisk: Scan Project`   | Run a full health scan             |
+| `Obelisk: Refresh Scan`   | Re-run the scan                    |
 | `Obelisk: Clear Findings` | Clear all findings and diagnostics |
-| `Obelisk: Stop Scan` | Cancel a running scan |
+| `Obelisk: Stop Scan`      | Cancel a running scan              |
 
 ## How It Works
 
@@ -70,4 +71,4 @@ The extension runs `obelisk scan --format json` on your workspace and parses the
 
 ---
 
-Built by **OneDev PH** for the IBM Bob Hackathon 2026.
+Built by **OneDev PH**.

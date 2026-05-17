@@ -17,20 +17,20 @@
 
 ## What is MCP?
 
-**Model Context Protocol (MCP)** is an open standard that enables AI assistants to securely connect to external tools and data sources. Obelisk implements MCP to expose its code analysis capabilities to AI assistants like Claude, Bob IDE, and other MCP-compatible clients.
+**Model Context Protocol (MCP)** is an open standard that enables AI assistants to securely connect to external tools and data sources. Obelisk uses MCP to expose its code analysis capabilities to clients such as Claude, Bob IDE, and other compatible tools.
 
 ### Benefits
 
 - 🔌 **Seamless Integration** - AI assistants can analyze your code directly
-- 🔒 **Secure** - All analysis runs locally or on your infrastructure
-- 🚀 **Real-time** - Get instant code health insights during conversations
-- 🎯 **Context-Aware** - AI understands your project structure and issues
+- 🔒 **Secure** - Analysis runs locally or on your infrastructure
+- 🚀 **Real-time** - Get code health insights during conversations
+- 🎯 **Context-Aware** - AI can use project structure and findings as context
 
 ---
 
 ## Quick Start
 
-### 1. Start MCP Server
+### 1. Start the MCP Server
 
 ```bash
 # Local mode (stdio transport)
@@ -63,15 +63,13 @@ export GEMINI_API_KEY=your-api-key-here
 ### Start Server
 
 ```bash
-# Default stdio mode (for local IDE integration)
+# Default stdio mode for local IDE integration
 obelisk mcp
 
 # The server will output:
 # MCP Server started (stdio transport)
 # Available tools: scan_project, check_security, analyze_complexity, ...
 ```
-
-
 
 ## Available Tools
 
@@ -127,7 +125,7 @@ MCP clients can invoke these tools to analyze your code:
 
 ### `analyze_complexity`
 
-**Description:** Analyze code complexity and identify spaghetti code
+**Description:** Analyze code complexity and identify high-complexity code
 
 **Parameters:**
 
@@ -468,8 +466,6 @@ obelisk config get api-key
     # Enable debug logging
     obelisk mcp --verbose
     ```
-
-
 
 ---
 

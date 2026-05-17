@@ -21,20 +21,20 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 1. Fork the repository
 2. Clone your fork:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/Obelisk-CLI.git
-   cd Obelisk-CLI
-   ```
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/Obelisk-CLI.git
+    cd Obelisk-CLI
+    ```
 3. Add the upstream remote:
-   ```bash
-   git remote add upstream https://github.com/Swif7ify/Obelisk-CLI.git
-   ```
+    ```bash
+    git remote add upstream https://github.com/Swif7ify/Obelisk-CLI.git
+    ```
 
 ## Development Setup
 
 ### Prerequisites
 
-- **Go 1.26+** installed ([download](https://golang.org/dl/))
+- **Go 1.26.3+** installed ([download](https://golang.org/dl/))
 - **Git** installed
 - A **Google Gemini API key** (for AI features)
 
@@ -80,9 +80,9 @@ Obelisk uses an adapter pattern. To add support for a new framework:
 ## Pull Request Process
 
 1. Create a feature branch from `main`:
-   ```bash
-   git checkout -b feature/my-feature
-   ```
+    ```bash
+    git checkout -b feature/my-feature
+    ```
 2. Make your changes with clear, descriptive commits
 3. Ensure all tests pass: `make test`
 4. Ensure the build succeeds: `make build`
@@ -110,6 +110,7 @@ Obelisk uses an adapter pattern. To add support for a new framework:
 ### Commit Messages
 
 Use conventional commit format:
+
 ```
 type(scope): description
 

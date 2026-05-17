@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">🏛️ Obelisk CLI</h1>
   <p align="center">
-    <strong>The AI-Powered "Automated Tech Lead" for Modern Codebases</strong>
+    <strong>AI-powered code health and analysis for modern codebases</strong>
   </p>
   <p align="center">
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
@@ -17,7 +17,7 @@
 
 ---
 
-**Obelisk** is a high-performance tool ecosystem consisting of a Go-based CLI, a VS Code extension, and an integrated Model Context Protocol (MCP) server. Acting as a final gatekeeper for your project, it doesn't just check for syntax errors — it evaluates project integrity, security, and architectural health using a combination of deep static analysis, native code parsing, and LLM intelligence directly within your terminal, IDE, or AI agents.
+**Obelisk** is a tool ecosystem consisting of a Go-based CLI, a VS Code extension, and an integrated Model Context Protocol (MCP) server. It evaluates project integrity, security, and architectural health using a combination of static analysis, native code parsing, and LLM-assisted review in your terminal, IDE, or AI agents.
 
 ## ⚡ Why Obelisk?
 
@@ -39,7 +39,7 @@ One command. Full project health report. AI-graded score.
 
 Obelisk is designed for both humans and machines:
 
-- **Interactive TUI (`obelisk`)** — Launch a premium, visual menu system with scrollable results.
+- **Interactive TUI (`obelisk`)** — Launch an interactive menu system with scrollable results.
 - **Local Dashboard (`obelisk check`)** — Runs a visual health check with an animated spinner, displays an interactive scorecard, and automatically generates a report file in your project directory.
 - **Headless Mode (`obelisk scan`)** — Completely bypasses the UI and prints standard text directly to `stdout`. Designed for automated pipelines (GitHub Actions, Jenkins). Supports raw JSON (`--format json`) and strict mode (`--strict`) which fails the pipeline with an Exit Code 1 if critical issues are found.
 - **MCP Server Mode (`obelisk mcp`)** — Runs as a Model Context Protocol server, exposing code analysis capabilities to AI assistants and IDEs. Supports both stdio (local) and HTTP/SSE (cloud) transports. **Try our public server at `https://mcp-obelisk.onedevph.online/sse`** or see [DEPLOYMENT.md](DEPLOYMENT.md) to deploy your own.
@@ -54,25 +54,25 @@ Obelisk is designed for both humans and machines:
 ### 🧹 Architectural & Code Quality Linting
 
 - **Native Syntax Checking (esbuild)** — If ESLint is missing, Obelisk uses its own blazing-fast embedded `esbuild` engine to natively parse `.js`, `.ts`, `.jsx`, and `.tsx` files and catch syntax errors — no Node.js required!
-- **Cyclomatic Complexity Scanner** — Mathematically analyzes your code's branching density (`if/for/switch/&&/||`) to detect and flag highly unmaintainable "Spaghetti Code"
+- **Cyclomatic Complexity Scanner** — Analyzes branching density (`if/for/switch/&&/||`) to identify maintainability risks
 - **Technical Debt Tracker** — Hunts down lingering `TODO`, `FIXME`, `HACK`, and `XXX` comments across your codebase and aggregates them into architectural debt warnings
 - **Naming Enforcer** — Validates file/folder naming conventions per framework (PascalCase for React, kebab-case for assets)
 - **Dependency Audit** — Scans `package.json` for deprecated or vulnerable packages
 - **Import Integrity** — Flags circular dependencies and enforces clean import patterns
 - **Unused Dependency Detection** — Identifies and flags packages declared but never imported
 
-### 🔐 Enterprise-Grade Security Architecture
+### 🔐 Security Architecture
 
 - **OS-Level Keyring Encryption** — Your Gemini API key is securely encrypted and stored natively in your Operating System's Credential Manager (Windows Credential Manager / macOS Keychain / Linux Secret Service). It is **never** saved in plaintext to disk.
 - **Automatic Security Migration** — If upgrading from an older version that stored the key in `config.json`, Obelisk automatically detects it, migrates it into the secure OS keychain, and permanently scrubs the plaintext from the configuration file.
 - **Zero Trust Config** — The `config.json` file contains only non-sensitive settings (model, report format, default path). Credentials are strictly isolated in the OS vault.
 - **Environment Variable Support** — For CI/CD pipelines, pass keys securely at runtime via `GEMINI_API_KEY` or `GOOGLE_API_KEY` environment variables.
 
-### 🧠 AI "Senior Dev" Brain
+### 🧠 AI-Assisted Analysis
 
-- **Health Score (A–F)** — Composite grade based on Security, Architecture, and Code Quality rubrics with strict hard-ceiling enforcement (errors cap score at D, criticals cap at F)
-- **Vibe Check** — AI analyzes your project structure against industry-standard patterns (MVC, Atomic Design, feature-based)
-- **Technical Debt Summary** — Plain-English summary of critical issues + praise for good practices
+- **Health Score (A–F)** — Composite grade based on Security, Architecture, and Code Quality rubrics with strict ceiling enforcement
+- **Architecture Review** — AI analyzes your project structure against common patterns such as MVC, Atomic Design, and feature-based organization
+- **Technical Debt Summary** — Plain-English summary of critical issues and strong practices
 
 ### 📄 Automatic Report Generation
 
@@ -242,12 +242,12 @@ Obelisk uses a modular **Adapter Pattern** to support multiple frameworks:
 
 ### Supported Frameworks
 
-| Framework                                | Status         |
-| ---------------------------------------- | -------------- |
-| JavaScript / TypeScript (React, Next.js) | ✅ Supported   |
-| Go (Golang)                              | 🔜 Coming Soon |
-| Laravel (PHP)                            | 🔜 Coming Soon |
-| Python (Django/Flask)                    | 🔜 Planned     |
+| Framework                                | Status       |
+| ---------------------------------------- | ------------ |
+| JavaScript / TypeScript (React, Next.js) | ✅ Supported |
+| Go (Golang)                              | Planned      |
+| Laravel (PHP)                            | Planned      |
+| Python (Django/Flask)                    | 🔜 Planned   |
 
 ---
 
@@ -271,7 +271,7 @@ For full details, see the [Security Policy](SECURITY.md).
 ## 🛠️ Tech Stack
 
 - **Core Logic:** [Go (Golang)](https://golang.org) — High-speed concurrency, tiny binaries, cross-platform
-- **Terminal UI:** [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss) — Premium interactive CLI experience
+- **Terminal UI:** [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss) — Interactive CLI experience
 - **Native Parser:** [esbuild](https://esbuild.github.io/) — Embedded Go-native JS/TS syntax checker (no Node.js required)
 - **AI Engine:** [Google Gemini API](https://ai.google.dev/) — Synthesizes findings into architectural insights
 - **Credential Security:** [go-keyring](https://github.com/zalando/go-keyring) — OS-native encrypted credential storage
@@ -313,7 +313,7 @@ Obelisk-CLI/
 │   │   ├── naming.go              # File/folder naming convention enforcer
 │   │   ├── dependencies.go        # package.json dependency auditor
 │   │   ├── imports.go             # Circular dependency & import scanner
-│   │   ├── complexity.go          # Cyclomatic Complexity (Spaghetti Code) scanner
+│   │   ├── complexity.go          # Cyclomatic complexity scanner
 │   │   ├── techdebt.go            # Technical Debt (TODO/FIXME) tracker
 │   │   └── types.go               # Finding, ScanResult type definitions
 │   ├── linter/                    # Orchestrated linting
@@ -332,8 +332,8 @@ Obelisk-CLI/
 │       └── writer.go              # File output writer
 └── adapters/                      # Framework-specific naming rules
     ├── javascript.go              # JS/TS/React/Next.js rules
-    ├── laravel.go                 # PHP/Laravel rules (Coming Soon)
-    └── golang.go                  # Go rules (Coming Soon)
+    ├── laravel.go                 # PHP/Laravel rules (planned)
+    └── golang.go                  # Go rules (planned)
 ```
 
 ---
