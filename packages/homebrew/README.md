@@ -20,10 +20,10 @@ brew install obelisk-cli
 
 ```bash
 # Download the source tarball
-curl -L https://github.com/Swif7ify/Obelisk-CLI/archive/refs/tags/v0.1.0.tar.gz -o obelisk-0.1.0.tar.gz
+curl -L https://github.com/Swif7ify/Obelisk-CLI/archive/refs/tags/v1.1.0.tar.gz -o obelisk-1.1.0.tar.gz
 
 # Calculate checksum
-shasum -a 256 obelisk-0.1.0.tar.gz
+shasum -a 256 obelisk-1.1.0.tar.gz
 ```
 
 ### Step 2: Update Formula
