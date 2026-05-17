@@ -248,7 +248,7 @@ obelisk version
 
 ```
 Obelisk CLI
-  Version:    0.1.0
+  Version:    1.1.0
   Commit:     abc1234
   Built:      2026-05-16T08:00:00Z
   Go Version: go1.26.3

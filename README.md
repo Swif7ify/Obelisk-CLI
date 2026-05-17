@@ -6,7 +6,7 @@
   <p align="center">
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
     <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white" alt="Go Version"></a>
-    <a href="https://github.com/Swif7ify/Obelisk-CLI/releases"><img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version"></a>
+    <a href="https://github.com/Swif7ify/Obelisk-CLI/releases"><img src="https://img.shields.io/badge/version-1.1.0-blue" alt="Version"></a>
     <a href="https://github.com/Swif7ify/Obelisk-CLI/actions"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status"></a>
   </p>
   <p align="center">
@@ -91,7 +91,7 @@ Obelisk is designed for both humans and machines:
 **For End Users - Professional Installation Experience**
 
 1. **Download the installer** from [GitHub Releases](https://github.com/Swif7ify/Obelisk-CLI/releases)
-2. **Double-click** `ObeliskCLI-0.1.0-x64.msi`
+2. **Double-click** `ObeliskCLI-1.1.0-x64.msi`
 3. **Follow the wizard:**
     - Accept the license agreement
     - Choose installation directory

@@ -122,10 +122,10 @@ Get-AuthenticodeSignature "bin\obelisk.exe" | Format-List
 # Download from: https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/
 
 # Sign MSI
-signtool sign /f certificate.pfx /p YourPassword /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "installer\ObeliskCLI-0.1.0-x64.msi"
+signtool sign /f certificate.pfx /p YourPassword /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "installer\ObeliskCLI-1.1.0-x64.msi"
 
 # Verify signature
-signtool verify /pa "installer\ObeliskCLI-0.1.0-x64.msi"
+signtool verify /pa "installer\ObeliskCLI-1.1.0-x64.msi"
 ```
 
 ---
@@ -175,7 +175,7 @@ Write-Host "✓ Executable signed" -ForegroundColor Green
 
 # Sign MSI
 Write-Host "Signing MSI installer..." -ForegroundColor Yellow
-& $signtool sign /f $CertPath /p $password /fd SHA256 /tr $TimestampServer /td SHA256 "installer\ObeliskCLI-0.1.0-x64.msi"
+& $signtool sign /f $CertPath /p $password /fd SHA256 /tr $TimestampServer /td SHA256 "installer\ObeliskCLI-1.1.0-x64.msi"
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ Failed to sign MSI!" -ForegroundColor Red
@@ -188,7 +188,7 @@ Write-Host ""
 Write-Host "Verifying signatures..." -ForegroundColor Yellow
 
 & $signtool verify /pa "bin\obelisk.exe"
-& $signtool verify /pa "installer\ObeliskCLI-0.1.0-x64.msi"
+& $signtool verify /pa "installer\ObeliskCLI-1.1.0-x64.msi"
 
 Write-Host ""
 Write-Host "✅ All files signed successfully!" -ForegroundColor Green

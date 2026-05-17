@@ -17,7 +17,7 @@ Complete guide for building, packaging, and distributing Obelisk CLI.
 # Build the installer
 .\installer\build-installer.ps1
 
-# Output: installer/ObeliskCLI-0.1.0-x64.msi
+# Output: installer/ObeliskCLI-1.1.0-x64.msi
 ```
 
 #### Features
@@ -106,7 +106,7 @@ powershell -ExecutionPolicy Bypass -File uninstall.ps1
 go install github.com/Swif7ify/Obelisk-CLI@latest
 
 # Or install specific version
-go install github.com/Swif7ify/Obelisk-CLI@v0.1.0
+go install github.com/Swif7ify/Obelisk-CLI@v1.1.0
 ```
 
 #### Features
@@ -133,7 +133,7 @@ go install github.com/Swif7ify/Obelisk-CLI@v0.1.0
 
 # Commit changes
 git add .
-git commit -m "chore: bump version to 0.1.0"
+git commit -m "chore: bump version to 1.1.0"
 git push
 ```
 
@@ -143,37 +143,37 @@ git push
 # Build for Windows x64
 $env:GOOS = "windows"
 $env:GOARCH = "amd64"
-go build -o bin/obelisk-windows-amd64.exe -ldflags "-s -w -X main.Version=0.1.0" .
+go build -o bin/obelisk-windows-amd64.exe -ldflags "-s -w -X main.Version=1.1.0" .
 
 # Build for Linux x64
 $env:GOOS = "linux"
 $env:GOARCH = "amd64"
-go build -o bin/obelisk-linux-amd64 -ldflags "-s -w -X main.Version=0.1.0" .
+go build -o bin/obelisk-linux-amd64 -ldflags "-s -w -X main.Version=1.1.0" .
 
 # Build for macOS x64
 $env:GOOS = "darwin"
 $env:GOARCH = "amd64"
-go build -o bin/obelisk-darwin-amd64 -ldflags "-s -w -X main.Version=0.1.0" .
+go build -o bin/obelisk-darwin-amd64 -ldflags "-s -w -X main.Version=1.1.0" .
 
 # Build for macOS ARM64 (Apple Silicon)
 $env:GOOS = "darwin"
 $env:GOARCH = "arm64"
-go build -o bin/obelisk-darwin-arm64 -ldflags "-s -w -X main.Version=0.1.0" .
+go build -o bin/obelisk-darwin-arm64 -ldflags "-s -w -X main.Version=1.1.0" .
 
 # Build MSI installer (Windows only)
-.\installer\build-installer.ps1 -Version "0.1.0"
+.\installer\build-installer.ps1 -Version "1.1.0"
 ```
 
 ### 3. Create GitHub Release
 
 ```bash
 # Create and push tag
-git tag -a v0.1.0 -m "Release version 0.1.0"
-git push origin v0.1.0
+git tag -a v1.1.0 -m "Release version 1.1.0"
+git push origin v1.1.0
 
 # Go to GitHub → Releases → Create new release
-# - Tag: v0.1.0
-# - Title: Obelisk CLI v0.1.0
+# - Tag: v1.1.0
+# - Title: Obelisk CLI v1.1.0
 # - Description: Copy from CHANGELOG.md
 ```
 
@@ -182,7 +182,7 @@ git push origin v0.1.0
 Upload these files to the GitHub Release:
 
 ```
-✅ ObeliskCLI-0.1.0-x64.msi          (Windows Installer)
+✅ ObeliskCLI-1.1.0-x64.msi          (Windows Installer)
 ✅ obelisk-windows-amd64.exe         (Windows Portable)
 ✅ obelisk-linux-amd64               (Linux Binary)
 ✅ obelisk-darwin-amd64              (macOS Intel)
@@ -240,7 +240,7 @@ sha256sum bin/* > checksums.txt
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>obelisk-cli</id>
-    <version>0.1.0</version>
+    <version>1.1.0</version>
     <title>Obelisk CLI</title>
     <authors>OneDev PH</authors>
     <projectUrl>https://github.com/Swif7ify/Obelisk-CLI</projectUrl>
@@ -256,7 +256,7 @@ sha256sum bin/* > checksums.txt
 
 ```powershell
 choco pack
-choco push obelisk-cli.0.1.0.nupkg --source https://push.chocolatey.org/
+choco push obelisk-cli.1.1.0.nupkg --source https://push.chocolatey.org/
 ```
 
 3. Users install:
@@ -278,7 +278,7 @@ choco install obelisk-cli
 **Setup:**
 
 1. Fork https://github.com/microsoft/winget-pkgs
-2. Create manifest in `manifests/o/OneDev/ObeliskCLI/0.1.0/`
+2. Create manifest in `manifests/o/OneDev/ObeliskCLI/1.1.0/`
 3. Submit PR
 
 4. Users install:
@@ -305,7 +305,7 @@ winget install OneDev.ObeliskCLI
 class ObeliskCli < Formula
   desc "AI-Powered Automated Tech Lead"
   homepage "https://github.com/Swif7ify/Obelisk-CLI"
-  url "https://github.com/Swif7ify/Obelisk-CLI/archive/v0.1.0.tar.gz"
+  url "https://github.com/Swif7ify/Obelisk-CLI/archive/v1.1.0.tar.gz"
   sha256 "..."
   license "MIT"
 
@@ -363,7 +363,7 @@ brew install obelisk-cli
 signtool sign /f certificate.pfx /p password /t http://timestamp.digicert.com obelisk.exe
 
 # Sign the MSI
-signtool sign /f certificate.pfx /p password /t http://timestamp.digicert.com ObeliskCLI-0.1.0-x64.msi
+signtool sign /f certificate.pfx /p password /t http://timestamp.digicert.com ObeliskCLI-1.1.0-x64.msi
 ```
 
 **macOS:**
@@ -399,7 +399,7 @@ Update these files for each release:
 
 ## 🎯 Recommended Distribution Strategy
 
-### For v0.1.0 (Initial Release)
+### For v1.1.0 (Initial Release)
 
 1. **Primary:** GitHub Releases with MSI installer
 2. **Secondary:** PowerShell install script
