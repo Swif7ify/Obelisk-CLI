@@ -1,3 +1,17 @@
+<div align="center">
+  <table>
+    <tbody>
+      <tr>
+        <td align="center">
+          🚧 <b>UNDER ACTIVE DEVELOPMENT</b> 🚧<br><br>
+          This project is still under active development. Bugs or breaking changes may occur.<br>
+          If you encounter issues or have suggestions, please open an issue or submit a pull request.<br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p align="center">
   <h1 align="center">🏛️ Obelisk CLI</h1>
   <p align="center">
